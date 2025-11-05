@@ -1,0 +1,60 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: servicedesk-ingress
+  namespace: servicedesk-pricing
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # If using cert-manager
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header X-Frame-Options "SAMEORIGIN" always;
+      add_header X-Content-Type-Options "nosniff" always;
+      add_header X-XSS-Protection "1; mode=block" always;
+      add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+spec:
+  tls:
+  - hosts:
+    - servicedesk.yourdomain.com
+    secretName: servicedesk-tls
+  rules:
+  - host: servicedesk.yourdomain.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: servicedesk-app-service
+            port:
+              number: 80
+
+---
+# Alternative: LoadBalancer service (if not using Ingress)
+apiVersion: v1
+kind: Service
+metadata:
+  name: servicedesk-loadbalancer
+  namespace: servicedesk-pricing
+  labels:
+    app: servicedesk-app
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb" # For AWS
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:region:account:certificate/cert-id"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 443
+    targetPort: 3000
+    protocol: TCP
+    name: https
+  - port: 80
+    targetPort: 3000
+    protocol: TCP
+    name: http
+  selector:
+    app: servicedesk-app

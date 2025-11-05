@@ -1,0 +1,9 @@
+# PDF Generation Components
+
+This directory contains components related to PDF proposal generation functionality.
+
+## Structure:
+- generators/ - PDF generation logic and utilities
+- templates/ - PDF template components
+- viewers/ - PDF viewing and preview components
+- managers/ - Proposal management components

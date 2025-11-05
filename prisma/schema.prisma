@@ -1,0 +1,621 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User management
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  projects Project[]
+  sessions Session[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// Main project entity
+model Project {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  status      ProjectStatus @default(DRAFT)
+  currency    String        @default("BRL")
+  location    String?
+  serviceType ServiceType   @default(STANDARD)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // User relation
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Client information
+  client   Client? @relation(fields: [clientId], references: [id])
+  clientId String?
+
+  // Contract information
+  contractPeriod   ContractPeriod?
+  generalInfo      GeneralInfo?
+  dimensioning     Dimensioning?
+  additionalServices AdditionalServices?
+
+  // Project components
+  teamMembers    TeamMember[]
+  schedules      Schedule[]
+  taxes          Tax[]
+  variables      Variable[]
+  otherCosts     OtherCost[]
+  budget         Budget?
+  forecast       Forecast?
+  analysis       Analysis?
+  negotiations   Negotiation[]
+  templates      ProjectTemplate[]
+
+  @@map("projects")
+}
+
+// Client information
+model Client {
+  id           String    @id @default(cuid())
+  name         String
+  document     String?
+  email        String?
+  phone        String?
+  contactPerson String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Address
+  address Address?
+
+  // Relations
+  projects Project[]
+
+  @@map("clients")
+}
+
+model Address {
+  id           String  @id @default(cuid())
+  street       String?
+  number       String?
+  complement   String?
+  neighborhood String?
+  city         String?
+  state        String?
+  zipCode      String?
+  country      String? @default("Brasil")
+
+  // Relations
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId String? @unique
+
+  @@map("addresses")
+}
+
+// Contract and project details
+model ContractPeriod {
+  id             String    @id @default(cuid())
+  startDate      DateTime
+  endDate        DateTime
+  durationMonths Int
+  renewalOptions Json?     // Array of renewal options
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @unique
+
+  @@map("contract_periods")
+}
+
+model GeneralInfo {
+  id            String @id @default(cuid())
+  userQuantity  Int    @default(100)
+  monthlyCalls  Int    @default(150)
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @unique
+
+  @@map("general_info")
+}
+
+model Dimensioning {
+  id                String      @id @default(cuid())
+  incidentsPerUser  Float       @default(1.5)
+  tmaMinutes        Int         @default(10)
+  occupancyRate     Int         @default(80)
+  n1Distribution    Int         @default(80)
+  n1Capacity        Int         @default(100)
+  n2Capacity        Int         @default(75)
+  n1SixHourShift    Boolean     @default(false)
+  coverageType      CoverageType @default(BUSINESS_HOURS)
+  suggestedN1       Int         @default(2)
+  suggestedN2       Int         @default(1)
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @unique
+
+  @@map("dimensioning")
+}
+
+model AdditionalServices {
+  id                   String  @id @default(cuid())
+  needsSoftware        Boolean @default(false)
+  needs0800            Boolean @default(false)
+  needsDirectCall      Boolean @default(false)
+  needsInfrastructure  Boolean @default(false)
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @unique
+
+  @@map("additional_services")
+}
+
+// Job positions and salaries
+model JobPosition {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  level         String?
+  salary8h      Float    // Salary for 8-hour shift
+  salary6h      Float?   // Salary for 6-hour shift (optional)
+  description   String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  teamMembers TeamMember[]
+
+  @@map("job_positions")
+}
+
+// Team management
+model TeamMember {
+  id                String   @id @default(cuid())
+  name              String
+  workingHours      Int      @default(40)
+  startDate         DateTime @default(now())
+  endDate           DateTime?
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  project       Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId     String
+  jobPosition   JobPosition @relation(fields: [jobPositionId], references: [id])
+  jobPositionId String
+
+  // Schedule relations
+  scheduleAssignments ScheduleAssignment[]
+
+  @@map("team_members")
+}
+
+// Schedule management
+model Schedule {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  coverageType CoverageType
+  startTime   String      // HH:MM format
+  endTime     String      // HH:MM format
+  daysOfWeek  Json        // Array of days [0-6]
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+
+  assignments ScheduleAssignment[]
+
+  @@map("schedules")
+}
+
+model ScheduleAssignment {
+  id           String @id @default(cuid())
+  teamMemberId String
+  scheduleId   String
+  role         String?
+  priority     Int    @default(1)
+
+  // Relations
+  teamMember TeamMember @relation(fields: [teamMemberId], references: [id], onDelete: Cascade)
+  schedule   Schedule   @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  @@unique([teamMemberId, scheduleId])
+  @@map("schedule_assignments")
+}
+
+// Tax management
+model Tax {
+  id          String    @id @default(cuid())
+  name        String
+  type        TaxType
+  rate        Float
+  description String?
+  isActive    Boolean   @default(true)
+  region      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+
+  @@map("taxes")
+}
+
+// Variables and market factors
+model Variable {
+  id          String       @id @default(cuid())
+  name        String
+  type        VariableType
+  value       Float
+  unit        String?
+  description String?
+  source      String?
+  lastUpdate  DateTime     @default(now())
+  isActive    Boolean      @default(true)
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+
+  @@map("variables")
+}
+
+// Other costs
+model OtherCost {
+  id          String    @id @default(cuid())
+  name        String
+  category    String
+  amount      Float
+  frequency   Frequency @default(MONTHLY)
+  description String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+
+  @@map("other_costs")
+}
+
+// Budget management
+model Budget {
+  id               String    @id @default(cuid())
+  teamCosts        Float     @default(0)
+  infrastructureCosts Float  @default(0)
+  otherCosts       Float     @default(0)
+  totalTaxes       Float     @default(0)
+  totalCosts       Float     @default(0)
+  marginType       MarginType @default(PERCENTAGE)
+  marginValue      Float     @default(20)
+  totalPrice       Float     @default(0)
+  monthlyBreakdown Json?     // Monthly cost breakdown
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @unique
+
+  @@map("budgets")
+}
+
+// Forecast system
+model Forecast {
+  id          String   @id @default(cuid())
+  assumptions Json     // Forecast assumptions
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @unique
+
+  scenarios    ForecastScenario[]
+  projections  ForecastProjection[]
+  risks        ForecastRisk[]
+  insights     ForecastInsight[]
+  alerts       ForecastAlert[]
+
+  @@map("forecasts")
+}
+
+model ForecastScenario {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  type        ScenarioType
+  probability Float
+  assumptions Json        // Scenario-specific assumptions
+  isBaseline  Boolean     @default(false)
+  color       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  forecast   Forecast @relation(fields: [forecastId], references: [id], onDelete: Cascade)
+  forecastId String
+
+  projections ForecastProjection[]
+
+  @@map("forecast_scenarios")
+}
+
+model ForecastProjection {
+  id         String   @id @default(cuid())
+  month      Int
+  year       Int
+  revenue    Float
+  costs      Json     // Cost breakdown
+  profit     Float
+  margin     Float
+  teamSize   Int
+  kpis       Json?    // Additional KPIs
+  createdAt  DateTime @default(now())
+
+  // Relations
+  forecast   Forecast         @relation(fields: [forecastId], references: [id], onDelete: Cascade)
+  forecastId String
+  scenario   ForecastScenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  scenarioId String
+
+  @@unique([forecastId, scenarioId, month, year])
+  @@map("forecast_projections")
+}
+
+model ForecastRisk {
+  id             String      @id @default(cuid())
+  name           String
+  description    String
+  category       String
+  probability    Float
+  impact         Float
+  severity       RiskSeverity
+  potentialLoss  Float
+  timeframe      String?
+  mitigation     String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  // Relations
+  forecast   Forecast @relation(fields: [forecastId], references: [id], onDelete: Cascade)
+  forecastId String
+
+  @@map("forecast_risks")
+}
+
+model ForecastInsight {
+  id           String          @id @default(cuid())
+  type         InsightType
+  title        String
+  description  String
+  impact       Float
+  confidence   Float
+  priority     InsightPriority
+  recommendation String?
+  createdAt    DateTime        @default(now())
+
+  // Relations
+  forecast   Forecast @relation(fields: [forecastId], references: [id], onDelete: Cascade)
+  forecastId String
+
+  @@map("forecast_insights")
+}
+
+model ForecastAlert {
+  id           String        @id @default(cuid())
+  type         AlertType
+  title        String
+  message      String
+  severity     AlertSeverity
+  threshold    Float
+  currentValue Float
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  // Relations
+  forecast   Forecast @relation(fields: [forecastId], references: [id], onDelete: Cascade)
+  forecastId String
+
+  @@map("forecast_alerts")
+}
+
+// Analysis and results
+model Analysis {
+  id        String   @id @default(cuid())
+  roi       Float
+  irr       Float?
+  payback   Int?     // Months
+  breakEven Int?     // Months
+  results   Json     // Detailed analysis results
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @unique
+
+  @@map("analysis")
+}
+
+// Negotiation scenarios
+model Negotiation {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  adjustments Json     // Price adjustments
+  status      NegotiationStatus @default(DRAFT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+
+  @@map("negotiations")
+}
+
+// Template system
+model ProjectTemplate {
+  id          String         @id @default(cuid())
+  name        String
+  description String?
+  category    String
+  type        TemplateType
+  data        Json           // Template data
+  isPublic    Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relations
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  projectId String?
+
+  @@map("project_templates")
+}
+
+// Enums
+enum UserRole {
+  ADMIN
+  USER
+  VIEWER
+}
+
+enum ProjectStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+enum ServiceType {
+  STANDARD
+  PREMIUM
+  ENTERPRISE
+  CUSTOM
+}
+
+enum CoverageType {
+  BUSINESS_HOURS
+  EXTENDED_HOURS
+  TWENTY_FOUR_SEVEN
+}
+
+enum TaxType {
+  FEDERAL
+  STATE
+  MUNICIPAL
+  CUSTOM
+}
+
+enum VariableType {
+  INFLATION
+  SALARY_ADJUSTMENT
+  MARKET_FACTOR
+  CUSTOM
+}
+
+enum Frequency {
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+  ONE_TIME
+}
+
+enum MarginType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum ScenarioType {
+  OPTIMISTIC
+  REALISTIC
+  PESSIMISTIC
+  CUSTOM
+}
+
+enum RiskSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum InsightType {
+  COST_OPTIMIZATION
+  REVENUE_OPPORTUNITY
+  RISK_MITIGATION
+  EFFICIENCY_IMPROVEMENT
+}
+
+enum InsightPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum AlertType {
+  PERFORMANCE
+  BUDGET
+  RISK
+  OPPORTUNITY
+}
+
+enum AlertSeverity {
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+enum NegotiationStatus {
+  DRAFT
+  PROPOSED
+  NEGOTIATING
+  ACCEPTED
+  REJECTED
+}
+
+enum TemplateType {
+  PROJECT
+  TEAM
+  BUDGET
+  FORECAST
+}

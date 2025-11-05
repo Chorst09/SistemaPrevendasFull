@@ -1,0 +1,8 @@
+# PDF Utilities
+
+This directory contains utilities, types, and services related to PDF generation functionality.
+
+## Structure:
+- types/ - TypeScript interfaces and types for PDF generation
+- services/ - PDF generation services and storage utilities
+- templates/ - PDF template configurations and layouts

@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: servicedesk-config
+  namespace: servicedesk-pricing
+data:
+  NODE_ENV: "production"
+  NEXTAUTH_URL: "https://servicedesk.yourdomain.com"
+  ENABLE_ANALYTICS: "true"
+  ENABLE_EXPORT: "true"
+  ENABLE_TEMPLATES: "true"
+  
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: servicedesk-pricing
+data:
+  POSTGRES_DB: "servicedesk_pricing"
+  POSTGRES_USER: "postgres"
+  
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: servicedesk-pricing
+data:
+  redis.conf: |
+    maxmemory 256mb
+    maxmemory-policy allkeys-lru
+    save 900 1
+    save 300 10
+    save 60 10000
+    appendonly yes
+    appendfsync everysec

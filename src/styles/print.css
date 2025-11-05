@@ -1,0 +1,840 @@
+/* Print-optimized color variables - aligned with new color system */
+:root {
+    /* Core Brand Colors for Print - based on new color system */
+    --print-primary-900: #1a2332;       /* Primary dark blue - hsl(220 45% 15%) */
+    --print-primary-800: #2a3441;       /* Primary medium - hsl(220 40% 20%) */
+    --print-primary-700: #3a4550;       /* Primary light - hsl(220 35% 30%) */
+    --print-primary-600: #4a5660;       /* Primary lighter - hsl(220 30% 40%) */
+    
+    /* Accent Colors for Print - optimized for printing */
+    --print-accent-cyan: #0099CC;       /* Cyan optimized for print - darker than #00D4FF */
+    --print-accent-orange: #E55A2B;     /* Orange optimized for print - darker than #FF6B35 */
+    --print-accent-green: #009955;      /* Green for success states - darker than #00B366 */
+    --print-accent-yellow: #CC9900;     /* Yellow for warnings - darker than #FFB800 */
+    
+    /* Text Colors */
+    --print-text: #000000;              /* Pure black for maximum contrast */
+    --print-text-secondary: #333333;    /* Dark gray for secondary text */
+    --print-text-muted: #666666;        /* Medium gray for muted text */
+    
+    /* Background Colors */
+    --print-background: #ffffff;        /* Pure white background */
+    --print-background-light: #f8f9fa;  /* Light gray for sections */
+    --print-background-accent: #f0f8ff; /* Very light blue for accent sections */
+    
+    /* Border Colors */
+    --print-border: #666666;            /* Medium gray for borders */
+    --print-border-light: #cccccc;      /* Light gray for subtle borders */
+    --print-border-accent: #0099CC;     /* Cyan for accent borders */
+    
+    /* Chart Colors for Print - optimized for visibility */
+    --print-chart-1: #0099CC;           /* Cyan - revenue/primary data */
+    --print-chart-2: #E55A2B;           /* Orange - costs/secondary data */
+    --print-chart-3: #009955;           /* Green - profit/positive data */
+    --print-chart-4: #CC9900;           /* Yellow - warnings/neutral data */
+    --print-chart-5: #7B4397;           /* Purple - special data */
+    --print-chart-6: #C2185B;           /* Pink - critical data */
+    --print-chart-7: #333333;           /* Dark gray - background data */
+    --print-chart-8: #006699;           /* Dark cyan - related data */
+    
+    /* Fallback colors for black and white printing */
+    --print-bw-primary: #000000;
+    --print-bw-secondary: #333333;
+    --print-bw-accent: #666666;
+    --print-bw-border: #999999;
+    --print-bw-light: #cccccc;
+}
+
+/* Oculta a área de impressão por padrão */
+.print-only {
+    display: none;
+}
+
+@media print {
+    /* Oculta tudo exceto a área de impressão */
+    body * {
+        visibility: hidden;
+    }
+    
+    #print-area, #print-area * {
+        visibility: visible;
+    }
+    
+    #print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    /* Garante que a área de impressão seja visível */
+    .print-only {
+        display: block;
+    }
+
+    /* Base print styles with new color system */
+    #print-area {
+        color: var(--print-text);
+        background-color: var(--print-background);
+        font-family: 'Arial', 'Helvetica', sans-serif;
+        line-height: 1.4;
+    }
+
+    /* Headers with brand colors - updated for new color system */
+    .print-header,
+    .print-section h1,
+    .print-section h2,
+    .print-section h3 {
+        color: var(--print-primary-900);
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    .print-section h1 {
+        font-size: 1.4rem;
+        border-bottom: 2px solid var(--print-primary-900);
+        padding-bottom: 8px;
+        color: var(--print-primary-900);
+    }
+
+    .print-section h2 {
+        font-size: 1.2rem;
+        border-bottom: 1px solid var(--print-border-light);
+        padding-bottom: 6px;
+        color: var(--print-primary-800);
+    }
+
+    .print-section h3 {
+        font-size: 1.1rem;
+        color: var(--print-primary-700);
+    }
+
+    /* Company header with brand colors */
+    .print-company-header {
+        color: var(--print-primary-900);
+        border-bottom: 3px solid var(--print-accent-cyan);
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+    }
+
+    .print-company-name {
+        color: var(--print-primary-900);
+        font-size: 1.6rem;
+        font-weight: bold;
+    }
+
+    .print-company-subtitle {
+        color: var(--print-accent-cyan);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    /* Sections with optimized styling */
+    .print-section {
+        border: 1px solid var(--print-border-light);
+        padding: 16px;
+        margin-top: 20px;
+        border-radius: 4px;
+        background-color: var(--print-background);
+        page-break-inside: avoid;
+    }
+
+    .print-section p {
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+        color: var(--print-text);
+    }
+
+    /* Accent elements - updated for new color system */
+    .print-accent,
+    .print-highlight {
+        color: var(--print-accent-orange);
+        font-weight: 600;
+    }
+
+    .print-accent-cyan {
+        color: var(--print-accent-cyan);
+        font-weight: 600;
+    }
+
+    .print-secondary-accent {
+        color: var(--print-accent-green);
+        font-weight: 500;
+    }
+
+    /* Status colors for print */
+    .print-status-revenue {
+        color: var(--print-accent-cyan);
+        font-weight: 600;
+    }
+
+    .print-status-cost {
+        color: var(--print-accent-orange);
+        font-weight: 600;
+    }
+
+    .print-status-profit {
+        color: var(--print-accent-green);
+        font-weight: 600;
+    }
+
+    .print-status-warning {
+        color: var(--print-accent-yellow);
+        font-weight: 600;
+    }
+
+    /* Summary and important sections - updated for new color system */
+    .summary-card,
+    .print-summary {
+        background-color: var(--print-background-accent);
+        border-top: 3px solid var(--print-accent-cyan);
+        border-left: 1px solid var(--print-border-light);
+        border-right: 1px solid var(--print-border-light);
+        border-bottom: 1px solid var(--print-border-light);
+        margin-top: 24px;
+        padding: 16px;
+        page-break-inside: avoid;
+    }
+
+    .print-summary-primary {
+        background-color: var(--print-background-light);
+        border-top: 3px solid var(--print-primary-900);
+        border-left: 1px solid var(--print-border-light);
+        border-right: 1px solid var(--print-border-light);
+        border-bottom: 1px solid var(--print-border-light);
+        margin-top: 24px;
+        padding: 16px;
+        page-break-inside: avoid;
+    }
+
+    .print-summary-accent {
+        background-color: var(--print-background-light);
+        border-top: 3px solid var(--print-accent-orange);
+        border-left: 1px solid var(--print-border-light);
+        border-right: 1px solid var(--print-border-light);
+        border-bottom: 1px solid var(--print-border-light);
+        margin-top: 24px;
+        padding: 16px;
+        page-break-inside: avoid;
+    }
+
+    /* Tables with proper contrast */
+    .print-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0;
+    }
+
+    .print-table th {
+        background-color: var(--print-primary-900);
+        color: var(--print-background);
+        padding: 8px;
+        text-align: left;
+        font-weight: bold;
+        border: 1px solid var(--print-border);
+    }
+
+    .print-table th.accent-header {
+        background-color: var(--print-accent-cyan);
+        color: var(--print-background);
+    }
+
+    .print-table th.secondary-header {
+        background-color: var(--print-primary-800);
+        color: var(--print-background);
+    }
+
+    .print-table td {
+        padding: 6px 8px;
+        border: 1px solid var(--print-border-light);
+        color: var(--print-text);
+    }
+
+    .print-table tr:nth-child(even) {
+        background-color: var(--print-background-light);
+    }
+
+    /* Status indicators with print-safe colors - updated for new system */
+    .print-status-success {
+        color: var(--print-accent-green);
+        font-weight: 600;
+    }
+
+    .print-status-warning {
+        color: var(--print-accent-yellow);
+        font-weight: 600;
+    }
+
+    .print-status-error {
+        color: #CC0000; /* Darker red for better print visibility */
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .print-status-info {
+        color: var(--print-accent-cyan);
+        font-weight: 600;
+    }
+
+    /* Chart-specific status colors for print */
+    .print-chart-revenue {
+        color: var(--print-chart-1);
+        font-weight: 600;
+    }
+
+    .print-chart-cost {
+        color: var(--print-chart-2);
+        font-weight: 600;
+    }
+
+    .print-chart-profit {
+        color: var(--print-chart-3);
+        font-weight: 600;
+    }
+
+    .print-chart-neutral {
+        color: var(--print-chart-7);
+        font-weight: 500;
+    }
+
+    /* Layout utilities */
+    .text-right {
+        text-align: right;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .grid {
+        display: grid;
+    }
+
+    .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .gap-x-4 {
+        column-gap: 1rem;
+    }
+
+    .gap-y-2 {
+        row-gap: 0.5rem;
+    }
+
+    /* Page setup with enhanced print optimization */
+    @page {
+        size: A4;
+        margin: 20mm;
+        color-adjust: exact;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        color-adjust: exact;
+        background-color: var(--print-background);
+        color: var(--print-text);
+        font-size: 12pt;
+        line-height: 1.4;
+    }
+
+    /* Force color printing for important elements */
+    .print-force-color {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    /* Print preview optimization */
+    .print-preview-mode {
+        background-color: var(--print-background);
+        color: var(--print-text);
+        font-family: 'Arial', 'Helvetica', sans-serif;
+    }
+
+    /* Enhanced contrast for print */
+    .print-high-contrast {
+        color: var(--print-text) !important;
+        background-color: var(--print-background) !important;
+        border-color: var(--print-border) !important;
+    }
+
+    /* Print-specific typography */
+    .print-title {
+        font-size: 18pt;
+        font-weight: bold;
+        color: var(--print-primary-900);
+        margin-bottom: 16pt;
+        text-align: center;
+    }
+
+    .print-subtitle {
+        font-size: 14pt;
+        font-weight: 600;
+        color: var(--print-primary-800);
+        margin-bottom: 12pt;
+    }
+
+    .print-body {
+        font-size: 11pt;
+        line-height: 1.4;
+        color: var(--print-text);
+    }
+
+    .print-small {
+        font-size: 9pt;
+        color: var(--print-text-secondary);
+    }
+
+    /* Print-specific spacing */
+    .print-section-break {
+        margin-top: 24pt;
+        margin-bottom: 16pt;
+        border-top: 1pt solid var(--print-border-light);
+        padding-top: 12pt;
+    }
+
+    /* Watermark and background elements */
+    .print-watermark {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-45deg);
+        font-size: 72pt;
+        color: var(--print-border-light);
+        opacity: 0.1;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    /* Hide interactive elements */
+    .no-print,
+    button,
+    .btn,
+    input[type="button"],
+    input[type="submit"],
+    .interactive {
+        display: none !important;
+    }
+
+    /* Ensure proper page breaks */
+    .page-break-before {
+        page-break-before: always;
+    }
+
+    .page-break-after {
+        page-break-after: always;
+    }
+
+    .page-break-inside-avoid {
+        page-break-inside: avoid;
+    }
+}
+
+/* Black and white printing fallbacks - enhanced for new color system */
+@media print and (monochrome) {
+    :root {
+        /* Override all color variables for B&W printing */
+        --print-primary-900: var(--print-bw-primary);
+        --print-primary-800: var(--print-bw-secondary);
+        --print-primary-700: var(--print-bw-accent);
+        --print-primary-600: var(--print-bw-border);
+        --print-accent-cyan: var(--print-bw-secondary);
+        --print-accent-orange: var(--print-bw-secondary);
+        --print-accent-green: var(--print-bw-secondary);
+        --print-accent-yellow: var(--print-bw-secondary);
+        --print-border-accent: var(--print-bw-border);
+        --print-background-accent: transparent;
+        
+        /* Chart colors for B&W */
+        --print-chart-1: var(--print-bw-primary);
+        --print-chart-2: var(--print-bw-secondary);
+        --print-chart-3: var(--print-bw-accent);
+        --print-chart-4: var(--print-bw-border);
+        --print-chart-5: var(--print-bw-primary);
+        --print-chart-6: var(--print-bw-secondary);
+        --print-chart-7: var(--print-bw-accent);
+        --print-chart-8: var(--print-bw-border);
+    }
+
+    /* Enhanced text styling for B&W printing */
+    .print-accent,
+    .print-highlight,
+    .print-accent-cyan {
+        font-weight: bold;
+        text-decoration: underline;
+        background-color: var(--print-bw-light);
+        padding: 2px 4px;
+    }
+
+    .print-secondary-accent {
+        font-weight: bold;
+        font-style: italic;
+        border-left: 3px solid var(--print-bw-primary);
+        padding-left: 8px;
+    }
+
+    /* Status indicators with enhanced B&W styling */
+    .print-status-success {
+        font-weight: bold;
+        text-decoration: none;
+        border: 2px solid var(--print-bw-primary);
+        padding: 2px 6px;
+        background-color: var(--print-bw-light);
+    }
+
+    .print-status-success::before {
+        content: "✓ ";
+        font-weight: bold;
+    }
+
+    .print-status-warning {
+        font-weight: bold;
+        text-decoration: none;
+        border: 2px dashed var(--print-bw-secondary);
+        padding: 2px 6px;
+    }
+
+    .print-status-warning::before {
+        content: "⚠ ";
+        font-weight: bold;
+    }
+
+    .print-status-error {
+        font-weight: bold;
+        text-decoration: underline;
+        border: 2px solid var(--print-bw-primary);
+        padding: 2px 6px;
+        background-color: var(--print-bw-light);
+    }
+
+    .print-status-error::before {
+        content: "✗ ";
+        font-weight: bold;
+    }
+
+    .print-status-info::before {
+        content: "ℹ ";
+        font-weight: bold;
+    }
+
+    /* Chart status with symbols for B&W */
+    .print-chart-revenue::before {
+        content: "📈 ";
+    }
+
+    .print-chart-cost::before {
+        content: "💰 ";
+    }
+
+    .print-chart-profit::before {
+        content: "📊 ";
+    }
+
+    /* Summary sections with enhanced B&W styling */
+    .summary-card,
+    .print-summary,
+    .print-summary-primary,
+    .print-summary-accent {
+        border-top: 4px double var(--print-bw-primary);
+        background-color: transparent;
+        border-left: 2px solid var(--print-bw-border);
+        border-right: 2px solid var(--print-bw-border);
+        border-bottom: 2px solid var(--print-bw-border);
+    }
+
+    /* Table styling for B&W */
+    .print-table th,
+    .print-table th.accent-header,
+    .print-table th.secondary-header {
+        background-color: var(--print-bw-primary);
+        color: var(--print-background);
+        border: 2px solid var(--print-bw-primary);
+    }
+
+    .print-table tr:nth-child(even) {
+        background-color: transparent;
+        border-bottom: 2px solid var(--print-bw-light);
+    }
+
+    .print-table tr:nth-child(odd) {
+        background-color: var(--print-bw-light);
+    }
+
+    /* Company header for B&W */
+    .print-company-header {
+        border-bottom: 4px double var(--print-bw-primary);
+    }
+
+    .print-company-subtitle {
+        font-weight: bold;
+        font-style: italic;
+    }
+}
+
+/* Additional print utility classes for new color system */
+@media print {
+    /* Color-specific utility classes */
+    .print-text-primary {
+        color: var(--print-primary-900) !important;
+    }
+
+    .print-text-secondary {
+        color: var(--print-primary-800) !important;
+    }
+
+    .print-text-accent {
+        color: var(--print-accent-cyan) !important;
+    }
+
+    .print-text-orange {
+        color: var(--print-accent-orange) !important;
+    }
+
+    .print-text-green {
+        color: var(--print-accent-green) !important;
+    }
+
+    .print-text-muted {
+        color: var(--print-text-muted) !important;
+    }
+
+    /* Background utility classes */
+    .print-bg-accent {
+        background-color: var(--print-background-accent) !important;
+    }
+
+    .print-bg-light {
+        background-color: var(--print-background-light) !important;
+    }
+
+    /* Border utility classes */
+    .print-border-primary {
+        border-color: var(--print-primary-900) !important;
+    }
+
+    .print-border-accent {
+        border-color: var(--print-accent-cyan) !important;
+    }
+
+    .print-border-orange {
+        border-color: var(--print-accent-orange) !important;
+    }
+
+    /* Chart-specific print classes */
+    .print-chart-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 16px 0;
+        padding: 12px;
+        border: 1px solid var(--print-border-light);
+        background-color: var(--print-background-light);
+    }
+
+    .print-chart-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 10pt;
+    }
+
+    .print-chart-legend-color {
+        width: 12px;
+        height: 12px;
+        border: 1px solid var(--print-border);
+        flex-shrink: 0;
+    }
+
+    .print-chart-legend-color.revenue {
+        background-color: var(--print-chart-1);
+    }
+
+    .print-chart-legend-color.cost {
+        background-color: var(--print-chart-2);
+    }
+
+    .print-chart-legend-color.profit {
+        background-color: var(--print-chart-3);
+    }
+
+    .print-chart-legend-color.warning {
+        background-color: var(--print-chart-4);
+    }
+
+    /* Print-specific form elements */
+    .print-form-group {
+        margin-bottom: 12pt;
+        page-break-inside: avoid;
+    }
+
+    .print-form-label {
+        font-weight: bold;
+        color: var(--print-primary-800);
+        margin-bottom: 4pt;
+        display: block;
+    }
+
+    .print-form-value {
+        color: var(--print-text);
+        padding: 4pt 8pt;
+        border: 1pt solid var(--print-border-light);
+        background-color: var(--print-background-light);
+        display: block;
+        min-height: 16pt;
+    }
+
+    /* Print-specific buttons and interactive elements */
+    .print-button {
+        display: inline-block;
+        padding: 6pt 12pt;
+        border: 2pt solid var(--print-primary-900);
+        background-color: var(--print-background);
+        color: var(--print-primary-900);
+        text-decoration: none;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .print-button.accent {
+        border-color: var(--print-accent-cyan);
+        color: var(--print-accent-cyan);
+    }
+
+    .print-button.orange {
+        border-color: var(--print-accent-orange);
+        color: var(--print-accent-orange);
+    }
+
+    /* Print-specific alerts and notifications */
+    .print-alert {
+        padding: 12pt;
+        margin: 12pt 0;
+        border-left: 4pt solid;
+        background-color: var(--print-background-light);
+        page-break-inside: avoid;
+    }
+
+    .print-alert.info {
+        border-left-color: var(--print-accent-cyan);
+    }
+
+    .print-alert.success {
+        border-left-color: var(--print-accent-green);
+    }
+
+    .print-alert.warning {
+        border-left-color: var(--print-accent-yellow);
+    }
+
+    .print-alert.error {
+        border-left-color: #CC0000;
+    }
+
+    /* Print optimization for specific components */
+    .print-proposal-header {
+        text-align: center;
+        padding: 20pt 0;
+        border-bottom: 2pt solid var(--print-primary-900);
+        margin-bottom: 20pt;
+    }
+
+    .print-proposal-title {
+        font-size: 20pt;
+        font-weight: bold;
+        color: var(--print-primary-900);
+        margin-bottom: 8pt;
+    }
+
+    .print-proposal-subtitle {
+        font-size: 14pt;
+        color: var(--print-accent-cyan);
+        font-weight: 500;
+    }
+
+    .print-footer {
+        position: fixed;
+        bottom: 15mm;
+        left: 20mm;
+        right: 20mm;
+        text-align: center;
+        font-size: 9pt;
+        color: var(--print-text-muted);
+        border-top: 1pt solid var(--print-border-light);
+        padding-top: 8pt;
+    }
+
+    /* Print page numbering */
+    .print-page-number::after {
+        content: "Página " counter(page) " de " counter(pages);
+        font-size: 9pt;
+        color: var(--print-text-muted);
+    }
+}
+
+/* Print preview styles for screen */
+@media screen {
+    .print-preview {
+        background-color: #f5f5f5;
+        padding: 20px;
+    }
+
+    .print-preview .print-page {
+        background-color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 0 auto 20px;
+        max-width: 210mm;
+        min-height: 297mm;
+        padding: 20mm;
+        box-sizing: border-box;
+    }
+
+    .print-preview .print-page:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* High contrast mode for accessibility */
+@media print and (prefers-contrast: high) {
+    :root {
+        --print-text: #000000;
+        --print-text-secondary: #000000;
+        --print-text-muted: #333333;
+        --print-border: #000000;
+        --print-border-light: #666666;
+        --print-primary-900: #000000;
+        --print-primary-800: #000000;
+        --print-primary-700: #333333;
+        --print-accent-cyan: #000000;
+        --print-accent-orange: #000000;
+        --print-accent-green: #000000;
+        --print-accent-yellow: #000000;
+    }
+
+    .print-accent,
+    .print-highlight,
+    .print-accent-cyan {
+        background-color: #000000;
+        color: #ffffff;
+        padding: 2px 4px;
+    }
+
+    .print-table th {
+        background-color: #000000;
+        color: #ffffff;
+        border: 2px solid #000000;
+    }
+
+    .summary-card,
+    .print-summary,
+    .print-summary-primary,
+    .print-summary-accent {
+        border: 3px solid #000000;
+        background-color: #ffffff;
+    }
+}
