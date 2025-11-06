@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import type { Partner, VendedorResponsavel } from '@/lib/types';
+import { GeneralStatus } from '@/lib/types/enums';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,28 +17,28 @@ import { VendedoresManager } from './VendedoresManager';
 const formSchema = z.object({
   name: z.string().min(1, 'O nome é obrigatório.'),
   // Adicionado o campo mainContact aqui
-  mainContact: z.string().optional(),
+  mainContact: z.string().optional().transform(val => val || ''),
   contact: z.string().email('Email de contato inválido.'),
-  phone: z.string().optional(),
+  phone: z.string().optional().transform(val => val || ''),
   status: z.enum(['Ativo', 'Inativo']),
-  site: z.string().url().optional().or(z.literal('')),
-  siteEcommerce: z.string().url().optional().or(z.literal('')),
-  login: z.string().optional(),
-  password: z.string().optional(),
-  loginEcommerce: z.string().optional(),
-  passwordEcommerce: z.string().optional(),
-  products: z.string().optional(),
-  sitePartner: z.string().url().optional().or(z.literal('')),
-  siteRO: z.string().url().optional().or(z.literal('')),
-  templateRO: z.string().optional(),
-  procedimentoRO: z.string().optional(),
+  site: z.string().url().optional().or(z.literal('')).transform(val => val || ''),
+  siteEcommerce: z.string().url().optional().or(z.literal('')).transform(val => val || ''),
+  login: z.string().optional().transform(val => val || ''),
+  password: z.string().optional().transform(val => val || ''),
+  loginEcommerce: z.string().optional().transform(val => val || ''),
+  passwordEcommerce: z.string().optional().transform(val => val || ''),
+  products: z.string().optional().transform(val => val || ''),
+  sitePartner: z.string().url().optional().or(z.literal('')).transform(val => val || ''),
+  siteRO: z.string().url().optional().or(z.literal('')).transform(val => val || ''),
+  templateRO: z.string().optional().transform(val => val || ''),
+  procedimentoRO: z.string().optional().transform(val => val || ''),
 });
 
 interface PartnerFormProps {
   partner: Partner | null;
   onSave: (data: Partner) => void;
   onCancel: () => void;
-  partnerType: 'Distribuidor' | 'Fornecedor';
+  partnerType: string;
 }
 
 const PartnerForm: React.FC<PartnerFormProps> = ({ partner, onSave, onCancel, partnerType }) => {
@@ -85,14 +86,20 @@ const PartnerForm: React.FC<PartnerFormProps> = ({ partner, onSave, onCancel, pa
   };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    // Limpar campos undefined/null antes de salvar
+    const cleanedValues = Object.fromEntries(
+      Object.entries(values).map(([key, value]) => [key, value || ''])
+    );
+
     // Certifique-se de que mainContact está incluído nos dados salvos
-    onSave({ 
-      ...values, 
-      id: partner ? partner.id : Date.now(), 
-      type: partnerType,
-      phone: values.phone || '', // Garantir que phone não seja undefined
+    onSave({
+      ...cleanedValues,
+      id: partner ? partner.id : Date.now(),
+      type: partnerType as any,
+      phone: cleanedValues.phone || '', // Garantir que phone não seja undefined
+      status: values.status === 'Ativo' ? GeneralStatus.ACTIVE : GeneralStatus.INACTIVE,
       vendedoresResponsaveis: vendedores
-    });
+    } as Partner);
   };
 
   return (
@@ -125,7 +132,7 @@ const PartnerForm: React.FC<PartnerFormProps> = ({ partner, onSave, onCancel, pa
         {partnerType === 'Distribuidor' && (
           <>
             <h4 className="text-md font-semibold pt-4 border-t">Informações do Portal</h4>
-            
+
             {/* Site de Acesso */}
             <FormField control={form.control} name="site" render={({ field }) => (
               <FormItem><FormLabel>Site de Acesso</FormLabel><FormControl><Input placeholder="https://portal.distribuidor.com" {...field} /></FormControl><FormMessage /></FormItem>
@@ -138,7 +145,7 @@ const PartnerForm: React.FC<PartnerFormProps> = ({ partner, onSave, onCancel, pa
                 <FormItem><FormLabel>Senha Portal</FormLabel><FormControl><Input type="text" {...field} /></FormControl><FormMessage /></FormItem>
               )} />
             </div>
-            
+
             {/* Site E-commerce */}
             <FormField control={form.control} name="siteEcommerce" render={({ field }) => (
               <FormItem><FormLabel>Site E-commerce</FormLabel><FormControl><Input placeholder="https://loja.distribuidor.com" {...field} /></FormControl><FormMessage /></FormItem>
@@ -152,12 +159,26 @@ const PartnerForm: React.FC<PartnerFormProps> = ({ partner, onSave, onCancel, pa
               )} />
             </div>
             <FormField control={form.control} name="products" render={({ field }) => (
-              <FormItem><FormLabel>Produtos Principais</FormLabel><FormControl><Textarea placeholder="Ex: Microsoft, Dell, Cisco..." {...field} /></FormControl><FormMessage /></FormItem>
+              <FormItem>
+                <FormLabel>Produtos Principais</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Ex: Microsoft, Dell, Cisco, HP, Lenovo, VMware..."
+                    {...field}
+                    rows={3}
+                    className="resize-none"
+                  />
+                </FormControl>
+                <p className="text-xs text-gray-500 mt-1">
+                  Separe os produtos por vírgula. Estes produtos aparecerão na lista de distribuidores.
+                </p>
+                <FormMessage />
+              </FormItem>
             )} />
-            
+
             {/* Vendedores Responsáveis */}
             <div className="pt-4 border-t">
-              <VendedoresManager 
+              <VendedoresManager
                 vendedores={vendedores}
                 onChange={setVendedores}
               />
@@ -171,7 +192,7 @@ const PartnerForm: React.FC<PartnerFormProps> = ({ partner, onSave, onCancel, pa
             <FormField control={form.control} name="sitePartner" render={({ field }) => (
               <FormItem><FormLabel>Site Partner</FormLabel><FormControl><Input placeholder="https://partner.fornecedor.com" {...field} /></FormControl><FormMessage /></FormItem>
             )} />
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField control={form.control} name="login" render={({ field }) => (
                 <FormItem><FormLabel>Login</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
               )} />
@@ -186,21 +207,21 @@ const PartnerForm: React.FC<PartnerFormProps> = ({ partner, onSave, onCancel, pa
               <FormItem>
                 <FormLabel>Template RO</FormLabel>
                 <FormControl>
-                    <div>
-                        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
-                        {!fileName ? (
-                            <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
-                                <Paperclip className="w-4 h-4 mr-2"/>Anexar Arquivo
-                            </Button>
-                        ) : (
-                            <div className="flex items-center justify-between p-2 border rounded-lg">
-                                <span className="text-sm truncate">{fileName}</span>
-                                <Button type="button" variant="ghost" size="icon" onClick={handleRemoveFile}>
-                                    <X className="w-4 h-4"/>
-                                </Button>
-                            </div>
-                        )}
-                    </div>
+                  <div>
+                    <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+                    {!fileName ? (
+                      <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                        <Paperclip className="w-4 h-4 mr-2" />Anexar Arquivo
+                      </Button>
+                    ) : (
+                      <div className="flex items-center justify-between p-2 border rounded-lg">
+                        <span className="text-sm truncate">{fileName}</span>
+                        <Button type="button" variant="ghost" size="icon" onClick={handleRemoveFile}>
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
