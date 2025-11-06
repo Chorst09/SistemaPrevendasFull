@@ -34,6 +34,7 @@ import BidsDocumentationView from '@/components/bids/BidsDocumentationView';
 import RFPView from '@/components/rfp/RFPView';
 import PriceRecordView from '@/components/price-records/PriceRecordView';
 import EditalAnalysisView from '@/components/edital-analysis/EditalAnalysisView';
+import AIBidAnalyzer from '@/components/ai-bid-analyzer/AIBidAnalyzer';
 
 import { ITPricingModule } from '@/components/it-pricing/ITPricingModule';
 import { SettingsView } from '@/components/settings/SettingsView';
@@ -130,8 +131,8 @@ export default function App() { // Ou Home
             label: 'Licitações/Editais',
             icon: <Gavel size={20} />,
             subItems: [
-                { id: 'bids-analyzer', label: 'Analisador de Editais', icon: <Brain size={16} /> },
-                { id: 'bids-analysis', label: 'Análise de Editais', icon: <Search size={16} /> },
+                { id: 'bids-analysis', label: 'Editais Analisados', icon: <Search size={16} /> },
+                { id: 'ai-bid-analyzer', label: 'Analisar Edital com IA', icon: <Brain size={16} /> },
                 { id: 'bids-docs', label: 'Documentações para Editais', icon: <FileText size={16} /> },
             ]
         },
@@ -178,15 +179,15 @@ export default function App() { // Ou Home
                             Gerencie seus projetos de precificação de Service Desk
                         </p>
                         <div className="flex items-center justify-center space-x-4">
-                            <a 
-                                href="/projects" 
+                            <a
+                                href="/projects"
                                 className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
                             >
                                 <Briefcase className="h-4 w-4 mr-2" />
                                 Acessar Projetos
                             </a>
-                            <a 
-                                href="/dashboard" 
+                            <a
+                                href="/dashboard"
                                 className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
                             >
                                 <BarChart3 className="h-4 w-4 mr-2" />
@@ -198,13 +199,13 @@ export default function App() { // Ou Home
             );
             case 'distributors': return <PartnerView partnerType="Distribuidor" />; // PartnerView pode precisar adaptação
             case 'suppliers-register': return <PartnerView partnerType="Fornecedor" />; // PartnerView pode precisar adaptação
-            case 'ro-management': return <RoManagementView 
-                partners={partners} 
-                ros={ros} 
+            case 'ro-management': return <RoManagementView
+                partners={partners}
+                ros={ros}
                 onSave={(ro) => {
                     setRos(prevRos => {
                         const existingIndex = prevRos.findIndex(r => r.id === ro.id);
-                        
+
                         if (existingIndex !== -1) {
                             // Editando RO existente
                             const updatedRos = [...prevRos];
@@ -212,26 +213,26 @@ export default function App() { // Ou Home
                             return updatedRos;
                         } else {
                             // Adicionando novo RO
-                            const newRo = { 
-                                ...ro, 
+                            const newRo = {
+                                ...ro,
                                 id: ro.id || Date.now()
                             };
                             return [...prevRos, newRo];
                         }
                     });
-                }} 
+                }}
                 onDelete={(id) => {
                     setRos(prevRos => prevRos.filter(r => r.id !== id));
-                }} 
+                }}
             />;
             case 'ro-charts': return <RoChartsView ros={ros} partners={partners} />;
-            case 'training-management': return <TrainingManagementView 
-                partners={partners} 
-                trainings={trainings} 
+            case 'training-management': return <TrainingManagementView
+                partners={partners}
+                trainings={trainings}
                 onSave={(training) => {
                     setTrainings(prevTrainings => {
                         const existingIndex = prevTrainings.findIndex(t => t.id === training.id);
-                        
+
                         if (existingIndex !== -1) {
                             // Editando training existente
                             const updatedTrainings = [...prevTrainings];
@@ -239,21 +240,21 @@ export default function App() { // Ou Home
                             return updatedTrainings;
                         } else {
                             // Adicionando novo training
-                            const newTraining = { 
-                                ...training, 
+                            const newTraining = {
+                                ...training,
                                 id: training.id || Date.now()
                             };
                             return [...prevTrainings, newTraining];
                         }
                     });
-                }} 
+                }}
                 onDelete={(id) => {
                     setTrainings(prevTrainings => prevTrainings.filter(t => t.id !== id));
-                }} 
+                }}
             />;
             case 'quotes': return <QuotesView partners={partners} />;
             case 'proposals': return <ProposalsView proposals={proposals} partners={partners} onSave={(proposal) => setProposals(prev => [...prev.filter(p => p.id !== proposal.id), proposal])} onDelete={(id) => setProposals(prev => prev.filter(p => p.id !== id))} />;
-            case 'generated-proposals': return <ProposalListManager 
+            case 'generated-proposals': return <ProposalListManager
                 onEditProposal={(proposalId) => {
                     // Set editing proposal ID and navigate to printer calculator
                     setEditingProposalId(proposalId)
@@ -267,18 +268,18 @@ export default function App() { // Ou Home
                 onNavigateToQuotes={() => setActiveTab('quotes')}
             />;
             case 'calculator-ti-vls': return <ITPricingModule onNavigateToProposals={() => setActiveTab('proposals')} />;
-            case 'calculator-servicedesk': return <ServiceDeskModule 
+            case 'calculator-servicedesk': return <ServiceDeskModule
                 onNavigateToProposals={() => setActiveTab('proposals')}
                 editingProposalId={editingProposalId}
                 onFinishEditing={() => setEditingProposalId(null)}
             />;
-            case 'calculator-servicedesk-advanced': return <ServiceDeskPricingSystem 
+            case 'calculator-servicedesk-advanced': return <ServiceDeskPricingSystem
                 integrationMode="integrated"
                 onDataChange={(data) => {
                     console.log('Service Desk data updated:', data);
                 }}
             />;
-            case 'calculator-printer': return <PrinterOutsourcingModule 
+            case 'calculator-printer': return <PrinterOutsourcingModule
                 onNavigateToProposals={() => setActiveTab('proposals')}
                 editingProposalId={editingProposalId}
                 onFinishEditing={() => {
@@ -288,13 +289,26 @@ export default function App() { // Ou Home
             />;
 
 
-            case 'bids-analyzer': return <iframe src="/edital-analyzer.html" className="w-full h-screen border-0" title="Analisador de Editais" />;
             case 'bids-analysis': return <EditalAnalysisView
                 editais={editais}
                 onAdd={(edital) => setEditais(prev => [...prev, { ...edital, id: `EDT-${Date.now()}` }])}
                 onUpdate={(id, edital) => setEditais(prev => prev.map(e => e.id === id ? { ...edital, id } : e))}
                 onDelete={(id) => setEditais(prev => prev.filter(e => e.id !== id))}
                 onAddAnalysis={(editalId, analysis) => setEditais(prev => prev.map(e => e.id === editalId ? { ...e, analysis: { ...analysis, id: `ANL-${Date.now()}`, editalId } } : e))}
+            />;
+            case 'ai-bid-analyzer': return <AIBidAnalyzer
+                onSaveEdital={(edital) => {
+                    console.log('Recebendo edital para salvar:', edital);
+                    const newEdital = { ...edital, id: `EDT-${Date.now()}` };
+                    console.log('Edital com ID:', newEdital);
+                    setEditais(prev => {
+                        console.log('Editais anteriores:', prev.length);
+                        const updated = [...prev, newEdital];
+                        console.log('Editais após adicionar:', updated.length);
+                        return updated;
+                    });
+                }}
+                onNavigateToAnalyzed={() => setActiveTab('bids-analysis')}
             />;
             case 'bids-docs': return <BidsDocumentationView docs={initialBidDocs} onDocsChange={setBidDocs} />; // Adapte se os docs vierem de outro lugar
             case 'rfp': return <RFPView rfps={rfps} onAdd={(rfp) => setRfps(prev => [...prev, { ...rfp, id: `RFP-${Date.now()}` }])} onUpdate={(id, rfp) => setRfps(prev => prev.map(r => r.id === id ? { ...rfp, id } : r))} onDelete={(id) => setRfps(prev => prev.filter(r => r.id !== id))} />;
@@ -311,122 +325,118 @@ export default function App() { // Ou Home
     return (
         <QuoteProvider initialData={quotes}>
             <div className="min-h-screen font-body bg-background text-foreground transition-colors duration-500">
-            <div className="flex">
+                <div className="flex">
 
-                {/* Sidebar - Implementação completa task 4.1: primary-900 background, hover states com accent colors, contraste adequado */}
-                <aside className="w-64 bg-primary-900 shadow-xl flex-col h-screen sticky top-0 hidden md:flex border-r border-primary-700/50 sidebar-bg">
-                    {/* Cabeçalho da Sidebar com primary-900 background */}
-                    <div className="flex items-center justify-center h-24 border-b border-primary-700/50 bg-gradient-to-r from-slate-900 to-blue-900 relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent-cyan/5 to-transparent"></div>
-                        <Briefcase className="w-8 h-8 text-accent-cyan relative z-10 drop-shadow-sm" />
-                        <span className="ml-3 text-xl font-bold text-white relative z-10 drop-shadow-sm">Menu</span>
-                    </div>
-                    {/* Navegação da Sidebar com hover states usando accent colors */}
-                    <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-                        {navItems.map(item => (
-                            !item.subItems ? (
-                                <Button
-                                    key={item.id}
-                                    variant="ghost"
-                                    className={`w-full justify-start px-4 py-3 h-auto text-sm transition-all duration-300 rounded-lg ${
-                                        activeTab === item.id 
-                                            ? 'bg-gradient-to-r from-accent-cyan/20 to-accent-orange/10 text-accent-cyan border border-accent-cyan/40 shadow-lg shadow-accent-cyan/15' 
+                    {/* Sidebar - Implementação completa task 4.1: primary-900 background, hover states com accent colors, contraste adequado */}
+                    <aside className="w-64 bg-primary-900 shadow-xl flex-col h-screen sticky top-0 hidden md:flex border-r border-primary-700/50 sidebar-bg">
+                        {/* Cabeçalho da Sidebar com primary-900 background */}
+                        <div className="flex items-center justify-center h-24 border-b border-primary-700/50 bg-gradient-to-r from-slate-900 to-blue-900 relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent-cyan/5 to-transparent"></div>
+                            <Briefcase className="w-8 h-8 text-accent-cyan relative z-10 drop-shadow-sm" />
+                            <span className="ml-3 text-xl font-bold text-white relative z-10 drop-shadow-sm">Menu</span>
+                        </div>
+                        {/* Navegação da Sidebar com hover states usando accent colors */}
+                        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                            {navItems.map(item => (
+                                !item.subItems ? (
+                                    <Button
+                                        key={item.id}
+                                        variant="ghost"
+                                        className={`w-full justify-start px-4 py-3 h-auto text-sm transition-all duration-300 rounded-lg ${activeTab === item.id
+                                            ? 'bg-gradient-to-r from-accent-cyan/20 to-accent-orange/10 text-accent-cyan border border-accent-cyan/40 shadow-lg shadow-accent-cyan/15'
                                             : 'text-primary-300 hover:text-foreground hover:bg-primary-800/60 hover:border-accent-cyan/30 hover:shadow-md hover:shadow-accent-cyan/10 border border-transparent'
-                                    }`}
-                                    onClick={() => setActiveTab(item.id)}
-                                >
-                                    <span className={activeTab === item.id ? 'text-accent-cyan' : 'text-primary-300 group-hover:text-accent-cyan transition-colors duration-300'}>{item.icon}</span>
-                                    <span className="ml-4 font-medium">{item.label}</span>
-                                </Button>
-                            ) : (
-                                // Collapsible para itens com sub-itens
-                                <Collapsible
-                                    key={item.id}
-                                    open={openSections[item.id as keyof typeof openSections] || item.subItems.some(sub => sub.id === activeTab)}
-                                    onOpenChange={(isOpen) => setOpenSections(prev => ({ ...prev, [item.id]: isOpen }))}
-                                >
-                                    <CollapsibleTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            className={`w-full justify-between px-4 py-3 h-auto text-sm transition-all duration-300 rounded-lg group ${
-                                                item.subItems.some(sub => sub.id === activeTab)
+                                            }`}
+                                        onClick={() => setActiveTab(item.id)}
+                                    >
+                                        <span className={activeTab === item.id ? 'text-accent-cyan' : 'text-primary-300 group-hover:text-accent-cyan transition-colors duration-300'}>{item.icon}</span>
+                                        <span className="ml-4 font-medium">{item.label}</span>
+                                    </Button>
+                                ) : (
+                                    // Collapsible para itens com sub-itens
+                                    <Collapsible
+                                        key={item.id}
+                                        open={openSections[item.id as keyof typeof openSections] || item.subItems.some(sub => sub.id === activeTab)}
+                                        onOpenChange={(isOpen) => setOpenSections(prev => ({ ...prev, [item.id]: isOpen }))}
+                                    >
+                                        <CollapsibleTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                className={`w-full justify-between px-4 py-3 h-auto text-sm transition-all duration-300 rounded-lg group ${item.subItems.some(sub => sub.id === activeTab)
                                                     ? 'bg-gradient-to-r from-accent-cyan/20 to-accent-orange/10 text-accent-cyan border border-accent-cyan/40 shadow-lg shadow-accent-cyan/15'
                                                     : 'text-primary-300 hover:text-foreground hover:bg-primary-800/60 hover:border-accent-cyan/30 hover:shadow-md hover:shadow-accent-cyan/10 border border-transparent'
-                                            }`}
-                                        >
-                                            <div className="flex items-center">
-                                                <span className={item.subItems.some(sub => sub.id === activeTab) ? 'text-accent-cyan' : 'text-primary-300 group-hover:text-accent-cyan transition-colors duration-300'}>{item.icon}</span>
-                                                <span className="ml-4 font-medium">{item.label}</span>
-                                            </div>
-                                            <ChevronDown className={`w-5 h-5 transition-all duration-300 ${
-                                                openSections[item.id as keyof typeof openSections] || item.subItems.some(sub => sub.id === activeTab) ? 'rotate-180 text-accent-cyan' : 'text-primary-400 group-hover:text-accent-cyan'
-                                            }`} />
-                                        </Button>
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent className="pl-8 pt-2 space-y-1">
-                                        {item.subItems.map(subItem => (
-                                            <Button
-                                                key={subItem.id}
-                                                variant="ghost"
-                                                onClick={() => handleNavigation(subItem)}
-                                                className={`w-full justify-start h-auto px-3 py-2 text-sm transition-all duration-300 rounded-md group ${
-                                                    activeTab === subItem.id 
-                                                        ? 'text-accent-cyan font-semibold bg-accent-cyan/15 border-l-4 border-accent-cyan shadow-sm shadow-accent-cyan/20' 
-                                                        : 'text-primary-400 hover:text-foreground hover:bg-primary-800/40 hover:border-l-4 hover:border-accent-orange/60 border-l-4 border-transparent'
-                                                }`}
+                                                    }`}
                                             >
-                                                <span className={activeTab === subItem.id ? 'text-accent-cyan' : 'text-primary-400 group-hover:text-accent-orange transition-colors duration-300'}>{subItem.icon}</span>
-                                                <span className="ml-3">{subItem.label}</span>
+                                                <div className="flex items-center">
+                                                    <span className={item.subItems.some(sub => sub.id === activeTab) ? 'text-accent-cyan' : 'text-primary-300 group-hover:text-accent-cyan transition-colors duration-300'}>{item.icon}</span>
+                                                    <span className="ml-4 font-medium">{item.label}</span>
+                                                </div>
+                                                <ChevronDown className={`w-5 h-5 transition-all duration-300 ${openSections[item.id as keyof typeof openSections] || item.subItems.some(sub => sub.id === activeTab) ? 'rotate-180 text-accent-cyan' : 'text-primary-400 group-hover:text-accent-cyan'
+                                                    }`} />
                                             </Button>
-                                        ))}
-                                    </CollapsibleContent>
-                                </Collapsible>
-                            )
-                        ))}
-                    </nav>
-                    {/* Parte inferior da Sidebar com primary-900 background */}
-                    <div className="p-4 border-t border-primary-700/50 bg-primary-900 flex flex-col gap-2">
-                        {/* Botão de Tema com accent colors no hover */}
-                        <Button 
-                            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} 
-                            variant="outline" 
-                            className="w-full bg-primary-800/60 border-primary-700/60 text-primary-200 hover:bg-primary-700/60 hover:border-accent-cyan/50 hover:text-foreground hover:shadow-md hover:shadow-accent-cyan/20 transition-all duration-300"
-                        >
-                            {mounted ? (
-                                <>
-                                    {theme === 'dark' ? <Sun className="mr-2 h-4 w-4 text-accent-orange" /> : <Moon className="mr-2 h-4 w-4 text-accent-cyan" />}
-                                    <span className="font-medium">{theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}</span>
-                                </>
-                            ) : (
-                                <>
-                                    <Sun className="mr-2 h-4 w-4 text-accent-orange" />
-                                    <span className="font-medium">Mudar Tema</span>
-                                </>
-                            )}
-                        </Button>
-                    </div>
-                </aside>
+                                        </CollapsibleTrigger>
+                                        <CollapsibleContent className="pl-8 pt-2 space-y-1">
+                                            {item.subItems.map(subItem => (
+                                                <Button
+                                                    key={subItem.id}
+                                                    variant="ghost"
+                                                    onClick={() => handleNavigation(subItem)}
+                                                    className={`w-full justify-start h-auto px-3 py-2 text-sm transition-all duration-300 rounded-md group ${activeTab === subItem.id
+                                                        ? 'text-accent-cyan font-semibold bg-accent-cyan/15 border-l-4 border-accent-cyan shadow-sm shadow-accent-cyan/20'
+                                                        : 'text-primary-400 hover:text-foreground hover:bg-primary-800/40 hover:border-l-4 hover:border-accent-orange/60 border-l-4 border-transparent'
+                                                        }`}
+                                                >
+                                                    <span className={activeTab === subItem.id ? 'text-accent-cyan' : 'text-primary-400 group-hover:text-accent-orange transition-colors duration-300'}>{subItem.icon}</span>
+                                                    <span className="ml-3">{subItem.label}</span>
+                                                </Button>
+                                            ))}
+                                        </CollapsibleContent>
+                                    </Collapsible>
+                                )
+                            ))}
+                        </nav>
+                        {/* Parte inferior da Sidebar com primary-900 background */}
+                        <div className="p-4 border-t border-primary-700/50 bg-primary-900 flex flex-col gap-2">
+                            {/* Botão de Tema com accent colors no hover */}
+                            <Button
+                                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                                variant="outline"
+                                className="w-full bg-primary-800/60 border-primary-700/60 text-primary-200 hover:bg-primary-700/60 hover:border-accent-cyan/50 hover:text-foreground hover:shadow-md hover:shadow-accent-cyan/20 transition-all duration-300"
+                            >
+                                {mounted ? (
+                                    <>
+                                        {theme === 'dark' ? <Sun className="mr-2 h-4 w-4 text-accent-orange" /> : <Moon className="mr-2 h-4 w-4 text-accent-cyan" />}
+                                        <span className="font-medium">{theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Sun className="mr-2 h-4 w-4 text-accent-orange" />
+                                        <span className="font-medium">Mudar Tema</span>
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                    </aside>
 
 
-                {/* Conteúdo Principal da Página (Main) */}
-                <main className="flex-1 max-h-screen overflow-y-auto">
-                    {/* Header Elegante com Logo */}
-                    <Header 
-                        currentTitle={currentNavItem.parentLabel || currentNavItem.label}
-                        currentSubtitle={currentNavItem.parentLabel ? currentNavItem.label : undefined}
-                        logoSrc={logoSrc}
-                    />
-                    
-                    {/* Área de conteúdo com padding */}
-                    <div className="p-6 sm:p-10 h-[calc(100vh-200px)] overflow-y-auto">
+                    {/* Conteúdo Principal da Página (Main) */}
+                    <main className="flex-1 max-h-screen overflow-y-auto">
+                        {/* Header Elegante com Logo */}
+                        <Header
+                            currentTitle={currentNavItem.parentLabel || currentNavItem.label}
+                            currentSubtitle={currentNavItem.parentLabel ? currentNavItem.label : undefined}
+                            logoSrc={logoSrc}
+                        />
 
-                        {/* Área de Conteúdo Principal - Renderiza a view ativa */}
-                        {renderContent()} {/* Chama a função para renderizar a view ativa */}
-                    </div>
+                        {/* Área de conteúdo com padding */}
+                        <div className="p-6 sm:p-10 h-[calc(100vh-200px)] overflow-y-auto">
 
-                </main>
+                            {/* Área de Conteúdo Principal - Renderiza a view ativa */}
+                            {renderContent()} {/* Chama a função para renderizar a view ativa */}
+                        </div>
+
+                    </main>
+                </div>
             </div>
-        </div>
         </QuoteProvider>
     );
 }

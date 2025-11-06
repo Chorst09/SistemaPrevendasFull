@@ -29,8 +29,8 @@ interface EditalAnalysisViewProps {
   onAddAnalysis: (editalId: string, analysis: any) => void;
 }
 
-const EditalAnalysisView: React.FC<EditalAnalysisViewProps> = ({ 
-  editais, onAdd, onUpdate, onDelete, onAddAnalysis 
+const EditalAnalysisView: React.FC<EditalAnalysisViewProps> = ({
+  editais, onAdd, onUpdate, onDelete, onAddAnalysis
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -44,15 +44,15 @@ const EditalAnalysisView: React.FC<EditalAnalysisViewProps> = ({
 
   const filteredEditais = useMemo(() => {
     return editais.filter(edital => {
-      const matchesSearch = 
+      const matchesSearch =
         edital.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         edital.publishingBody.toLowerCase().includes(searchTerm.toLowerCase()) ||
         edital.publicationNumber.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       const matchesStatus = statusFilter === 'all' || edital.status === statusFilter;
       const matchesCategory = categoryFilter === 'all' || edital.category === categoryFilter;
-      const matchesBodyType = bodyTypeFilter === 'all' || 
-        (edital.analysis?.publishingBodyAnalysis.bodyType === bodyTypeFilter);
+      const matchesBodyType = bodyTypeFilter === 'all' ||
+        (edital.analysis?.publishingBodyAnalysis?.bodyType === bodyTypeFilter);
 
       return matchesSearch && matchesStatus && matchesCategory && matchesBodyType;
     });
@@ -386,9 +386,9 @@ const EditalAnalysisView: React.FC<EditalAnalysisViewProps> = ({
                     <TableCell>
                       <div>
                         <div className="font-medium">{edital.publishingBody}</div>
-                        {edital.analysis?.publishingBodyAnalysis.bodyType && (
-                          <Badge 
-                            variant="outline" 
+                        {edital.analysis?.publishingBodyAnalysis?.bodyType && (
+                          <Badge
+                            variant="outline"
                             className="text-xs bg-[hsl(var(--accent-cyan)/0.1)] text-[hsl(var(--accent-cyan))] border-[hsl(var(--accent-cyan)/0.3)]"
                           >
                             <Building className="h-3 w-3 mr-1" />
@@ -437,19 +437,19 @@ const EditalAnalysisView: React.FC<EditalAnalysisViewProps> = ({
                               Score: {edital.analysis.overallAssessment.score}/100
                             </div>
                             <div className="flex-1 bg-[hsl(var(--muted))] rounded-full h-2 overflow-hidden">
-                              <div 
+                              <div
                                 className={`h-full transition-all duration-500 ${getProgressColor(edital.analysis.overallAssessment.score)}`}
                                 style={{ width: `${edital.analysis.overallAssessment.score}%` }}
                               />
                             </div>
                           </div>
-                          <Badge 
+                          <Badge
                             className={
-                              edital.analysis.overallAssessment.recommendation === 'Participar' 
-                                ? 'bg-[hsl(var(--accent-green)/0.15)] text-[hsl(var(--accent-green))] border-[hsl(var(--accent-green)/0.4)] shadow-sm' 
+                              edital.analysis.overallAssessment.recommendation === 'Participar'
+                                ? 'bg-[hsl(var(--accent-green)/0.15)] text-[hsl(var(--accent-green))] border-[hsl(var(--accent-green)/0.4)] shadow-sm'
                                 : edital.analysis.overallAssessment.recommendation === 'Não Participar'
-                                ? 'bg-[hsl(var(--destructive)/0.15)] text-[hsl(var(--destructive))] border-[hsl(var(--destructive)/0.4)] shadow-sm'
-                                : 'bg-[hsl(var(--accent-yellow)/0.15)] text-[hsl(var(--accent-yellow))] border-[hsl(var(--accent-yellow)/0.4)] shadow-sm'
+                                  ? 'bg-[hsl(var(--destructive)/0.15)] text-[hsl(var(--destructive))] border-[hsl(var(--destructive)/0.4)] shadow-sm'
+                                  : 'bg-[hsl(var(--accent-yellow)/0.15)] text-[hsl(var(--accent-yellow))] border-[hsl(var(--accent-yellow)/0.4)] shadow-sm'
                             }
                           >
                             {edital.analysis.overallAssessment.recommendation === 'Participar' && <CheckCircle className="h-3 w-3 mr-1" />}
@@ -597,21 +597,21 @@ const EditalAnalysisView: React.FC<EditalAnalysisViewProps> = ({
                           <div className="space-y-2">
                             <div className="flex items-center gap-2">
                               <h4 className="font-semibold">{doc.name}</h4>
-                              <Badge 
+                              <Badge
                                 className={
                                   doc.type === 'Obrigatório' ? 'bg-[hsl(var(--destructive)/0.15)] text-[hsl(var(--destructive))] border-[hsl(var(--destructive)/0.4)] shadow-sm' :
-                                  doc.type === 'Opcional' ? 'bg-[hsl(var(--accent-yellow)/0.15)] text-[hsl(var(--accent-yellow))] border-[hsl(var(--accent-yellow)/0.4)] shadow-sm' :
-                                  'bg-[hsl(var(--accent-cyan)/0.15)] text-[hsl(var(--accent-cyan))] border-[hsl(var(--accent-cyan)/0.4)] shadow-sm'
+                                    doc.type === 'Opcional' ? 'bg-[hsl(var(--accent-yellow)/0.15)] text-[hsl(var(--accent-yellow))] border-[hsl(var(--accent-yellow)/0.4)] shadow-sm' :
+                                      'bg-[hsl(var(--accent-cyan)/0.15)] text-[hsl(var(--accent-cyan))] border-[hsl(var(--accent-cyan)/0.4)] shadow-sm'
                                 }
                               >
                                 {doc.type}
                               </Badge>
-                              <Badge 
+                              <Badge
                                 className={
                                   doc.status === 'Pronto' ? 'bg-[hsl(var(--accent-green)/0.15)] text-[hsl(var(--accent-green))] border-[hsl(var(--accent-green)/0.4)] shadow-sm' :
-                                  doc.status === 'Em Preparação' ? 'bg-[hsl(var(--accent-yellow)/0.15)] text-[hsl(var(--accent-yellow))] border-[hsl(var(--accent-yellow)/0.4)] shadow-sm' :
-                                  doc.status === 'Enviado' ? 'bg-[hsl(var(--accent-cyan)/0.15)] text-[hsl(var(--accent-cyan))] border-[hsl(var(--accent-cyan)/0.4)] shadow-sm' :
-                                  'bg-[hsl(var(--primary-600)/0.15)] text-[hsl(var(--primary-300))] border-[hsl(var(--primary-600)/0.4)] shadow-sm'
+                                    doc.status === 'Em Preparação' ? 'bg-[hsl(var(--accent-yellow)/0.15)] text-[hsl(var(--accent-yellow))] border-[hsl(var(--accent-yellow)/0.4)] shadow-sm' :
+                                      doc.status === 'Enviado' ? 'bg-[hsl(var(--accent-cyan)/0.15)] text-[hsl(var(--accent-cyan))] border-[hsl(var(--accent-cyan)/0.4)] shadow-sm' :
+                                        'bg-[hsl(var(--primary-600)/0.15)] text-[hsl(var(--primary-300))] border-[hsl(var(--primary-600)/0.4)] shadow-sm'
                                 }
                               >
                                 {doc.status === 'Pronto' && <CheckCircle className="h-3 w-3 mr-1" />}
@@ -670,11 +670,11 @@ const EditalAnalysisView: React.FC<EditalAnalysisViewProps> = ({
                         <TableCell>{formatCurrency(product.estimatedUnitPrice)}</TableCell>
                         <TableCell>{formatCurrency(product.totalEstimatedPrice)}</TableCell>
                         <TableCell>
-                          <Badge 
+                          <Badge
                             className={
                               product.status === 'Disponível' ? 'bg-[hsl(var(--accent-green)/0.15)] text-[hsl(var(--accent-green))] border-[hsl(var(--accent-green)/0.4)] shadow-sm' :
-                              product.status === 'Em Cotação' ? 'bg-[hsl(var(--accent-yellow)/0.15)] text-[hsl(var(--accent-yellow))] border-[hsl(var(--accent-yellow)/0.4)] shadow-sm' :
-                              'bg-[hsl(var(--destructive)/0.15)] text-[hsl(var(--destructive))] border-[hsl(var(--destructive)/0.4)] shadow-sm'
+                                product.status === 'Em Cotação' ? 'bg-[hsl(var(--accent-yellow)/0.15)] text-[hsl(var(--accent-yellow))] border-[hsl(var(--accent-yellow)/0.4)] shadow-sm' :
+                                  'bg-[hsl(var(--destructive)/0.15)] text-[hsl(var(--destructive))] border-[hsl(var(--destructive)/0.4)] shadow-sm'
                             }
                           >
                             {product.status === 'Disponível' && <CheckCircle className="h-3 w-3 mr-1" />}
@@ -710,13 +710,13 @@ const EditalAnalysisView: React.FC<EditalAnalysisViewProps> = ({
                             </span>
                           </div>
                           <Progress value={viewingEdital.analysis.overallAssessment.score} className="h-3" />
-                          <Badge 
+                          <Badge
                             className={
-                              viewingEdital.analysis.overallAssessment.recommendation === 'Participar' 
-                                ? 'bg-[hsl(var(--accent-green)/0.15)] text-[hsl(var(--accent-green))] border-[hsl(var(--accent-green)/0.4)] text-lg px-4 py-2 shadow-sm' 
+                              viewingEdital.analysis.overallAssessment.recommendation === 'Participar'
+                                ? 'bg-[hsl(var(--accent-green)/0.15)] text-[hsl(var(--accent-green))] border-[hsl(var(--accent-green)/0.4)] text-lg px-4 py-2 shadow-sm'
                                 : viewingEdital.analysis.overallAssessment.recommendation === 'Não Participar'
-                                ? 'bg-[hsl(var(--destructive)/0.15)] text-[hsl(var(--destructive))] border-[hsl(var(--destructive)/0.4)] text-lg px-4 py-2 shadow-sm'
-                                : 'bg-[hsl(var(--accent-yellow)/0.15)] text-[hsl(var(--accent-yellow))] border-[hsl(var(--accent-yellow)/0.4)] text-lg px-4 py-2 shadow-sm'
+                                  ? 'bg-[hsl(var(--destructive)/0.15)] text-[hsl(var(--destructive))] border-[hsl(var(--destructive)/0.4)] text-lg px-4 py-2 shadow-sm'
+                                  : 'bg-[hsl(var(--accent-yellow)/0.15)] text-[hsl(var(--accent-yellow))] border-[hsl(var(--accent-yellow)/0.4)] text-lg px-4 py-2 shadow-sm'
                             }
                           >
                             {viewingEdital.analysis.overallAssessment.recommendation === 'Participar' && <CheckCircle className="h-4 w-4 mr-2" />}
@@ -814,7 +814,7 @@ const EditalAnalysisView: React.FC<EditalAnalysisViewProps> = ({
                           const daysUntilDeadline = getDaysUntil(viewingEdital.submissionDeadline);
                           const isUrgent = daysUntilOpening <= 7 && daysUntilOpening >= 0;
                           const isOverdue = daysUntilDeadline < 0;
-                          
+
                           return (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="text-center">
@@ -853,26 +853,26 @@ const EditalAnalysisView: React.FC<EditalAnalysisViewProps> = ({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <Label className="text-sm font-medium text-gray-600">Tipo de Órgão</Label>
-                            <p className="font-semibold">{viewingEdital.analysis.publishingBodyAnalysis.bodyType}</p>
+                            <p className="font-semibold">{viewingEdital.analysis?.publishingBodyAnalysis?.bodyType || 'N/A'}</p>
                           </div>
                           <div>
                             <Label className="text-sm font-medium text-gray-600">Histórico de Pagamento</Label>
-                            <Badge 
+                            <Badge
                               className={
-                                viewingEdital.analysis.publishingBodyAnalysis.paymentHistory === 'Excelente' ? 'bg-green-100 text-green-800' :
-                                viewingEdital.analysis.publishingBodyAnalysis.paymentHistory === 'Bom' ? 'bg-blue-100 text-blue-800' :
-                                viewingEdital.analysis.publishingBodyAnalysis.paymentHistory === 'Regular' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-red-100 text-red-800'
+                                viewingEdital.analysis?.publishingBodyAnalysis?.paymentHistory === 'Excelente' ? 'bg-green-100 text-green-800' :
+                                  viewingEdital.analysis?.publishingBodyAnalysis?.paymentHistory === 'Bom' ? 'bg-blue-100 text-blue-800' :
+                                    viewingEdital.analysis?.publishingBodyAnalysis?.paymentHistory === 'Regular' ? 'bg-yellow-100 text-yellow-800' :
+                                      'bg-red-100 text-red-800'
                               }
                             >
-                              {viewingEdital.analysis.publishingBodyAnalysis.paymentHistory}
+                              {viewingEdital.analysis?.publishingBodyAnalysis?.paymentHistory || 'N/A'}
                             </Badge>
                           </div>
                         </div>
                         <div className="mt-4">
                           <Label className="text-sm font-medium text-gray-600">Experiência Prévia</Label>
-                          <p className="text-sm text-gray-700">{viewingEdital.analysis.publishingBodyAnalysis.previousExperience}</p>
-                          <p className="text-sm text-gray-700 mt-2">{viewingEdital.analysis.publishingBodyAnalysis.notes}</p>
+                          <p className="text-sm text-gray-700">{viewingEdital.analysis?.publishingBodyAnalysis?.previousExperience || 'N/A'}</p>
+                          <p className="text-sm text-gray-700 mt-2">{viewingEdital.analysis?.publishingBodyAnalysis?.notes || 'N/A'}</p>
                         </div>
                       </CardContent>
                     </Card>
@@ -1074,7 +1074,7 @@ const EditalAnalysisView: React.FC<EditalAnalysisViewProps> = ({
                   <div className="text-center py-8">
                     <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <p className="text-gray-500">Nenhuma análise realizada ainda</p>
-                    <Button 
+                    <Button
                       className="mt-4"
                       onClick={() => handleAnalyze(viewingEdital)}
                     >
@@ -1092,7 +1092,7 @@ const EditalAnalysisView: React.FC<EditalAnalysisViewProps> = ({
                     const daysUntilDeadline = getDaysUntil(viewingEdital.submissionDeadline);
                     const isUrgent = daysUntilOpening <= 7 && daysUntilOpening >= 0;
                     const isOverdue = daysUntilDeadline < 0;
-                    
+
                     return (
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <Card>
