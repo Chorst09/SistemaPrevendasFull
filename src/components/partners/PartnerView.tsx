@@ -284,7 +284,7 @@ const PartnerView: React.FC<PartnerViewProps> = ({ partnerType }) => {
                   Mostrando {filteredPartners.length} de {partners.length} {partnerType.toLowerCase()}s
                 </span>
                 <span>
-                  {partners.filter(p => p.products && p.products.trim()).length} com produtos cadastrados
+                  {partners.filter(p => p.products && p.products.trim()).length} com produtos/serviços cadastrados
                 </span>
               </div>
             )}
@@ -359,12 +359,12 @@ const PartnerView: React.FC<PartnerViewProps> = ({ partnerType }) => {
                                           <DialogHeader>
                                             <DialogTitle className="flex items-center gap-2">
                                               <Package className="h-5 w-5" />
-                                              Produtos - {partner.name}
+                                              Produtos/Serviços - {partner.name}
                                             </DialogTitle>
                                           </DialogHeader>
                                           <div className="space-y-2">
                                             <p className="text-sm text-gray-600">
-                                              Total de produtos: {productList.length}
+                                              Total de itens: {productList.length}
                                             </p>
                                             <div className="flex flex-wrap gap-2 max-h-60 overflow-y-auto">
                                               {productList.map((product, index) => (
@@ -387,7 +387,7 @@ const PartnerView: React.FC<PartnerViewProps> = ({ partnerType }) => {
                           ) : (
                             <div className="flex items-center text-gray-400 text-sm">
                               <Package className="h-4 w-4 mr-1" />
-                              Nenhum produto cadastrado
+                              Nenhum produto/serviço cadastrado
                             </div>
                           )}
                         </div>

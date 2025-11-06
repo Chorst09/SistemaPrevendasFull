@@ -188,6 +188,25 @@ const PartnerForm: React.FC<PartnerFormProps> = ({ partner, onSave, onCancel, pa
 
         {partnerType === 'Fornecedor' && (
           <>
+            <h4 className="text-md font-semibold pt-4 border-t">Informações Gerais</h4>
+            <FormField control={form.control} name="products" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Produtos/Serviços Oferecidos</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Ex: Desenvolvimento de Software, Consultoria em TI, Suporte Técnico, Infraestrutura..."
+                    {...field}
+                    rows={3}
+                    className="resize-none"
+                  />
+                </FormControl>
+                <p className="text-xs text-gray-500 mt-1">
+                  Separe os produtos/serviços por vírgula. Estes aparecerão na lista de fornecedores.
+                </p>
+                <FormMessage />
+              </FormItem>
+            )} />
+
             <h4 className="text-md font-semibold pt-4 border-t">Informações de RO</h4>
             <FormField control={form.control} name="sitePartner" render={({ field }) => (
               <FormItem><FormLabel>Site Partner</FormLabel><FormControl><Input placeholder="https://partner.fornecedor.com" {...field} /></FormControl><FormMessage /></FormItem>

@@ -3,13 +3,13 @@
  * Contém interfaces e tipos fundamentais utilizados em todo o projeto
  */
 
-import { 
-  PartnerType, 
-  GeneralStatus, 
-  QuoteStatus, 
+import {
+  PartnerType,
+  GeneralStatus,
+  QuoteStatus,
   ProposalStatus,
   ROStatus,
-  TrainingType 
+  TrainingType
 } from './enums'
 
 // Tipos básicos
@@ -104,6 +104,7 @@ export interface RO extends BaseEntity {
   product: string
   value: number
   status: ROStatus
+  accountManager: string
 }
 
 // Treinamentos

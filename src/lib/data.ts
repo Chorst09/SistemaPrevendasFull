@@ -1,19 +1,19 @@
 import type { Partner, Quote, RO, Training, BidDocs, Proposal, RFP, PriceRecord, Edital } from './types';
 
 export const initialPartners: Partner[] = [
-  { 
-    id: 1, 
-    name: 'Distribuidor TechData', 
-    type: 'Distribuidor', 
-    contact: 'joao@techdata.com', 
-    phone: '(11) 98765-4321', 
-    status: 'Ativo', 
-    site: 'https://portal.techdata.com', 
-    siteEcommerce: 'https://shop.techdata.com', 
-    login: 'user_techdata', 
-    password: '123', 
-    loginEcommerce: 'shop_user', 
-    passwordEcommerce: 'shop123', 
+  {
+    id: 1,
+    name: 'Distribuidor TechData',
+    type: 'Distribuidor',
+    contact: 'joao@techdata.com',
+    phone: '(11) 98765-4321',
+    status: 'Ativo',
+    site: 'https://portal.techdata.com',
+    siteEcommerce: 'https://shop.techdata.com',
+    login: 'user_techdata',
+    password: '123',
+    loginEcommerce: 'shop_user',
+    passwordEcommerce: 'shop123',
     products: 'Licenças Microsoft, Hardware Dell, Cisco',
     vendedoresResponsaveis: [
       { id: '1', fornecedor: 'Microsoft', vendedor: 'Ana Silva', telefone: '(11) 99999-1111', email: 'ana.silva@techdata.com' },
@@ -22,19 +22,19 @@ export const initialPartners: Partner[] = [
     ]
   },
   { id: 2, name: 'Fornecedor AWS', type: 'Fornecedor', contact: 'maria@aws.com', phone: '(11) 91234-5678', status: 'Ativo', sitePartner: 'https://partner.aws.amazon.com', login: 'aws_partner', password: 'aws_password', siteRO: 'https://partner.aws.amazon.com/ro', templateRO: 'template_aws_ro.pdf', procedimentoRO: '1. Logar no portal de parceiros.\n2. Ir para a seção de registro de oportunidades.\n3. Preencher o formulário com os dados do cliente.' },
-  { 
-    id: 3, 
-    name: 'Distribuidor Ingram Micro', 
-    type: 'Distribuidor', 
-    contact: 'carlos@ingram.com', 
-    phone: '(21) 99999-8888', 
-    status: 'Inativo', 
-    site: 'https://www.ingrammicro.com.br', 
-    siteEcommerce: 'https://ecommerce.ingrammicro.com.br', 
-    login: 'user_ingram', 
-    password: '456', 
-    loginEcommerce: 'ecom_user', 
-    passwordEcommerce: 'ecom456', 
+  {
+    id: 3,
+    name: 'Distribuidor Ingram Micro',
+    type: 'Distribuidor',
+    contact: 'carlos@ingram.com',
+    phone: '(21) 99999-8888',
+    status: 'Inativo',
+    site: 'https://www.ingrammicro.com.br',
+    siteEcommerce: 'https://ecommerce.ingrammicro.com.br',
+    login: 'user_ingram',
+    password: '456',
+    loginEcommerce: 'ecom_user',
+    passwordEcommerce: 'ecom456',
     products: 'HP, IBM, Lenovo',
     vendedoresResponsaveis: [
       { id: '4', fornecedor: 'HP', vendedor: 'Roberto Lima', telefone: '(21) 98888-1111', email: 'roberto.lima@ingram.com' },
@@ -43,19 +43,19 @@ export const initialPartners: Partner[] = [
     ]
   },
   { id: 4, name: 'Fornecedor Microsoft', type: 'Fornecedor', contact: 'ana@microsoft.com', phone: '(41) 98877-6655', status: 'Ativo', sitePartner: 'https://partner.microsoft.com', login: 'ms_partner', password: 'ms_password', siteRO: 'https://partner.microsoft.com/ro', templateRO: 'procedimento_ro_ms.docx', procedimentoRO: 'Utilizar o Partner Center para registrar a oportunidade. É necessário o tenant ID do cliente.' },
-  { 
-    id: 5, 
-    name: 'Distribuidor Westcon', 
-    type: 'Distribuidor', 
-    contact: 'pedro@westcon.com', 
-    phone: '(31) 98765-1234', 
-    status: 'Ativo', 
-    site: 'https://www.westcon.com', 
-    siteEcommerce: 'https://store.westcon.com', 
-    login: 'user_westcon', 
-    password: '789', 
-    loginEcommerce: 'store_user', 
-    passwordEcommerce: 'store789', 
+  {
+    id: 5,
+    name: 'Distribuidor Westcon',
+    type: 'Distribuidor',
+    contact: 'pedro@westcon.com',
+    phone: '(31) 98765-1234',
+    status: 'Ativo',
+    site: 'https://www.westcon.com',
+    siteEcommerce: 'https://store.westcon.com',
+    login: 'user_westcon',
+    password: '789',
+    loginEcommerce: 'store_user',
+    passwordEcommerce: 'store789',
     products: 'Palo Alto, F5, Juniper',
     vendedoresResponsaveis: [
       { id: '7', fornecedor: 'Fortinet', vendedor: 'Pedro Almeida', telefone: '(31) 97777-1111', email: 'pedro.almeida@westcon.com' },
@@ -76,99 +76,99 @@ export const initialQuotes: Quote[] = [
 ];
 
 export const initialProposals: Proposal[] = [
-  { 
-    id: 'PROP-001', 
-    title: 'Solução de Infraestrutura Cloud', 
-    client: 'Empresa Alpha', 
-    description: 'Migração completa da infraestrutura para nuvem AWS com serviços de consultoria e suporte técnico.', 
-    status: 'Aprovada', 
-    value: 85000, 
-    date: '2024-07-15', 
-    expiryDate: '2024-08-15', 
-    accountManager: 'João da Silva', 
-    distributorId: 1, 
-    proposalFile: 'proposta_alpha_cloud.pdf', 
-    technicalSpecs: 'especificacoes_tecnicas_alpha.pdf', 
-    commercialTerms: 'termos_comerciais_alpha.pdf' 
+  {
+    id: 'PROP-001',
+    title: 'Solução de Infraestrutura Cloud',
+    client: 'Empresa Alpha',
+    description: 'Migração completa da infraestrutura para nuvem AWS com serviços de consultoria e suporte técnico.',
+    status: 'Aprovada',
+    value: 85000,
+    date: '2024-07-15',
+    expiryDate: '2024-08-15',
+    accountManager: 'João da Silva',
+    distributorId: 1,
+    proposalFile: 'proposta_alpha_cloud.pdf',
+    technicalSpecs: 'especificacoes_tecnicas_alpha.pdf',
+    commercialTerms: 'termos_comerciais_alpha.pdf'
   },
-  { 
-    id: 'PROP-002', 
-    title: 'Sistema de Gestão Empresarial', 
-    client: 'Startup Beta', 
-    description: 'Implementação de ERP completo com módulos de gestão financeira, estoque e recursos humanos.', 
-    status: 'Em Análise', 
-    value: 45000, 
-    date: '2024-07-20', 
-    expiryDate: '2024-08-20', 
-    accountManager: 'Maria Oliveira', 
-    distributorId: 3, 
-    proposalFile: 'proposta_beta_erp.pdf', 
-    technicalSpecs: 'especificacoes_tecnicas_beta.pdf', 
-    commercialTerms: '' 
+  {
+    id: 'PROP-002',
+    title: 'Sistema de Gestão Empresarial',
+    client: 'Startup Beta',
+    description: 'Implementação de ERP completo com módulos de gestão financeira, estoque e recursos humanos.',
+    status: 'Em Análise',
+    value: 45000,
+    date: '2024-07-20',
+    expiryDate: '2024-08-20',
+    accountManager: 'Maria Oliveira',
+    distributorId: 3,
+    proposalFile: 'proposta_beta_erp.pdf',
+    technicalSpecs: 'especificacoes_tecnicas_beta.pdf',
+    commercialTerms: ''
   },
-  { 
-    id: 'PROP-003', 
-    title: 'Segurança da Informação', 
-    client: 'Indústria Gama', 
-    description: 'Implementação de soluções de segurança cibernética incluindo firewall, antivírus e treinamento de equipe.', 
-    status: 'Rascunho', 
-    value: 28000, 
-    date: '2024-07-25', 
-    expiryDate: '2024-08-25', 
-    accountManager: 'João da Silva', 
-    distributorId: 5, 
-    proposalFile: '', 
-    technicalSpecs: '', 
-    commercialTerms: '' 
+  {
+    id: 'PROP-003',
+    title: 'Segurança da Informação',
+    client: 'Indústria Gama',
+    description: 'Implementação de soluções de segurança cibernética incluindo firewall, antivírus e treinamento de equipe.',
+    status: 'Rascunho',
+    value: 28000,
+    date: '2024-07-25',
+    expiryDate: '2024-08-25',
+    accountManager: 'João da Silva',
+    distributorId: 5,
+    proposalFile: '',
+    technicalSpecs: '',
+    commercialTerms: ''
   },
-  { 
-    id: 'PROP-004', 
-    title: 'Modernização de Rede', 
-    client: 'Comércio Delta', 
-    description: 'Upgrade completo da infraestrutura de rede com equipamentos de última geração e configuração avançada.', 
-    status: 'Enviada', 
-    value: 65000, 
-    date: '2024-07-18', 
-    expiryDate: '2024-08-18', 
-    accountManager: 'Carlos Pereira', 
-    distributorId: 1, 
-    proposalFile: 'proposta_delta_rede.pdf', 
-    technicalSpecs: 'especificacoes_tecnicas_delta.pdf', 
-    commercialTerms: 'termos_comerciais_delta.pdf' 
+  {
+    id: 'PROP-004',
+    title: 'Modernização de Rede',
+    client: 'Comércio Delta',
+    description: 'Upgrade completo da infraestrutura de rede com equipamentos de última geração e configuração avançada.',
+    status: 'Enviada',
+    value: 65000,
+    date: '2024-07-18',
+    expiryDate: '2024-08-18',
+    accountManager: 'Carlos Pereira',
+    distributorId: 1,
+    proposalFile: 'proposta_delta_rede.pdf',
+    technicalSpecs: 'especificacoes_tecnicas_delta.pdf',
+    commercialTerms: 'termos_comerciais_delta.pdf'
   },
-  { 
-    id: 'PROP-005', 
-    title: 'Licenciamento Microsoft 365', 
-    client: 'Consultoria Epsilon', 
-    description: 'Migração para Microsoft 365 com licenças E5 e serviços de migração e treinamento.', 
-    status: 'Rejeitada', 
-    value: 15000, 
-    date: '2024-07-10', 
-    expiryDate: '2024-08-10', 
-    accountManager: 'Maria Oliveira', 
-    distributorId: 1, 
-    proposalFile: 'proposta_epsilon_m365.pdf', 
-    technicalSpecs: '', 
-    commercialTerms: 'termos_comerciais_epsilon.pdf' 
+  {
+    id: 'PROP-005',
+    title: 'Licenciamento Microsoft 365',
+    client: 'Consultoria Epsilon',
+    description: 'Migração para Microsoft 365 com licenças E5 e serviços de migração e treinamento.',
+    status: 'Rejeitada',
+    value: 15000,
+    date: '2024-07-10',
+    expiryDate: '2024-08-10',
+    accountManager: 'Maria Oliveira',
+    distributorId: 1,
+    proposalFile: 'proposta_epsilon_m365.pdf',
+    technicalSpecs: '',
+    commercialTerms: 'termos_comerciais_epsilon.pdf'
   },
 ];
 
 export const initialRos: RO[] = [
-    { id: 1, supplierId: 2, roNumber: 'AWS-12345', openDate: '2024-07-15', expiryDate: '2024-10-15', clientName: 'Empresa Alpha', product: 'AWS EC2 Instances', value: 25000, status: 'Aprovado' },
-    { id: 2, supplierId: 4, roNumber: 'MS-ABC-678', openDate: '2024-06-20', expiryDate: '2024-09-20', clientName: 'Startup Beta', product: 'Microsoft 365 E5', value: 12000, status: 'Expirado' },
-    { id: 3, supplierId: 6, roNumber: 'ORA-789-XYZ', openDate: '2024-08-01', expiryDate: '2024-11-01', clientName: 'Indústria Gama', product: 'Oracle Database Enterprise', value: 45000, status: 'Negado' },
+  { id: 1, supplierId: 2, roNumber: 'AWS-12345', openDate: '2024-07-15', expiryDate: '2024-10-15', clientName: 'Empresa Alpha', product: 'AWS EC2 Instances', value: 25000, status: 'Aprovado', accountManager: 'João Silva' },
+  { id: 2, supplierId: 4, roNumber: 'MS-ABC-678', openDate: '2024-06-20', expiryDate: '2024-09-20', clientName: 'Startup Beta', product: 'Microsoft 365 E5', value: 12000, status: 'Expirado', accountManager: 'Maria Santos' },
+  { id: 3, supplierId: 6, roNumber: 'ORA-789-XYZ', openDate: '2024-08-01', expiryDate: '2024-11-01', clientName: 'Indústria Gama', product: 'Oracle Database Enterprise', value: 45000, status: 'Negado', accountManager: 'Carlos Oliveira' },
 ];
 
 export const initialTrainings: Training[] = [
-    { id: 1, supplierId: 2, trainingName: 'AWS Certified Cloud Practitioner', type: 'Técnico', participantName: 'Carlos Silva', expiryDate: '2025-08-01' },
-    { id: 2, supplierId: 4, trainingName: 'MS-900: Microsoft 365 Fundamentals', type: 'Comercial', participantName: 'Mariana Oliveira', expiryDate: '2026-01-15' },
-    { id: 3, supplierId: 4, trainingName: 'AZ-104: Microsoft Azure Administrator', type: 'Técnico', participantName: 'Carlos Silva', expiryDate: '2025-11-20' },
+  { id: 1, supplierId: 2, trainingName: 'AWS Certified Cloud Practitioner', type: 'Técnico', participantName: 'Carlos Silva', expiryDate: '2025-08-01' },
+  { id: 2, supplierId: 4, trainingName: 'MS-900: Microsoft 365 Fundamentals', type: 'Comercial', participantName: 'Mariana Oliveira', expiryDate: '2026-01-15' },
+  { id: 3, supplierId: 4, trainingName: 'AZ-104: Microsoft Azure Administrator', type: 'Técnico', participantName: 'Carlos Silva', expiryDate: '2025-11-20' },
 ];
 
 export const initialBidDocs: BidDocs = {
-    company: [{id: 1, name: 'Contrato Social.pdf'}, {id: 2, name: 'CNPJ.pdf'}],
-    proofs: [{id: 1, name: 'Atestado de Capacidade Técnica.pdf'}],
-    certifications: [{id: 1, name: 'Certificação ISO 9001.pdf'}, {id: 2, name: 'Certificação ISO 27001.pdf'}],
+  company: [{ id: 1, name: 'Contrato Social.pdf' }, { id: 2, name: 'CNPJ.pdf' }],
+  proofs: [{ id: 1, name: 'Atestado de Capacidade Técnica.pdf' }],
+  certifications: [{ id: 1, name: 'Certificação ISO 9001.pdf' }, { id: 2, name: 'Certificação ISO 27001.pdf' }],
 };
 
 
@@ -625,62 +625,62 @@ export const initialEditais: Edital[] = [
         finalNotes: 'Edital viável com boa probabilidade de sucesso'
       }
     },
-                    files: [
-                  {
-                    id: 'FILE-001',
-                    name: 'edital_001.pdf',
-                    type: 'pdf',
-                    size: 2048576, // 2MB
-                    uploadDate: '2024-07-20',
-                    aiAnalysis: {
-                      id: 'AI-001',
-                      fileId: 'FILE-001',
-                      analysisDate: '2024-07-20',
-                      summary: "Análise automática do edital realizada com sucesso. Foram identificados pontos-chave importantes para a participação na licitação.",
-                      keyPoints: [
-                        "Prazo de submissão: 30 dias",
-                        "Valor estimado: R$ 2.500.000,00",
-                        "Documentação obrigatória: 15 itens",
-                        "Experiência mínima: 3 anos"
-                      ],
-                      requirements: [
-                        "Certificado de Registro Cadastral",
-                        "Certificado de Capacidade Técnica",
-                        "Proposta comercial detalhada",
-                        "Documentação fiscal"
-                      ],
-                      deadlines: [
-                        "Abertura: 15/08/2024",
-                        "Submissão: 10/08/2024",
-                        "Validade: 60 dias"
-                      ],
-                      values: [
-                        "Valor total: R$ 2.500.000,00",
-                        "Garantia: R$ 50.000,00",
-                        "Prazo de pagamento: 30 dias"
-                      ],
-                      risks: [
-                        "Prazo apertado para documentação",
-                        "Concorrência forte no setor",
-                        "Especificações técnicas complexas"
-                      ],
-                      opportunities: [
-                        "Possibilidade de parcerias",
-                        "Mercado em crescimento",
-                        "Órgão com histórico positivo"
-                      ],
-                      recommendations: [
-                        "Participar da licitação",
-                        "Acelerar preparação de documentos",
-                        "Buscar parcerias estratégicas"
-                      ],
-                      confidence: 85,
-                      processingTime: 3.2
-                    }
-                  }
-                ],
-                attachments: ['anexos_tecnicos.pdf'],
-                notes: 'Edital prioritário para a empresa'
+    files: [
+      {
+        id: 'FILE-001',
+        name: 'edital_001.pdf',
+        type: 'pdf',
+        size: 2048576, // 2MB
+        uploadDate: '2024-07-20',
+        aiAnalysis: {
+          id: 'AI-001',
+          fileId: 'FILE-001',
+          analysisDate: '2024-07-20',
+          summary: "Análise automática do edital realizada com sucesso. Foram identificados pontos-chave importantes para a participação na licitação.",
+          keyPoints: [
+            "Prazo de submissão: 30 dias",
+            "Valor estimado: R$ 2.500.000,00",
+            "Documentação obrigatória: 15 itens",
+            "Experiência mínima: 3 anos"
+          ],
+          requirements: [
+            "Certificado de Registro Cadastral",
+            "Certificado de Capacidade Técnica",
+            "Proposta comercial detalhada",
+            "Documentação fiscal"
+          ],
+          deadlines: [
+            "Abertura: 15/08/2024",
+            "Submissão: 10/08/2024",
+            "Validade: 60 dias"
+          ],
+          values: [
+            "Valor total: R$ 2.500.000,00",
+            "Garantia: R$ 50.000,00",
+            "Prazo de pagamento: 30 dias"
+          ],
+          risks: [
+            "Prazo apertado para documentação",
+            "Concorrência forte no setor",
+            "Especificações técnicas complexas"
+          ],
+          opportunities: [
+            "Possibilidade de parcerias",
+            "Mercado em crescimento",
+            "Órgão com histórico positivo"
+          ],
+          recommendations: [
+            "Participar da licitação",
+            "Acelerar preparação de documentos",
+            "Buscar parcerias estratégicas"
+          ],
+          confidence: 85,
+          processingTime: 3.2
+        }
+      }
+    ],
+    attachments: ['anexos_tecnicos.pdf'],
+    notes: 'Edital prioritário para a empresa'
   },
   {
     id: 'EDT-002',

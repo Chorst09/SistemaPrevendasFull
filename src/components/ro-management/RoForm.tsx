@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import type { RO, Partner } from '@/lib/types';
+import { ROStatus } from '@/lib/types/enums';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -18,6 +19,7 @@ const formSchema = z.object({
   clientName: z.string().min(1, 'O nome do cliente é obrigatório.'),
   product: z.string().min(1, 'O produto é obrigatório.'),
   value: z.coerce.number().min(0, 'O valor deve ser positivo.'),
+  accountManager: z.string().min(1, 'O gerente de contas é obrigatório.'),
   status: z.enum(['Aprovado', 'Negado', 'Expirado'], {
     required_error: 'Selecione um status.',
   }),
@@ -43,6 +45,7 @@ const RoForm: React.FC<RoFormProps> = ({ ro, suppliers, onSave, onCancel }) => {
         clientName: '',
         product: '',
         value: 0,
+        accountManager: '',
         status: 'Aprovado',
       },
   });
@@ -52,9 +55,10 @@ const RoForm: React.FC<RoFormProps> = ({ ro, suppliers, onSave, onCancel }) => {
       ...values,
       id: ro ? ro.id : Date.now(),
       supplierId: Number(values.supplierId),
-      status: values.status as 'Aprovado' | 'Negado' | 'Expirado'
+      status: values.status === 'Aprovado' ? ROStatus.APPROVED :
+        values.status === 'Negado' ? ROStatus.DENIED : ROStatus.EXPIRED
     };
-    onSave(roData);
+    onSave(roData as RO);
   };
 
   return (
@@ -85,6 +89,9 @@ const RoForm: React.FC<RoFormProps> = ({ ro, suppliers, onSave, onCancel }) => {
         </div>
         <FormField control={form.control} name="clientName" render={({ field }) => (
           <FormItem><FormLabel>Nome do Cliente</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+        )} />
+        <FormField control={form.control} name="accountManager" render={({ field }) => (
+          <FormItem><FormLabel>Gerente de Contas</FormLabel><FormControl><Input placeholder="Nome do gerente responsável" {...field} /></FormControl><FormMessage /></FormItem>
         )} />
         <FormField control={form.control} name="product" render={({ field }) => (
           <FormItem><FormLabel>Produto</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>

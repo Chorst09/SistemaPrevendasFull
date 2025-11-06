@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { RO, Partner } from '@/lib/types';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -19,10 +21,10 @@ import {
   Line,
   Legend
 } from 'recharts';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
   Calendar,
   Building,
   CheckCircle,
@@ -37,21 +39,43 @@ interface RoChartsViewProps {
 }
 
 export function RoChartsView({ ros, partners }: RoChartsViewProps) {
-  
+  const [selectedAccountManager, setSelectedAccountManager] = useState<string>('all');
+  const [selectedClient, setSelectedClient] = useState<string>('all');
+
+  // Listas únicas para os filtros
+  const accountManagers = useMemo(() => {
+    const managers = [...new Set(ros.map(ro => ro.accountManager).filter(Boolean))];
+    return managers.sort();
+  }, [ros]);
+
+  const clients = useMemo(() => {
+    const clientList = [...new Set(ros.map(ro => ro.clientName))];
+    return clientList.sort();
+  }, [ros]);
+
+  // ROs filtrados
+  const filteredRos = useMemo(() => {
+    return ros.filter(ro => {
+      const matchesManager = selectedAccountManager === 'all' || ro.accountManager === selectedAccountManager;
+      const matchesClient = selectedClient === 'all' || ro.clientName === selectedClient;
+      return matchesManager && matchesClient;
+    });
+  }, [ros, selectedAccountManager, selectedClient]);
+
   // Dados processados para os gráficos
   const chartData = useMemo(() => {
     // 1. RO's por Status
     const statusData = [
-      { name: 'Aprovado', value: ros.filter(ro => ro.status === 'Aprovado').length, color: '#10b981' },
-      { name: 'Negado', value: ros.filter(ro => ro.status === 'Negado').length, color: '#ef4444' },
-      { name: 'Expirado', value: ros.filter(ro => ro.status === 'Expirado').length, color: '#6b7280' }
+      { name: 'Aprovado', value: filteredRos.filter(ro => ro.status === 'Aprovado').length, color: '#10b981' },
+      { name: 'Negado', value: filteredRos.filter(ro => ro.status === 'Negado').length, color: '#ef4444' },
+      { name: 'Expirado', value: filteredRos.filter(ro => ro.status === 'Expirado').length, color: '#6b7280' }
     ];
 
     // 2. RO's por Fornecedor
     const supplierData = partners
       .filter(p => p.type === 'Fornecedor')
       .map(supplier => {
-        const supplierRos = ros.filter(ro => ro.supplierId === supplier.id);
+        const supplierRos = filteredRos.filter(ro => ro.supplierId === supplier.id);
         return {
           name: supplier.name.replace('Fornecedor ', ''),
           total: supplierRos.length,
@@ -64,10 +88,10 @@ export function RoChartsView({ ros, partners }: RoChartsViewProps) {
       .filter(data => data.total > 0);
 
     // 3. Valor total por mês (simulado baseado nas datas)
-    const monthlyData = ros.reduce((acc, ro) => {
+    const monthlyData = filteredRos.reduce((acc, ro) => {
       const month = new Date(ro.openDate).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
       const existing = acc.find(item => item.month === month);
-      
+
       if (existing) {
         existing.valor += ro.value;
         existing.quantidade += 1;
@@ -78,35 +102,102 @@ export function RoChartsView({ ros, partners }: RoChartsViewProps) {
           quantidade: 1
         });
       }
-      
+
       return acc;
     }, [] as Array<{ month: string; valor: number; quantidade: number }>);
 
     // 4. Estatísticas gerais
-    const totalValue = ros.reduce((sum, ro) => sum + ro.value, 0);
-    const avgValue = ros.length > 0 ? totalValue / ros.length : 0;
-    const approvalRate = ros.length > 0 ? (ros.filter(ro => ro.status === 'Aprovado').length / ros.length) * 100 : 0;
+    const totalValue = filteredRos.reduce((sum, ro) => sum + ro.value, 0);
+    const avgValue = filteredRos.length > 0 ? totalValue / filteredRos.length : 0;
+    const approvalRate = filteredRos.length > 0 ? (filteredRos.filter(ro => ro.status === 'Aprovado').length / filteredRos.length) * 100 : 0;
 
     return {
       statusData,
       supplierData,
       monthlyData,
       stats: {
-        total: ros.length,
+        total: filteredRos.length,
         totalValue,
         avgValue,
         approvalRate
       }
     };
-  }, [ros, partners]);
+  }, [filteredRos, partners]);
 
   const COLORS = ['#10b981', '#ef4444', '#6b7280'];
 
   return (
     <div className="space-y-6">
+      {/* Filtros */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Building className="h-5 w-5" />
+            Filtros de RO
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Gerente de Contas</label>
+              <Select value={selectedAccountManager} onValueChange={setSelectedAccountManager}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Todos os gerentes" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os gerentes</SelectItem>
+                  {accountManagers.map(manager => (
+                    <SelectItem key={manager} value={manager}>{manager}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Cliente</label>
+              <Select value={selectedClient} onValueChange={setSelectedClient}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Todos os clientes" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os clientes</SelectItem>
+                  {clients.map(client => (
+                    <SelectItem key={client} value={client}>{client}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-end">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSelectedAccountManager('all');
+                  setSelectedClient('all');
+                }}
+                className="w-full"
+              >
+                Limpar Filtros
+              </Button>
+            </div>
+          </div>
+
+          {(selectedAccountManager !== 'all' || selectedClient !== 'all') && (
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-800">
+                <strong>Filtros ativos:</strong>
+                {selectedAccountManager !== 'all' && ` Gerente: ${selectedAccountManager}`}
+                {selectedClient !== 'all' && ` Cliente: ${selectedClient}`}
+                {` (${filteredRos.length} de ${ros.length} ROs)`}
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Métricas Detalhadas */}
-      <RoMetrics ros={ros} partners={partners} />
-      
+      <RoMetrics ros={filteredRos} partners={partners} />
+
       {/* Cards de Estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
@@ -127,9 +218,9 @@ export function RoChartsView({ ros, partners }: RoChartsViewProps) {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Valor Total</p>
                 <p className="text-2xl font-bold">
-                  {chartData.stats.totalValue.toLocaleString('pt-BR', { 
-                    style: 'currency', 
-                    currency: 'BRL' 
+                  {chartData.stats.totalValue.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
                   })}
                 </p>
               </div>
@@ -144,9 +235,9 @@ export function RoChartsView({ ros, partners }: RoChartsViewProps) {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Valor Médio</p>
                 <p className="text-2xl font-bold">
-                  {chartData.stats.avgValue.toLocaleString('pt-BR', { 
-                    style: 'currency', 
-                    currency: 'BRL' 
+                  {chartData.stats.avgValue.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
                   })}
                 </p>
               </div>
@@ -202,8 +293,8 @@ export function RoChartsView({ ros, partners }: RoChartsViewProps) {
             <div className="flex justify-center space-x-4 mt-4">
               {chartData.statusData.map((item, index) => (
                 <div key={item.name} className="flex items-center space-x-2">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
+                  <div
+                    className="w-3 h-3 rounded-full"
                     style={{ backgroundColor: item.color }}
                   />
                   <span className="text-sm">{item.name}: {item.value}</span>
@@ -226,8 +317,8 @@ export function RoChartsView({ ros, partners }: RoChartsViewProps) {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData.supplierData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="name" 
+                  <XAxis
+                    dataKey="name"
                     angle={-45}
                     textAnchor="end"
                     height={60}
@@ -261,9 +352,9 @@ export function RoChartsView({ ros, partners }: RoChartsViewProps) {
                 <XAxis dataKey="month" />
                 <YAxis yAxisId="left" />
                 <YAxis yAxisId="right" orientation="right" />
-                <Tooltip 
+                <Tooltip
                   formatter={(value, name) => [
-                    name === 'valor' 
+                    name === 'valor'
                       ? Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
                       : value,
                     name === 'valor' ? 'Valor Total' : 'Quantidade'
@@ -271,11 +362,11 @@ export function RoChartsView({ ros, partners }: RoChartsViewProps) {
                 />
                 <Legend />
                 <Bar yAxisId="left" dataKey="quantidade" fill="#3b82f6" name="Quantidade de RO's" />
-                <Line 
-                  yAxisId="right" 
-                  type="monotone" 
-                  dataKey="valor" 
-                  stroke="#10b981" 
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="valor"
+                  stroke="#10b981"
                   strokeWidth={3}
                   name="Valor Total (R$)"
                 />
@@ -318,9 +409,9 @@ export function RoChartsView({ ros, partners }: RoChartsViewProps) {
                       <Badge variant="secondary">{supplier.expirados}</Badge>
                     </td>
                     <td className="text-right p-2 font-medium">
-                      {supplier.valor.toLocaleString('pt-BR', { 
-                        style: 'currency', 
-                        currency: 'BRL' 
+                      {supplier.valor.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
                       })}
                     </td>
                   </tr>

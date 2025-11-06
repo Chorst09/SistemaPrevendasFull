@@ -11,10 +11,10 @@ import { Badge } from '@/components/ui/badge';
 import RoForm from './RoForm';
 
 interface RoManagementViewProps {
-  ros: RO[];
-  partners: Partner[];
-  onSave: (ro: RO) => void;
-  onDelete: (id: number) => void;
+    ros: RO[];
+    partners: Partner[];
+    onSave: (ro: RO) => void;
+    onDelete: (id: number) => void;
 }
 
 const RoManagementView: React.FC<RoManagementViewProps> = ({ ros, partners, onSave, onDelete }) => {
@@ -74,6 +74,7 @@ const RoManagementView: React.FC<RoManagementViewProps> = ({ ros, partners, onSa
                                 <TableHead>Nº do RO</TableHead>
                                 <TableHead>Expiração</TableHead>
                                 <TableHead>Cliente</TableHead>
+                                <TableHead>Gerente de Contas</TableHead>
                                 <TableHead>Produto</TableHead>
                                 <TableHead>Valor</TableHead>
                                 <TableHead>Status</TableHead>
@@ -89,14 +90,15 @@ const RoManagementView: React.FC<RoManagementViewProps> = ({ ros, partners, onSa
                                         <TableCell>{ro.roNumber}</TableCell>
                                         <TableCell>{new Date(ro.expiryDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</TableCell>
                                         <TableCell>{ro.clientName}</TableCell>
+                                        <TableCell>{ro.accountManager || 'N/A'}</TableCell>
                                         <TableCell>{ro.product}</TableCell>
                                         <TableCell className="font-medium">{ro.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
                                         <TableCell>
-                                            <Badge 
+                                            <Badge
                                                 variant={
-                                                    ro.status === 'Aprovado' ? 'default' : 
-                                                    ro.status === 'Negado' ? 'destructive' : 
-                                                    'secondary'
+                                                    ro.status === 'Aprovado' ? 'default' :
+                                                        ro.status === 'Negado' ? 'destructive' :
+                                                            'secondary'
                                                 }
                                             >
                                                 {ro.status}
