@@ -1,0 +1,1 @@
+export { ITAssessmentView } from './ITAssessmentView';

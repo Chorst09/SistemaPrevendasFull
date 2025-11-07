@@ -35,6 +35,8 @@ import RFPView from '@/components/rfp/RFPView';
 import PriceRecordView from '@/components/price-records/PriceRecordView';
 import EditalAnalysisView from '@/components/edital-analysis/EditalAnalysisView';
 import AIBidAnalyzer from '@/components/ai-bid-analyzer/AIBidAnalyzer';
+import { ITAssessmentView } from '@/components/it-assessment';
+import { POCManagementView } from '@/components/poc';
 
 import { ITPricingModule } from '@/components/it-pricing/ITPricingModule';
 import { SettingsView } from '@/components/settings/SettingsView';
@@ -312,8 +314,8 @@ export default function App() { // Ou Home
             />;
             case 'bids-docs': return <BidsDocumentationView docs={initialBidDocs} onDocsChange={setBidDocs} />; // Adapte se os docs vierem de outro lugar
             case 'rfp': return <RFPView rfps={rfps} onAdd={(rfp) => setRfps(prev => [...prev, { ...rfp, id: `RFP-${Date.now()}` }])} onUpdate={(id, rfp) => setRfps(prev => prev.map(r => r.id === id ? { ...rfp, id } : r))} onDelete={(id) => setRfps(prev => prev.filter(r => r.id !== id))} />;
-            case 'it-assessment': return <iframe src="/it-assessment.html" className="w-full h-screen border-0" title="Assessment de TI" />;
-            case 'poc': return <iframe src="/poc-management.html" className="w-full h-screen border-0" title="Provas de Conceito POC" />;
+            case 'it-assessment': return <ITAssessmentView />;
+            case 'poc': return <POCManagementView />;
             case 'price-records': return <PriceRecordView priceRecords={priceRecords} onAdd={(priceRecord) => setPriceRecords(prev => [...prev, { ...priceRecord, id: `ATA-${Date.now()}` }])} onUpdate={(id, priceRecord) => setPriceRecords(prev => prev.map(r => r.id === id ? { ...priceRecord, id } : r))} onDelete={(id) => setPriceRecords(prev => prev.filter(r => r.id !== id))} />;
             case 'settings': return <SettingsView />;
             default: return <DashboardView salesData={salesData} quoteStatusData={quoteStatusData} partners={partners} ros={ros} />;
