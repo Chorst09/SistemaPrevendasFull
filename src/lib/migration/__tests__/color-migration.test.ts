@@ -256,7 +256,8 @@ describe('Color Migration System', () => {
 
   describe('Performance Monitoring', () => {
     it('should track migration metrics', () => {
-      const monitor = new (require('../migration-utils').MigrationPerformanceMonitor)();
+      const { MigrationPerformanceMonitor } = require('@/lib/migration/migration-utils');
+      const monitor = new MigrationPerformanceMonitor();
       
       monitor.startMigration();
       monitor.recordComponent();
@@ -272,7 +273,8 @@ describe('Color Migration System', () => {
     });
 
     it('should generate migration report', () => {
-      const monitor = new (require('../migration-utils').MigrationPerformanceMonitor)();
+      const { MigrationPerformanceMonitor } = require('@/lib/migration/migration-utils');
+      const monitor = new MigrationPerformanceMonitor();
       
       monitor.startMigration();
       monitor.recordComponent();

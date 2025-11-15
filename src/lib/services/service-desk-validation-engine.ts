@@ -144,12 +144,19 @@ export class ServiceDeskValidationEngine {
     if (!team || team.length === 0) {
       errors.push({
         field: 'team',
-        message: 'Pelo menos um cargo da equipe deve ser configurado',
+        message: 'Pelo menos um membro da equipe deve ser configurado',
         code: 'REQUIRED_FIELD'
       });
-    } else {
-      team.forEach((member, index) => {
-        // Validação para nova estrutura TeamMemberNew
+      return {
+        isValid: false,
+        errors,
+        warnings
+      };
+    }
+
+    team.forEach((member, index) => {
+      // Validação para nova estrutura TeamMemberNew
+      if (member.jobPositionId !== undefined) {
         if (!member.jobPositionId?.trim()) {
           errors.push({
             field: `team[${index}].jobPositionId`,
@@ -173,9 +180,11 @@ export class ServiceDeskValidationEngine {
             code: 'INVALID_VALUE'
           });
         }
+      }
 
-        // Validação para estrutura antiga (compatibilidade)
-        if (member.name !== undefined && !member.name?.trim()) {
+      // Validação para estrutura antiga (compatibilidade)
+      if (member.name !== undefined) {
+        if (!member.name?.trim()) {
           errors.push({
             field: `team[${index}].name`,
             message: `Nome do membro ${index + 1} é obrigatório`,
@@ -183,7 +192,7 @@ export class ServiceDeskValidationEngine {
           });
         }
 
-        if (member.role !== undefined && !member.role?.trim()) {
+        if (!member.role?.trim()) {
           errors.push({
             field: `team[${index}].role`,
             message: `Cargo do membro ${index + 1} é obrigatório`,
@@ -191,23 +200,23 @@ export class ServiceDeskValidationEngine {
           });
         }
 
-        if (member.salary !== undefined && member.salary <= 0) {
+        if (member.salary <= 0) {
           errors.push({
             field: `team[${index}].salary`,
             message: `Salário do membro ${index + 1} deve ser maior que zero`,
             code: 'INVALID_VALUE'
           });
         }
+      }
 
-        if (member.workload !== undefined && (member.workload <= 0 || member.workload > 60)) {
-          warnings.push({
-            field: `team[${index}].workload`,
-            message: `Carga horária do membro ${index + 1} parece incomum`,
-            suggestion: 'Verifique se a carga horária está correta (0-60 horas/semana)'
-          });
-        }
-      });
-    }
+      if (member.workload !== undefined && (member.workload < 1 || member.workload > 60)) {
+        warnings.push({
+          field: `team[${index}].workload`,
+          message: `Carga horária do membro ${index + 1} parece incomum`,
+          suggestion: 'Verifique se a carga horária está correta (0-60 horas/semana)'
+        });
+      }
+    });
 
     return {
       isValid: errors.length === 0,

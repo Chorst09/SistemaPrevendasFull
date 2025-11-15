@@ -221,19 +221,24 @@ export function shouldEnableFeatureForUser(
 ): boolean {
   if (typeof window === 'undefined') return false;
 
-  // Verifica se feature está forçadamente habilitada/desabilitada
-  const forceEnabled = localStorage.getItem(`force-enable-${feature}`) === 'true';
-  const forceDisabled = localStorage.getItem(`force-disable-${feature}`) === 'true';
-  
-  if (forceEnabled) return true;
-  if (forceDisabled) return false;
+  try {
+    // Verifica se feature está forçadamente habilitada/desabilitada
+    const forceEnabled = localStorage.getItem(`force-enable-${feature}`) === 'true';
+    const forceDisabled = localStorage.getItem(`force-disable-${feature}`) === 'true';
+    
+    if (forceEnabled) return true;
+    if (forceDisabled) return false;
 
-  // Usa userId se fornecido, senão usa hash do user agent
-  const identifier = userId || navigator.userAgent;
-  const hash = hashString(identifier);
-  const userPercentile = hash % 100;
-  
-  return userPercentile < rolloutPercentage;
+    // Usa userId se fornecido, senão usa hash do user agent
+    const identifier = userId || navigator.userAgent;
+    const hash = hashString(identifier);
+    const userPercentile = hash % 100;
+    
+    return userPercentile < rolloutPercentage;
+  } catch (error) {
+    console.warn('Error accessing localStorage in feature flags:', error);
+    return false;
+  }
 }
 
 /**

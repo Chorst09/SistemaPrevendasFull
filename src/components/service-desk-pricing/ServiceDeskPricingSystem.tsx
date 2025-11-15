@@ -175,6 +175,13 @@ export function ServiceDeskPricingSystem({
   onDataChange,
   integrationMode = 'integrated'
 }: ServiceDeskPricingSystemProps) {
+  // Early return for SSR - prevent localStorage access on server
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const [data, setData] = useState<ServiceDeskData>(
     initialData || ServiceDeskDataManager.createEmptyData()
   );
@@ -253,12 +260,14 @@ export function ServiceDeskPricingSystem({
         // Initialize sync between tabs
         dataManager.initializeSync();
         
-        // Check if user is first time user
-        const hasSeenTour = localStorage.getItem('service-desk-tour-completed');
-        if (!hasSeenTour) {
-          setIsFirstTimeUser(true);
-          // Show tour launcher after a brief delay
-          setTimeout(() => setShowTourLauncher(true), 2000);
+        // Check if user is first time user (only on client side)
+        if (typeof window !== 'undefined') {
+          const hasSeenTour = localStorage.getItem('service-desk-tour-completed');
+          if (!hasSeenTour) {
+            setIsFirstTimeUser(true);
+            // Show tour launcher after a brief delay
+            setTimeout(() => setShowTourLauncher(true), 2000);
+          }
         }
         
         // Load existing data if no initial data provided
@@ -588,7 +597,9 @@ export function ServiceDeskPricingSystem({
 
   const handleTourComplete = useCallback((tourId: string) => {
     setActiveTour(null);
-    localStorage.setItem('service-desk-tour-completed', 'true');
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('service-desk-tour-completed', 'true');
+    }
     setIsFirstTimeUser(false);
     showNotification('success', 'Tour concluído! Agora você está pronto para usar o sistema.');
     
@@ -602,7 +613,9 @@ export function ServiceDeskPricingSystem({
 
   const handleTourSkip = useCallback((tourId: string) => {
     setActiveTour(null);
-    localStorage.setItem('service-desk-tour-skipped', 'true');
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('service-desk-tour-skipped', 'true');
+    }
     
     analyticsService.trackEvent({
       type: 'USER_ACTION' as any,
@@ -654,6 +667,15 @@ export function ServiceDeskPricingSystem({
       data.project?.name // Add project name to breadcrumbs
     );
   }, [navigation, data.project?.name]);
+
+  // Don't render on server to avoid localStorage errors
+  if (!isMounted) {
+    return (
+      <div className="w-full max-w-7xl mx-auto p-6 flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6 space-y-6">

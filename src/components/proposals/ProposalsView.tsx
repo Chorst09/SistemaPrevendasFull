@@ -36,6 +36,10 @@ const ProposalsView: React.FC<ProposalsViewProps> = ({ proposals, partners, onSa
   // Combina propostas do sistema com as do localStorage
   const allProposals = [...proposals, ...localProposals];
 
+  const handleGoToCommercialProposals = () => {
+    window.location.href = '/propostas';
+  };
+
   const filteredProposals = allProposals.filter(proposal =>
     proposal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     proposal.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -148,11 +152,41 @@ const ProposalsView: React.FC<ProposalsViewProps> = ({ proposals, partners, onSa
             Gerencie suas propostas comerciais
           </p>
         </div>
-        <Button onClick={handleCreate}>
-          <PlusCircle className="h-4 w-4 mr-2" />
-          Nova Proposta
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={handleGoToCommercialProposals} variant="default">
+            <FileText className="h-4 w-4 mr-2" />
+            Propostas Comerciais
+          </Button>
+          <Button onClick={handleCreate} variant="outline">
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Nova Proposta Técnica
+          </Button>
+        </div>
       </div>
+
+      {/* Banner Propostas Comerciais */}
+      <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 border-blue-200 dark:border-blue-800">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                <FileText className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
+                  Sistema de Propostas Comerciais Completo
+                </h3>
+                <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                  Crie propostas profissionais com 10 seções estruturadas: Capa, Sumário Executivo, Desafio, Solução, Escopo, Cronograma, Investimento, Diferenciais, Próximos Passos e Preview em PDF.
+                </p>
+              </div>
+            </div>
+            <Button onClick={handleGoToCommercialProposals} size="lg" className="shrink-0">
+              Acessar Sistema
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Estatísticas */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

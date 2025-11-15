@@ -8,6 +8,7 @@ import {
 import { MemoryManager, cleanupUnusedData, MemoryEfficientMap } from '@/lib/utils/memory-optimization';
 import { prismaDataService } from './prisma-data-service';
 import { prisma } from '@/lib/prisma';
+import { safeLocalStorage } from '@/lib/utils/storage-helper';
 
 export class ServiceDeskDataManager {
   private static readonly STORAGE_KEY = 'service-desk-pricing-data';
@@ -352,7 +353,7 @@ export class ServiceDeskDataManager {
    */
   private async loadFromLocalStorage(projectId: string): Promise<ServiceDeskData> {
     try {
-      const serializedData = localStorage.getItem(`${ServiceDeskDataManager.STORAGE_KEY}-${projectId}`);
+      const serializedData = safeLocalStorage.getItem(`${ServiceDeskDataManager.STORAGE_KEY}-${projectId}`);
       if (!serializedData) {
         throw new Error('No data found in localStorage');
       }
@@ -485,7 +486,7 @@ export class ServiceDeskDataManager {
         return value;
       });
       
-      localStorage.setItem(`${ServiceDeskDataManager.STORAGE_KEY}-${data.project.id}`, serializedData);
+      safeLocalStorage.setItem(`${ServiceDeskDataManager.STORAGE_KEY}-${data.project.id}`, serializedData);
     } catch (error) {
       console.error('Error persisting data to localStorage:', error);
       throw new Error('Failed to save data');
@@ -662,8 +663,8 @@ export class ServiceDeskDataManager {
    */
   listBackups(): string[] {
     const backups: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
+    for (let i = 0; i < safeLocalStorage.length; i++) {
+      const key = safeLocalStorage.key(i);
       if (key?.startsWith(`${ServiceDeskDataManager.STORAGE_KEY}-backup-`)) {
         backups.push(key);
       }
@@ -675,7 +676,7 @@ export class ServiceDeskDataManager {
    * Restores data from backup
    */
   async restoreFromBackup(backupKey: string): Promise<ServiceDeskData> {
-    const serializedData = localStorage.getItem(backupKey);
+    const serializedData = safeLocalStorage.getItem(backupKey);
     if (!serializedData) {
       throw new Error('Backup not found');
     }
@@ -743,7 +744,7 @@ export class ServiceDeskDataManager {
     
     // Also try to delete from localStorage
     try {
-      localStorage.removeItem(`${ServiceDeskDataManager.STORAGE_KEY}-${projectId}`);
+      safeLocalStorage.removeItem(`${ServiceDeskDataManager.STORAGE_KEY}-${projectId}`);
     } catch (error) {
       console.error('Error deleting from localStorage:', error);
     }
@@ -963,7 +964,7 @@ export class ServiceDeskDataManager {
       });
       
       // Store in localStorage as backup
-      localStorage.setItem(backupKey, serializedData);
+      safeLocalStorage.setItem(backupKey, serializedData);
       
       // Keep only last 5 backups
       const backupKeys = Object.keys(localStorage)
@@ -973,7 +974,7 @@ export class ServiceDeskDataManager {
       
       // Remove old backups
       backupKeys.slice(5).forEach(key => {
-        localStorage.removeItem(key);
+        safeLocalStorage.removeItem(key);
       });
       
       return backupKey;

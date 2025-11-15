@@ -52,7 +52,8 @@ vi.mock('@/lib/utils/memory-optimization', () => ({
   },
   MemoryEfficientMap: vi.fn().mockImplementation(() => ({
     set: vi.fn(),
-    get: vi.fn(),
+    get: vi.fn().mockReturnValue(undefined),
+    has: vi.fn().mockReturnValue(false),
     delete: vi.fn(),
     clear: vi.fn(),
     size: 0,

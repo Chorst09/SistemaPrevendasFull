@@ -168,7 +168,7 @@ describe('Team Validation', () => {
       expect(result.errors).toContainEqual(
         expect.objectContaining({
           field: 'team',
-          message: 'Pelo menos um cargo da equipe deve ser configurado'
+          message: 'Pelo menos um membro da equipe deve ser configurado'
         })
       );
     });

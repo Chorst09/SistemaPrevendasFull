@@ -214,7 +214,9 @@ class ColorMigrationManager {
         userAgent: navigator.userAgent,
       };
       
-      localStorage.setItem('color-migration-backup', JSON.stringify(currentConfig));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('color-migration-backup', JSON.stringify(currentConfig));
+      }
     }
   }
 
@@ -413,7 +415,7 @@ class ColorMigrationManager {
     if (typeof window === 'undefined') return false;
 
     // Verifica se usuário está em grupo específico
-    const userGroup = localStorage.getItem('user-group');
+    const userGroup = typeof window !== 'undefined' ? localStorage.getItem('user-group') : null;
     if (userGroup && userGroups.includes(userGroup)) {
       return true;
     }
@@ -446,7 +448,11 @@ class ColorMigrationManager {
 
     Object.entries(enabledFeatures).forEach(([feature, enabled]) => {
       if (enabled && typeof window !== 'undefined') {
-        localStorage.setItem(`migration-${feature}`, 'true');
+        try {
+          localStorage.setItem(`migration-${feature}`, 'true');
+        } catch (e) {
+          console.warn('Failed to set migration feature:', e);
+        }
         
         // Aplica classe CSS correspondente
         document.documentElement.classList.toggle(`migration-${feature}`, enabled);
@@ -678,7 +684,7 @@ class ColorMigrationManager {
     if (typeof window === 'undefined') return;
 
     // Restaura backup
-    const backup = localStorage.getItem('color-migration-backup');
+    const backup = typeof window !== 'undefined' ? localStorage.getItem('color-migration-backup') : null;
     if (backup) {
       const backupData = JSON.parse(backup);
       
@@ -695,9 +701,13 @@ class ColorMigrationManager {
         .join(' ');
 
       // Limpa localStorage
-      Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('migration-')) {
-          localStorage.removeItem(key);
+      if (typeof window !== 'undefined') {
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('migration-')) {
+            localStorage.removeItem(key);
+          }
+        });
+      }
         }
       });
     }
@@ -732,7 +742,9 @@ class ColorMigrationManager {
       completionDate: new Date().toISOString(),
     };
 
-    localStorage.setItem('color-system-config', JSON.stringify(finalConfig));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('color-system-config', JSON.stringify(finalConfig));
+    }
   }
 
   /**
