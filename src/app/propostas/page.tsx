@@ -80,24 +80,27 @@ export default function PropostasPage() {
         
         // Preencher investimento com valores calculados do NOC
         if (calculations) {
+          // Função para arredondar valores para 2 casas decimais
+          const roundValue = (value: number) => Math.round(value * 100) / 100;
+          
           newProposal.investment = {
             plans: [
               {
                 id: 'plan-monthly',
                 name: 'Plano Mensal NOC',
-                value: calculations.finalMonthlyPrice || 0,
+                value: roundValue(calculations.finalMonthlyPrice || 0),
                 recurrence: 'monthly',
                 description: `Serviço de NOC ${nocData?.project?.coverage || '24x7'} com ${nocData?.totalDevices || 0} dispositivos monitorados`
               },
               {
                 id: 'plan-annual',
                 name: 'Plano Anual NOC',
-                value: calculations.finalAnnualPrice || 0,
+                value: roundValue(calculations.finalAnnualPrice || 0),
                 recurrence: 'annual',
                 description: `Contrato anual com desconto - ${nocData?.project?.contractDuration || 12} meses`
               }
             ],
-            setupFee: calculations.monthlyInfrastructureCost || 0,
+            setupFee: roundValue(calculations.monthlyInfrastructureCost || 0),
             paymentConditions: 'Pagamento mensal via boleto ou transferência bancária',
             contractTerms: `Contrato de ${nocData?.project?.contractDuration || 12} meses com SLA de ${nocData?.sla?.availability || 99.9}% de disponibilidade`
           };
