@@ -305,8 +305,8 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
                     color: project.progress.healthIndicators.schedule === 'on-track' ? '#16a34a' : 
                            project.progress.healthIndicators.schedule === 'at-risk' ? '#ca8a04' : '#dc2626'
                   }} />
-                  <div className="text-xs font-medium">Cronograma</div>
-                  <div className="text-xs mt-1">
+                  <div className="text-xs font-medium text-blue-900">Cronograma</div>
+                  <div className="text-xs mt-1 text-blue-800">
                     {project.progress.healthIndicators.schedule === 'on-track' ? 'No Prazo' :
                      project.progress.healthIndicators.schedule === 'at-risk' ? 'Em Risco' : 'Atrasado'}
                   </div>
@@ -320,8 +320,8 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
                     color: project.progress.healthIndicators.budget === 'on-track' ? '#16a34a' : 
                            project.progress.healthIndicators.budget === 'at-risk' ? '#ca8a04' : '#dc2626'
                   }} />
-                  <div className="text-xs font-medium">Orçamento</div>
-                  <div className="text-xs mt-1">
+                  <div className="text-xs font-medium text-blue-900">Orçamento</div>
+                  <div className="text-xs mt-1 text-blue-800">
                     {project.progress.healthIndicators.budget === 'on-track' ? 'No Orçamento' :
                      project.progress.healthIndicators.budget === 'at-risk' ? 'Em Risco' : 'Acima'}
                   </div>
@@ -335,8 +335,8 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
                     color: project.progress.healthIndicators.scope === 'on-track' ? '#16a34a' : 
                            project.progress.healthIndicators.scope === 'at-risk' ? '#ca8a04' : '#dc2626'
                   }} />
-                  <div className="text-xs font-medium">Escopo</div>
-                  <div className="text-xs mt-1">
+                  <div className="text-xs font-medium text-blue-900">Escopo</div>
+                  <div className="text-xs mt-1 text-blue-800">
                     {project.progress.healthIndicators.scope === 'on-track' ? 'Controlado' :
                      project.progress.healthIndicators.scope === 'at-risk' ? 'Em Risco' : 'Expandindo'}
                   </div>
@@ -350,8 +350,8 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
                     color: project.progress.healthIndicators.quality === 'on-track' ? '#16a34a' : 
                            project.progress.healthIndicators.quality === 'at-risk' ? '#ca8a04' : '#dc2626'
                   }} />
-                  <div className="text-xs font-medium">Qualidade</div>
-                  <div className="text-xs mt-1">
+                  <div className="text-xs font-medium text-blue-900">Qualidade</div>
+                  <div className="text-xs mt-1 text-blue-800">
                     {project.progress.healthIndicators.quality === 'on-track' ? 'Boa' :
                      project.progress.healthIndicators.quality === 'at-risk' ? 'Em Risco' : 'Com Problemas'}
                   </div>
