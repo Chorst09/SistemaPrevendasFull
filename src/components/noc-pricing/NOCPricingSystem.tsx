@@ -20,6 +20,11 @@ import { TeamTab } from './tabs/TeamTab';
 import { CostsTab } from './tabs/CostsTab';
 import { TaxesTab } from './tabs/TaxesTab';
 import { VariablesTab } from './tabs/VariablesTab';
+import { ReportTab } from './tabs/ReportTab';
+
+// Import services
+import { NOCProposalService } from '@/lib/services/noc-proposal-service';
+import { useToast } from '@/hooks/use-toast';
 
 // Tabs do sistema NOC
 const NOC_TABS = [
@@ -45,6 +50,7 @@ export function NOCPricingSystem() {
 
   const dataManager = useMemo(() => new NOCDataManager(), []);
   const validationEngine = useMemo(() => new NOCValidationEngine(), []);
+  const { toast } = useToast();
 
   // Previne erros de SSR
   useEffect(() => {
@@ -133,6 +139,44 @@ export function NOCPricingSystem() {
     a.click();
     URL.revokeObjectURL(url);
   }, [data, dataManager]);
+
+  // Salva como proposta
+  const handleSaveProposal = useCallback(async (proposalData: any) => {
+    try {
+      const proposal = await NOCProposalService.saveProposal(proposalData);
+      
+      toast({
+        title: 'Proposta Salva!',
+        description: `A proposta "${proposal.title}" foi salva com sucesso em Propostas.`,
+        variant: 'default'
+      });
+
+      // Navegar para propostas após 2 segundos
+      setTimeout(() => {
+        // Aqui você pode adicionar navegação se necessário
+        console.log('Proposta salva:', proposal.id);
+      }, 2000);
+
+      return proposal;
+    } catch (error) {
+      console.error('Error saving proposal:', error);
+      toast({
+        title: 'Erro ao Salvar',
+        description: 'Não foi possível salvar a proposta. Tente novamente.',
+        variant: 'destructive'
+      });
+      throw error;
+    }
+  }, [toast]);
+
+  // Exporta PDF
+  const handleExportPDF = useCallback(() => {
+    toast({
+      title: 'Exportando PDF',
+      description: 'A funcionalidade de exportação PDF será implementada em breve.',
+      variant: 'default'
+    });
+  }, [toast]);
 
   // Obtém status da aba
   const getTabStatus = (tabId: string) => {
@@ -286,6 +330,14 @@ export function NOCPricingSystem() {
                 <VariablesTab
                   data={data.variables}
                   onChange={(variablesData) => handleDataUpdate('variables', variablesData)}
+                />
+              </TabsContent>
+
+              <TabsContent value="report">
+                <ReportTab
+                  data={data}
+                  onSaveProposal={handleSaveProposal}
+                  onExportPDF={handleExportPDF}
                 />
               </TabsContent>
 

@@ -18,6 +18,8 @@ import {
   Search
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { NOCProposalsList } from '@/components/noc-pricing/NOCProposalsList';
 
 export default function PropostasPage() {
   const router = useRouter();
@@ -120,37 +122,45 @@ export default function PropostasPage() {
         <div>
           <h1 className="text-3xl font-bold">Lista de Propostas</h1>
           <p className="text-muted-foreground mt-2">
-            Gerencie suas propostas comerciais
+            Gerencie suas propostas comerciais e NOC
           </p>
         </div>
         <Button onClick={handleCreateNew} size="lg">
           <Plus className="mr-2 h-5 w-5" />
-          Nova Proposta
+          Nova Proposta Comercial
         </Button>
       </div>
 
-      {/* Filtros */}
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <div className="flex gap-4 flex-wrap">
-            <div className="flex-1 min-w-[300px]">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar por título, número ou cliente..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant={filterStatus === 'ALL' ? 'default' : 'outline'}
-                onClick={() => setFilterStatus('ALL')}
-              >
-                Todas
-              </Button>
+      {/* Abas */}
+      <Tabs defaultValue="comercial" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="comercial">Propostas Comerciais</TabsTrigger>
+          <TabsTrigger value="noc">Propostas NOC</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="comercial" className="space-y-6">
+          {/* Filtros */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex gap-4 flex-wrap">
+                <div className="flex-1 min-w-[300px]">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Buscar por título, número ou cliente..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant={filterStatus === 'ALL' ? 'default' : 'outline'}
+                    onClick={() => setFilterStatus('ALL')}
+                  >
+                    Todas
+                  </Button>
               <Button
                 variant={filterStatus === ProposalStatus.DRAFT ? 'default' : 'outline'}
                 onClick={() => setFilterStatus(ProposalStatus.DRAFT)}
@@ -259,6 +269,12 @@ export default function PropostasPage() {
           ))}
         </div>
       )}
+        </TabsContent>
+
+        <TabsContent value="noc">
+          <NOCProposalsList />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
