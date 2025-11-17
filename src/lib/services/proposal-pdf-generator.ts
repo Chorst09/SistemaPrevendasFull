@@ -300,11 +300,29 @@ export class ProposalPDFGenerator {
     a.download = filename || `proposta-${proposal.proposalNumber}.pdf`;
     a.click();
     URL.revokeObjectURL(url);
+    
+    // Salvar no serviço de propostas geradas
+    this.saveToGeneratedProposals(proposal);
   }
 
   openPDFInNewTab(proposal: CommercialProposal) {
     const blob = this.generate(proposal);
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
+    
+    // Salvar no serviço de propostas geradas
+    this.saveToGeneratedProposals(proposal);
+  }
+
+  private saveToGeneratedProposals(proposal: CommercialProposal) {
+    try {
+      // Importação dinâmica para evitar problemas de dependência circular
+      import('@/lib/services/generated-proposal-service').then(({ GeneratedProposalService }) => {
+        GeneratedProposalService.saveGeneratedProposal(proposal);
+        console.log('Proposta salva em Propostas Geradas');
+      });
+    } catch (error) {
+      console.error('Erro ao salvar proposta gerada:', error);
+    }
   }
 }

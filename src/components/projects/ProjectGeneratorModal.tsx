@@ -9,9 +9,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ProjectGeneratorService } from '@/lib/services/project-generator-service';
 import { UnifiedProposalService, UnifiedProposal } from '@/lib/services/unified-proposal-service';
+import { GeneratedProposalService, GeneratedProposal } from '@/lib/services/generated-proposal-service';
 import { ProjectGenerationConfig } from '@/lib/types/project';
 import { Project } from '@/lib/types/project';
-import { X, Loader2, Sparkles } from 'lucide-react';
+import { X, Loader2, Sparkles, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface ProjectGeneratorModalProps {
@@ -20,7 +21,7 @@ interface ProjectGeneratorModalProps {
 }
 
 export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorModalProps) {
-  const [proposals, setProposals] = useState<UnifiedProposal[]>([]);
+  const [generatedProposals, setGeneratedProposals] = useState<GeneratedProposal[]>([]);
   const [selectedProposalId, setSelectedProposalId] = useState('');
   const [projectName, setProjectName] = useState('');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
@@ -40,24 +41,17 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
   }, []);
 
   const loadProposals = () => {
-    console.log('ProjectGeneratorModal - Carregando propostas...');
-    const allProposals = UnifiedProposalService.getAllProposals();
-    console.log('ProjectGeneratorModal - Total de propostas:', allProposals.length);
-    console.log('ProjectGeneratorModal - Propostas:', allProposals);
+    console.log('ProjectGeneratorModal - Carregando propostas geradas...');
+    const allProposals = GeneratedProposalService.getAllGeneratedProposals();
+    console.log('ProjectGeneratorModal - Total de propostas geradas:', allProposals.length);
+    console.log('ProjectGeneratorModal - Propostas geradas:', allProposals);
     
-    // Filtrar apenas propostas aprovadas ou enviadas
-    const validProposals = allProposals.filter(p => 
-      p.status === 'approved' || p.status === 'sent' || p.status === 'draft'
-    );
-    console.log('ProjectGeneratorModal - Propostas válidas:', validProposals.length);
-    console.log('ProjectGeneratorModal - Propostas válidas:', validProposals);
-    
-    setProposals(validProposals);
+    setGeneratedProposals(allProposals);
   };
 
   const handleProposalChange = (proposalId: string) => {
     setSelectedProposalId(proposalId);
-    const proposal = proposals.find(p => p.id === proposalId);
+    const proposal = generatedProposals.find(p => p.id === proposalId);
     if (proposal && !projectName) {
       setProjectName(`Projeto - ${proposal.title}`);
     }
@@ -76,8 +70,17 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
     setIsGenerating(true);
 
     try {
+      // Buscar a proposta gerada selecionada
+      const generatedProposal = generatedProposals.find(p => p.id === selectedProposalId);
+      if (!generatedProposal) {
+        throw new Error('Proposta não encontrada');
+      }
+
+      // Usar os dados da proposta comercial para gerar o projeto
+      const proposal = generatedProposal.proposalData;
+      
       const generationConfig: ProjectGenerationConfig = {
-        proposalId: selectedProposalId,
+        proposalId: proposal.id,
         projectName: projectName || undefined,
         startDate: startDate || undefined,
         ...config
@@ -104,7 +107,7 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
     }
   };
 
-  const selectedProposal = proposals.find(p => p.id === selectedProposalId);
+  const selectedProposal = generatedProposals.find(p => p.id === selectedProposalId);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -125,51 +128,61 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Debug Info */}
-          <div className="bg-gray-100 p-3 rounded text-xs space-y-2">
+          {/* Info e Refresh */}
+          <div className="bg-blue-50 border border-blue-200 p-3 rounded text-xs space-y-2">
             <div className="flex justify-between items-center">
               <div>
-                <p><strong>Debug:</strong> {proposals.length} propostas carregadas</p>
-                <p><strong>Storage Key:</strong> unified-proposals</p>
+                <p className="font-semibold text-blue-900">
+                  📄 {generatedProposals.length} propostas geradas disponíveis
+                </p>
+                <p className="text-blue-700 mt-1">
+                  Propostas comerciais que foram geradas em PDF
+                </p>
               </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => {
                   console.log('=== REFRESH MANUAL ===');
-                  console.log('LocalStorage unified-proposals:', localStorage.getItem('unified-proposals'));
-                  console.log('LocalStorage commercial-proposals:', localStorage.getItem('commercial-proposals'));
-                  console.log('LocalStorage noc-proposals:', localStorage.getItem('noc-proposals'));
+                  console.log('LocalStorage generated-proposals:', localStorage.getItem('generated-proposals'));
                   loadProposals();
+                  toast({
+                    title: 'Atualizado',
+                    description: 'Lista de propostas recarregada',
+                  });
                 }}
               >
-                🔄 Refresh
+                <RefreshCw className="h-3 w-3 mr-1" />
+                Atualizar
               </Button>
             </div>
           </div>
 
           {/* Seleção de Proposta */}
           <div className="space-y-2">
-            <Label>Proposta Base *</Label>
+            <Label>Proposta Gerada *</Label>
             <p className="text-xs text-muted-foreground mb-2">
-              Selecione uma proposta da lista de Propostas para gerar o projeto
+              Selecione uma proposta da lista de "Propostas Geradas" para criar o projeto
             </p>
             <Select value={selectedProposalId} onValueChange={handleProposalChange}>
               <SelectTrigger>
-                <SelectValue placeholder="Selecione uma proposta da lista" />
+                <SelectValue placeholder="Selecione uma proposta gerada" />
               </SelectTrigger>
               <SelectContent>
-                {proposals.length === 0 ? (
+                {generatedProposals.length === 0 ? (
                   <SelectItem value="none" disabled>
-                    Nenhuma proposta disponível
+                    Nenhuma proposta gerada disponível
                   </SelectItem>
                 ) : (
-                  proposals.map(proposal => (
+                  generatedProposals.map(proposal => (
                     <SelectItem key={proposal.id} value={proposal.id}>
                       <div className="flex flex-col">
                         <span className="font-medium">{proposal.title}</span>
                         <span className="text-xs text-gray-500">
-                          {proposal.client} • {proposal.type === 'noc' ? 'NOC' : 'Comercial'}
+                          {proposal.client} • {proposal.proposalNumber}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          Gerada em {new Date(proposal.generatedAt).toLocaleDateString('pt-BR')}
                         </span>
                       </div>
                     </SelectItem>
@@ -177,41 +190,37 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
                 )}
               </SelectContent>
             </Select>
-            {proposals.length === 0 && (
-              <div className="space-y-2">
-                <p className="text-xs text-red-600">
-                  Nenhuma proposta disponível. Acesse o menu "Propostas" para criar uma proposta primeiro.
+            {generatedProposals.length === 0 && (
+              <div className="space-y-2 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                <p className="text-xs text-yellow-800">
+                  <strong>Nenhuma proposta gerada encontrada.</strong>
                 </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    // Tentar migrar propostas antigas
-                    UnifiedProposalService.migrateOldProposals().then(() => {
-                      loadProposals();
-                    });
-                  }}
-                  className="w-full"
-                >
-                  Tentar Migrar Propostas Antigas
-                </Button>
+                <p className="text-xs text-yellow-700">
+                  Para gerar um projeto, você precisa primeiro:
+                </p>
+                <ol className="text-xs text-yellow-700 list-decimal list-inside space-y-1 ml-2">
+                  <li>Criar uma proposta comercial no menu "Propostas"</li>
+                  <li>Gerar o PDF da proposta (botão "Visualizar" ou "Download")</li>
+                  <li>A proposta aparecerá automaticamente aqui</li>
+                </ol>
               </div>
             )}
           </div>
 
           {/* Preview da Proposta Selecionada */}
           {selectedProposal && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="font-medium text-blue-900 mb-2">Proposta Selecionada</h4>
-              <div className="text-sm text-blue-800 space-y-1">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h4 className="font-medium text-green-900 mb-2">✓ Proposta Selecionada</h4>
+              <div className="text-sm text-green-800 space-y-1">
+                <p><strong>Título:</strong> {selectedProposal.title}</p>
                 <p><strong>Cliente:</strong> {selectedProposal.client}</p>
-                <p><strong>Tipo:</strong> {selectedProposal.type === 'noc' ? 'NOC' : 'Comercial'}</p>
-                {selectedProposal.type === 'noc' && selectedProposal.nocData && (
-                  <>
-                    <p><strong>Dispositivos:</strong> {selectedProposal.nocData.data.totalDevices}</p>
-                    <p><strong>Cobertura:</strong> {selectedProposal.nocData.data.project.coverage}</p>
-                  </>
-                )}
+                <p><strong>Número:</strong> {selectedProposal.proposalNumber}</p>
+                <p><strong>Status:</strong> {
+                  selectedProposal.status === 'generated' ? 'Gerada' :
+                  selectedProposal.status === 'sent' ? 'Enviada' :
+                  selectedProposal.status === 'approved' ? 'Aprovada' : 'Rejeitada'
+                }</p>
+                <p><strong>Gerada em:</strong> {new Date(selectedProposal.generatedAt).toLocaleString('pt-BR')}</p>
               </div>
             </div>
           )}
