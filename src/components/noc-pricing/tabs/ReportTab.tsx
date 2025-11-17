@@ -215,34 +215,34 @@ export function ReportTab({ data, onSaveProposal, onExportPDF }: ReportTabProps)
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <h4 className="font-semibold">Custos Mensais</h4>
+              <h4 className="font-semibold text-blue-900">Custos Mensais</h4>
               <div className="space-y-2">
-                <div className="flex justify-between p-3 bg-gray-50 rounded">
-                  <span>Equipe</span>
-                  <span className="font-medium">
+                <div className="flex justify-between p-3 bg-blue-50 rounded">
+                  <span className="text-blue-700">Equipe</span>
+                  <span className="font-medium text-blue-900">
                     {data.project.currency} {calculations.monthlyTeamCost.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
-                <div className="flex justify-between p-3 bg-gray-50 rounded">
-                  <span>Infraestrutura</span>
-                  <span className="font-medium">
+                <div className="flex justify-between p-3 bg-blue-50 rounded">
+                  <span className="text-blue-700">Infraestrutura</span>
+                  <span className="font-medium text-blue-900">
                     {data.project.currency} {calculations.monthlyInfrastructureCost.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
-                <div className="flex justify-between p-3 bg-gray-50 rounded">
-                  <span>Licenças</span>
-                  <span className="font-medium">
+                <div className="flex justify-between p-3 bg-blue-50 rounded">
+                  <span className="text-blue-700">Licenças</span>
+                  <span className="font-medium text-blue-900">
                     {data.project.currency} {calculations.monthlyLicenseCost.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
-                <div className="flex justify-between p-3 bg-gray-50 rounded">
-                  <span>Operacional</span>
-                  <span className="font-medium">
+                <div className="flex justify-between p-3 bg-blue-50 rounded">
+                  <span className="text-blue-700">Operacional</span>
+                  <span className="font-medium text-blue-900">
                     {data.project.currency} {calculations.monthlyOperationalCost.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
                 <div className="flex justify-between p-3 bg-blue-100 rounded font-bold">
-                  <span>Total Mensal</span>
+                  <span className="text-blue-800">Total Mensal</span>
                   <span className="text-blue-600">
                     {data.project.currency} {calculations.monthlyTotalCost.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
@@ -251,34 +251,34 @@ export function ReportTab({ data, onSaveProposal, onExportPDF }: ReportTabProps)
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-semibold">Precificação</h4>
+              <h4 className="font-semibold text-blue-900">Precificação</h4>
               <div className="space-y-2">
-                <div className="flex justify-between p-3 bg-gray-50 rounded">
-                  <span>Custo Base</span>
-                  <span className="font-medium">
+                <div className="flex justify-between p-3 bg-blue-50 rounded">
+                  <span className="text-blue-700">Custo Base</span>
+                  <span className="font-medium text-blue-900">
                     {data.project.currency} {calculations.monthlyTotalCost.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
-                <div className="flex justify-between p-3 bg-gray-50 rounded">
-                  <span>Com Margens</span>
-                  <span className="font-medium">
+                <div className="flex justify-between p-3 bg-blue-50 rounded">
+                  <span className="text-blue-700">Com Margens</span>
+                  <span className="font-medium text-blue-900">
                     {data.project.currency} {calculations.priceWithMargin.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
-                <div className="flex justify-between p-3 bg-gray-50 rounded">
-                  <span>Com Impostos</span>
-                  <span className="font-medium">
+                <div className="flex justify-between p-3 bg-blue-50 rounded">
+                  <span className="text-blue-700">Com Impostos</span>
+                  <span className="font-medium text-blue-900">
                     {data.project.currency} {calculations.priceWithTaxes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
                 <div className="flex justify-between p-3 bg-green-100 rounded font-bold">
-                  <span>Preço Final Mensal</span>
+                  <span className="text-green-800">Preço Final Mensal</span>
                   <span className="text-green-600">
                     {data.project.currency} {calculations.finalMonthlyPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
                 <div className="flex justify-between p-3 bg-green-50 rounded">
-                  <span>Preço Anual</span>
+                  <span className="text-green-700">Preço Anual</span>
                   <span className="font-medium text-green-700">
                     {data.project.currency} {calculations.finalAnnualPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
