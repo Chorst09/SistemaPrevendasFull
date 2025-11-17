@@ -430,7 +430,7 @@ export function ProposalListManager({
         <div>
           <h2 className="text-2xl font-bold">Propostas Geradas</h2>
           <p className="text-muted-foreground">
-            Gerencie suas propostas de outsourcing de impressão
+            Propostas comerciais que foram geradas em PDF
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -438,12 +438,6 @@ export function ProposalListManager({
             <Button onClick={onNavigateToQuotes} variant="outline" className="flex items-center space-x-2">
               <Briefcase className="h-4 w-4" />
               <span>Ver Orçamentos</span>
-            </Button>
-          )}
-          {onCreateNew && (
-            <Button onClick={onCreateNew} className="flex items-center space-x-2">
-              <FileText className="h-4 w-4" />
-              <span>Nova Proposta</span>
             </Button>
           )}
         </div>
@@ -577,19 +571,27 @@ export function ProposalListManager({
           <CardContent className="p-8 text-center">
             <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">
-              {searchQuery ? 'Nenhuma proposta encontrada' : 'Nenhuma proposta criada'}
+              {searchQuery ? 'Nenhuma proposta encontrada' : 'Nenhuma proposta gerada'}
             </h3>
-            <p className="text-muted-foreground mb-4">
-              {searchQuery 
-                ? 'Tente ajustar os termos de busca.' 
-                : 'Crie sua primeira proposta de outsourcing de impressão.'
-              }
-            </p>
-            {!searchQuery && onCreateNew && (
-              <Button onClick={onCreateNew}>
-                <FileText className="h-4 w-4 mr-2" />
-                Criar Primeira Proposta
-              </Button>
+            {searchQuery ? (
+              <p className="text-muted-foreground mb-4">
+                Tente ajustar os termos de busca.
+              </p>
+            ) : (
+              <div className="max-w-md mx-auto space-y-3">
+                <p className="text-muted-foreground">
+                  As propostas aparecem aqui automaticamente quando você gera o PDF de uma proposta comercial.
+                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-left">
+                  <p className="font-semibold text-blue-900 mb-2">Como gerar uma proposta:</p>
+                  <ol className="list-decimal list-inside space-y-1 text-blue-800">
+                    <li>Acesse o menu <strong>"Propostas"</strong></li>
+                    <li>Crie ou edite uma proposta comercial</li>
+                    <li>Clique em <strong>"Visualizar"</strong> ou <strong>"Download"</strong> para gerar o PDF</li>
+                    <li>A proposta aparecerá automaticamente aqui</li>
+                  </ol>
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>
