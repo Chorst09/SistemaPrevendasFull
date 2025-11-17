@@ -18,27 +18,60 @@ import {
   Search
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { NOCProposalsList } from '@/components/noc-pricing/NOCProposalsList';
+import { UnifiedProposalService, UnifiedProposal } from '@/lib/services/unified-proposal-service';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function PropostasPage() {
   const router = useRouter();
-  const [proposals, setProposals] = useState<CommercialProposal[]>([]);
+  const [proposals, setProposals] = useState<UnifiedProposal[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<ProposalStatus | 'ALL'>('ALL');
+  const [filterType, setFilterType] = useState<'ALL' | 'commercial' | 'noc'>('ALL');
+  const [showNOCSelector, setShowNOCSelector] = useState(false);
+  const [selectedNOCId, setSelectedNOCId] = useState<string>('');
 
   useEffect(() => {
     loadProposals();
+    // Migrar propostas antigas na primeira vez
+    UnifiedProposalService.migrateOldProposals();
   }, []);
 
   const loadProposals = () => {
-    const allProposals = CommercialProposalService.getAllProposals();
+    const allProposals = UnifiedProposalService.getAllProposals();
     setProposals(allProposals);
   };
 
   const handleCreateNew = () => {
+    // Verificar se existem propostas NOC
+    const nocProposals = UnifiedProposalService.getNOCProposalsForSelection();
+    
+    if (nocProposals.length > 0) {
+      // Mostrar seletor de proposta NOC
+      setShowNOCSelector(true);
+    } else {
+      // Criar proposta comercial sem vincular NOC
+      createCommercialProposal();
+    }
+  };
+
+  const createCommercialProposal = (nocProposalId?: string) => {
     const newProposal = CommercialProposalService.createEmptyProposal();
+    
+    // Se tiver proposta NOC vinculada, preencher dados
+    if (nocProposalId) {
+      const nocProposal = UnifiedProposalService.getProposalById(nocProposalId);
+      if (nocProposal && nocProposal.nocData) {
+        // Preencher dados da proposta comercial com dados do NOC
+        newProposal.cover.clientName = nocProposal.client;
+        newProposal.title = `Proposta Comercial - ${nocProposal.title}`;
+      }
+    }
+    
     CommercialProposalService.saveProposal(newProposal);
+    UnifiedProposalService.saveCommercialProposal(newProposal, nocProposalId);
+    
+    setShowNOCSelector(false);
+    setSelectedNOCId('');
     router.push(`/propostas/${newProposal.id}`);
   };
 
@@ -108,12 +141,12 @@ export default function PropostasPage() {
   const filteredProposals = proposals.filter(proposal => {
     const matchesSearch = 
       proposal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      proposal.proposalNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      proposal.client.name.toLowerCase().includes(searchTerm.toLowerCase());
+      proposal.client.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = filterStatus === 'ALL' || proposal.status === filterStatus;
+    const matchesType = filterType === 'ALL' || proposal.type === filterType;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesType;
   });
 
   return (

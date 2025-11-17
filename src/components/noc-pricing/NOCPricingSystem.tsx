@@ -23,7 +23,7 @@ import { VariablesTab } from './tabs/VariablesTab';
 import { ReportTab } from './tabs/ReportTab';
 
 // Import services
-import { NOCProposalService } from '@/lib/services/noc-proposal-service';
+import { UnifiedProposalService } from '@/lib/services/unified-proposal-service';
 import { useToast } from '@/hooks/use-toast';
 
 // Tabs do sistema NOC
@@ -143,18 +143,17 @@ export function NOCPricingSystem() {
   // Salva como proposta
   const handleSaveProposal = useCallback(async (proposalData: any) => {
     try {
-      const proposal = await NOCProposalService.saveProposal(proposalData);
+      const proposal = await UnifiedProposalService.saveNOCProposal(proposalData);
       
       toast({
-        title: 'Proposta Salva!',
+        title: 'Proposta NOC Salva!',
         description: `A proposta "${proposal.title}" foi salva com sucesso em Propostas.`,
         variant: 'default'
       });
 
       // Navegar para propostas após 2 segundos
       setTimeout(() => {
-        // Aqui você pode adicionar navegação se necessário
-        console.log('Proposta salva:', proposal.id);
+        console.log('Proposta NOC salva:', proposal.id);
       }, 2000);
 
       return proposal;
