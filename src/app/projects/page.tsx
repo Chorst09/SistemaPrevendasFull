@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Plus, FolderKanban } from 'lucide-react';
 import { ProjectGeneratorService } from '@/lib/services/project-generator-service';
@@ -12,6 +13,7 @@ import { ProjectGeneratorModal } from '@/components/projects/ProjectGeneratorMod
 type ViewMode = 'list' | 'detail';
 
 export default function ProjectsPage() {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -93,6 +95,17 @@ export default function ProjectsPage() {
     <div className="min-h-screen bg-background">
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-6">
+          <div className="mb-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push('/')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Voltar</span>
+            </Button>
+          </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <FolderKanban className="h-8 w-8 text-primary" />
