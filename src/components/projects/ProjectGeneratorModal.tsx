@@ -126,9 +126,26 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
 
         <CardContent className="space-y-6">
           {/* Debug Info */}
-          <div className="bg-gray-100 p-3 rounded text-xs">
-            <p><strong>Debug:</strong> {proposals.length} propostas carregadas</p>
-            <p><strong>Storage Key:</strong> unified-proposals</p>
+          <div className="bg-gray-100 p-3 rounded text-xs space-y-2">
+            <div className="flex justify-between items-center">
+              <div>
+                <p><strong>Debug:</strong> {proposals.length} propostas carregadas</p>
+                <p><strong>Storage Key:</strong> unified-proposals</p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  console.log('=== REFRESH MANUAL ===');
+                  console.log('LocalStorage unified-proposals:', localStorage.getItem('unified-proposals'));
+                  console.log('LocalStorage commercial-proposals:', localStorage.getItem('commercial-proposals'));
+                  console.log('LocalStorage noc-proposals:', localStorage.getItem('noc-proposals'));
+                  loadProposals();
+                }}
+              >
+                🔄 Refresh
+              </Button>
+            </div>
           </div>
 
           {/* Seleção de Proposta */}

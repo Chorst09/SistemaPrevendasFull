@@ -53,6 +53,11 @@ export default function EditProposalPage() {
     setIsSaving(true);
     try {
       await CommercialProposalService.saveProposal(proposal);
+      
+      // Também salvar no serviço unificado
+      const { UnifiedProposalService } = await import('@/lib/services/unified-proposal-service');
+      await UnifiedProposalService.saveCommercialProposal(proposal);
+      
       alert('Proposta salva com sucesso!');
     } catch (error) {
       console.error('Error saving proposal:', error);
