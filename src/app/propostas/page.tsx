@@ -18,6 +18,7 @@ import {
   Search
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { UnifiedProposalService, UnifiedProposal } from '@/lib/services/unified-proposal-service';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -149,8 +150,64 @@ export default function PropostasPage() {
     return matchesSearch && matchesStatus && matchesType;
   });
 
+  const nocProposalsForSelection = UnifiedProposalService.getNOCProposalsForSelection();
+
   return (
     <div className="container mx-auto py-8 px-4">
+      {/* Modal de Seleção de Proposta NOC */}
+      {showNOCSelector && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle>Vincular Proposta NOC?</CardTitle>
+              <CardDescription>
+                Você tem propostas NOC salvas. Deseja vincular uma delas a esta proposta comercial?
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Selecione uma Proposta NOC (opcional)</Label>
+                <Select value={selectedNOCId} onValueChange={setSelectedNOCId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Nenhuma (criar sem vincular)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Nenhuma (criar sem vincular)</SelectItem>
+                    {nocProposalsForSelection.map(noc => (
+                      <SelectItem key={noc.id} value={noc.id}>
+                        {noc.title} - {noc.client}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Ao vincular, os dados do cliente serão preenchidos automaticamente
+                </p>
+              </div>
+
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowNOCSelector(false);
+                    setSelectedNOCId('');
+                  }}
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={() => createCommercialProposal(selectedNOCId || undefined)}
+                  className="flex-1"
+                >
+                  Criar Proposta
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold">Lista de Propostas</h1>
@@ -164,36 +221,48 @@ export default function PropostasPage() {
         </Button>
       </div>
 
-      {/* Abas */}
-      <Tabs defaultValue="comercial" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="comercial">Propostas Comerciais</TabsTrigger>
-          <TabsTrigger value="noc">Propostas NOC</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="comercial" className="space-y-6">
-          {/* Filtros */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex gap-4 flex-wrap">
-                <div className="flex-1 min-w-[300px]">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Buscar por título, número ou cliente..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant={filterStatus === 'ALL' ? 'default' : 'outline'}
-                    onClick={() => setFilterStatus('ALL')}
-                  >
-                    Todas
-                  </Button>
+      {/* Filtros */}
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <div className="flex gap-4 flex-wrap">
+            <div className="flex-1 min-w-[300px]">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por título ou cliente..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant={filterType === 'ALL' ? 'default' : 'outline'}
+                onClick={() => setFilterType('ALL')}
+              >
+                Todas
+              </Button>
+              <Button
+                variant={filterType === 'commercial' ? 'default' : 'outline'}
+                onClick={() => setFilterType('commercial')}
+              >
+                Comerciais
+              </Button>
+              <Button
+                variant={filterType === 'noc' ? 'default' : 'outline'}
+                onClick={() => setFilterType('noc')}
+              >
+                NOC
+              </Button>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant={filterStatus === 'ALL' ? 'default' : 'outline'}
+                onClick={() => setFilterStatus('ALL')}
+              >
+                Todos Status
+              </Button>
               <Button
                 variant={filterStatus === ProposalStatus.DRAFT ? 'default' : 'outline'}
                 onClick={() => setFilterStatus(ProposalStatus.DRAFT)}
@@ -302,12 +371,6 @@ export default function PropostasPage() {
           ))}
         </div>
       )}
-        </TabsContent>
-
-        <TabsContent value="noc">
-          <NOCProposalsList />
-        </TabsContent>
-      </Tabs>
     </div>
   );
 }
