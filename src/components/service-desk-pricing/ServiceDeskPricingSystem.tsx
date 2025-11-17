@@ -1040,7 +1040,7 @@ export function ServiceDeskPricingSystem({
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold">Tours Guiados</h2>
+                <h2 className="text-xl font-semibold text-blue-700">Tours Guiados</h2>
                 <Button variant="ghost" onClick={() => setShowTourLauncher(false)}>
                   <X size={20} />
                 </Button>

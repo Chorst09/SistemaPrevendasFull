@@ -422,18 +422,18 @@ export function TourLauncher({ onStartTour, className }: TourLauncherProps) {
   return (
     <div className={className}>
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Tours Disponíveis</h3>
+        <h3 className="text-lg font-medium text-blue-700">Tours Disponíveis</h3>
         
         <div className="grid gap-4 md:grid-cols-3">
           <div className="border rounded-lg p-4 space-y-3">
             <div className="flex items-center space-x-2">
               <Calculator className="text-blue-500" size={20} />
-              <h4 className="font-medium">Tour Básico</h4>
+              <h4 className="font-medium text-blue-700">Tour Básico</h4>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-blue-700">
               Aprenda os conceitos fundamentais e navegue pelas principais funcionalidades.
             </p>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-blue-600">
               ⏱️ ~4 minutos • 8 passos
             </div>
             <button
@@ -447,12 +447,12 @@ export function TourLauncher({ onStartTour, className }: TourLauncherProps) {
           <div className="border rounded-lg p-4 space-y-3">
             <div className="flex items-center space-x-2">
               <BarChart3 className="text-purple-500" size={20} />
-              <h4 className="font-medium">Funcionalidades Avançadas</h4>
+              <h4 className="font-medium text-blue-700">Funcionalidades Avançadas</h4>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-blue-700">
               Explore templates, analytics e recursos de exportação.
             </p>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-blue-600">
               ⏱️ ~2 minutos • 3 passos
             </div>
             <button
@@ -466,12 +466,12 @@ export function TourLauncher({ onStartTour, className }: TourLauncherProps) {
           <div className="border rounded-lg p-4 space-y-3">
             <div className="flex items-center space-x-2">
               <CheckCircle className="text-green-500" size={20} />
-              <h4 className="font-medium">Dicas Rápidas</h4>
+              <h4 className="font-medium text-blue-700">Dicas Rápidas</h4>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-blue-700">
               Dicas e truques para usar o sistema de forma mais eficiente.
             </p>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-blue-600">
               ⏱️ ~1 minuto • 3 passos
             </div>
             <button
