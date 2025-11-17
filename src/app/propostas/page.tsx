@@ -76,24 +76,33 @@ export default function PropostasPage() {
     router.push(`/propostas/${newProposal.id}`);
   };
 
-  const handleEdit = (id: string) => {
-    router.push(`/propostas/${id}`);
-  };
-
-  const handleView = (id: string) => {
-    const proposal = CommercialProposalService.getProposalById(id);
-    if (proposal) {
-      const { ProposalPDFGenerator } = require('@/lib/services/proposal-pdf-generator');
-      const generator = new ProposalPDFGenerator();
-      generator.openPDFInNewTab(proposal);
+  const handleEdit = (proposal: UnifiedProposal) => {
+    if (proposal.type === 'commercial') {
+      router.push(`/propostas/${proposal.id}`);
+    } else {
+      // Para propostas NOC, poderia abrir o sistema NOC
+      alert('Edição de propostas NOC será implementada em breve');
     }
   };
 
-  const handleDuplicate = async (id: string) => {
+  const handleView = (proposal: UnifiedProposal) => {
+    if (proposal.type === 'commercial' && proposal.commercialData) {
+      const { ProposalPDFGenerator } = require('@/lib/services/proposal-pdf-generator');
+      const generator = new ProposalPDFGenerator();
+      generator.openPDFInNewTab(proposal.commercialData);
+    } else if (proposal.type === 'noc') {
+      alert('Visualização de propostas NOC será implementada em breve');
+    }
+  };
+
+  const handleDuplicate = async (proposal: UnifiedProposal) => {
     try {
-      const duplicate = await CommercialProposalService.duplicateProposal(id);
-      loadProposals();
-      router.push(`/propostas/${duplicate.id}`);
+      if (proposal.type === 'commercial' && proposal.commercialData) {
+        const duplicate = await CommercialProposalService.duplicateProposal(proposal.id);
+        await UnifiedProposalService.saveCommercialProposal(duplicate, proposal.linkedNOCProposalId);
+        loadProposals();
+        router.push(`/propostas/${duplicate.id}`);
+      }
     } catch (error) {
       console.error('Error duplicating proposal:', error);
     }
@@ -101,18 +110,23 @@ export default function PropostasPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm('Tem certeza que deseja excluir esta proposta?')) {
-      await CommercialProposalService.deleteProposal(id);
+      await UnifiedProposalService.deleteProposal(id);
+      // Também deletar do serviço antigo se for comercial
+      const proposal = UnifiedProposalService.getProposalById(id);
+      if (proposal?.type === 'commercial') {
+        await CommercialProposalService.deleteProposal(id);
+      }
       loadProposals();
     }
   };
 
-  const handleExport = (proposal: CommercialProposal) => {
-    const json = CommercialProposalService.exportToJSON(proposal);
+  const handleExport = (proposal: UnifiedProposal) => {
+    const json = JSON.stringify(proposal, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `proposta-${proposal.proposalNumber}.json`;
+    a.download = `proposta-${proposal.type}-${proposal.id}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -125,8 +139,12 @@ export default function PropostasPage() {
     }
   };
 
-  const getStatusBadge = (status: ProposalStatus) => {
-    const variants: Record<ProposalStatus, { variant: any; label: string }> = {
+  const getStatusBadge = (status: string) => {
+    const statusMap: Record<string, { variant: any; label: string }> = {
+      'draft': { variant: 'secondary', label: 'Rascunho' },
+      'sent': { variant: 'default', label: 'Enviada' },
+      'approved': { variant: 'default', label: 'Aprovada' },
+      'rejected': { variant: 'destructive', label: 'Rejeitada' },
       [ProposalStatus.DRAFT]: { variant: 'secondary', label: 'Rascunho' },
       [ProposalStatus.PENDING_REVIEW]: { variant: 'default', label: 'Em Revisão' },
       [ProposalStatus.SENT]: { variant: 'default', label: 'Enviada' },
@@ -135,7 +153,7 @@ export default function PropostasPage() {
       [ProposalStatus.EXPIRED]: { variant: 'secondary', label: 'Expirada' }
     };
 
-    const config = variants[status];
+    const config = statusMap[status] || { variant: 'outline', label: status };
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
@@ -144,7 +162,7 @@ export default function PropostasPage() {
       proposal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       proposal.client.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesStatus = filterStatus === 'ALL' || proposal.status === filterStatus;
+    const matchesStatus = filterStatus === 'ALL' || proposal.status.toLowerCase() === filterStatus.toLowerCase();
     const matchesType = filterType === 'ALL' || proposal.type === filterType;
 
     return matchesSearch && matchesStatus && matchesType;
@@ -311,16 +329,28 @@ export default function PropostasPage() {
             <Card key={proposal.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
-                  <CardTitle className="text-lg">{proposal.title}</CardTitle>
+                  <div className="flex items-center space-x-2">
+                    <CardTitle className="text-lg">{proposal.title}</CardTitle>
+                    <Badge variant={proposal.type === 'noc' ? 'secondary' : 'default'}>
+                      {proposal.type === 'noc' ? 'NOC' : 'Comercial'}
+                    </Badge>
+                  </div>
                   {getStatusBadge(proposal.status)}
                 </div>
                 <CardDescription>
                   <div className="space-y-1">
-                    <div className="font-mono text-sm">{proposal.proposalNumber}</div>
-                    <div className="text-sm">{proposal.client.name || 'Cliente não informado'}</div>
+                    {proposal.type === 'commercial' && proposal.commercialData && (
+                      <div className="font-mono text-sm">{proposal.commercialData.proposalNumber}</div>
+                    )}
+                    <div className="text-sm">{proposal.client || 'Cliente não informado'}</div>
                     <div className="text-xs text-muted-foreground">
                       Criada em {new Date(proposal.createdAt).toLocaleDateString('pt-BR')}
                     </div>
+                    {proposal.linkedNOCProposalId && (
+                      <div className="text-xs text-blue-600">
+                        Vinculada a proposta NOC
+                      </div>
+                    )}
                   </div>
                 </CardDescription>
               </CardHeader>
@@ -329,7 +359,7 @@ export default function PropostasPage() {
                   <Button
                     size="sm"
                     variant="default"
-                    onClick={() => handleView(proposal.id)}
+                    onClick={() => handleView(proposal)}
                   >
                     <Eye className="h-4 w-4 mr-1" />
                     Visualizar
@@ -337,19 +367,21 @@ export default function PropostasPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => handleEdit(proposal.id)}
+                    onClick={() => handleEdit(proposal)}
                   >
                     <Edit className="h-4 w-4 mr-1" />
                     Editar
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleDuplicate(proposal.id)}
-                  >
-                    <Copy className="h-4 w-4 mr-1" />
-                    Duplicar
-                  </Button>
+                  {proposal.type === 'commercial' && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDuplicate(proposal)}
+                    >
+                      <Copy className="h-4 w-4 mr-1" />
+                      Duplicar
+                    </Button>
+                  )}
                   <Button
                     size="sm"
                     variant="outline"
