@@ -707,16 +707,16 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
                 <h4 className="font-semibold mb-3">Breakdown de Custos</h4>
                 <div className="space-y-2">
                   {project.budget.breakdown.map(item => (
-                    <div key={item.id} className="flex justify-between p-3 bg-gray-50 rounded">
+                    <div key={item.id} className="flex justify-between p-3 bg-gray-50 rounded border border-gray-200">
                       <div>
-                        <p className="font-medium">{item.category}</p>
-                        <p className="text-xs text-gray-500">{item.description}</p>
+                        <p className="font-medium text-blue-900">{item.category}</p>
+                        <p className="text-xs text-blue-700">{item.description}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium">
+                        <p className="font-medium text-blue-900">
                           {project.budget.currency} {item.plannedCost.toLocaleString()}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-blue-700">
                           Gasto: {item.actualCost.toLocaleString()}
                         </p>
                       </div>
