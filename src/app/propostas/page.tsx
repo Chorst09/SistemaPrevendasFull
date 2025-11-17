@@ -15,7 +15,8 @@ import {
   Copy, 
   Download,
   Eye,
-  Search
+  Search,
+  ArrowLeft
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -72,10 +73,22 @@ export default function PropostasPage() {
         // Preencher cliente
         newProposal.client = {
           name: nocProposal.client,
-          contact: '',
+          document: '',
           email: '',
           phone: '',
-          address: nocData?.project?.location || ''
+          address: {
+            street: nocData?.project?.location || '',
+            number: '',
+            complement: '',
+            neighborhood: '',
+            city: '',
+            state: '',
+            zipCode: '',
+            country: 'Brasil'
+          },
+          contactPerson: '',
+          contactEmail: '',
+          contactPhone: ''
         };
         
         // Preencher investimento com valores calculados do NOC
@@ -273,17 +286,30 @@ export default function PropostasPage() {
         </div>
       )}
 
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">Lista de Propostas</h1>
-          <p className="text-muted-foreground mt-2">
-            Gerencie suas propostas comerciais e NOC
-          </p>
+      <div className="mb-8">
+        <div className="flex items-center mb-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/')}
+            className="mr-4"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
         </div>
-        <Button onClick={handleCreateNew} size="lg">
-          <Plus className="mr-2 h-5 w-5" />
-          Nova Proposta Comercial
-        </Button>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Lista de Propostas</h1>
+            <p className="text-muted-foreground mt-2">
+              Gerencie suas propostas comerciais e NOC
+            </p>
+          </div>
+          <Button onClick={handleCreateNew} size="lg">
+            <Plus className="mr-2 h-5 w-5" />
+            Nova Proposta Comercial
+          </Button>
+        </div>
       </div>
 
       {/* Filtros */}
