@@ -177,9 +177,9 @@ export default function App() { // Ou Home
             case 'projects': return (
                 <div className="p-6">
                     <div className="text-center">
-                        <h2 className="text-2xl font-bold mb-4">Projetos Service Desk</h2>
+                        <h2 className="text-2xl font-bold mb-4">Gestão de Projetos</h2>
                         <p className="text-muted-foreground mb-6">
-                            Gerencie seus projetos de precificação de Service Desk
+                            Gerencie e acompanhe todos os seus projetos de TI
                         </p>
                         <div className="flex items-center justify-center space-x-4">
                             <a

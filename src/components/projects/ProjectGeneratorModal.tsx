@@ -121,9 +121,12 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
           {/* Seleção de Proposta */}
           <div className="space-y-2">
             <Label>Proposta Base *</Label>
+            <p className="text-xs text-muted-foreground mb-2">
+              Selecione uma proposta da lista de Propostas para gerar o projeto
+            </p>
             <Select value={selectedProposalId} onValueChange={handleProposalChange}>
               <SelectTrigger>
-                <SelectValue placeholder="Selecione uma proposta" />
+                <SelectValue placeholder="Selecione uma proposta da lista" />
               </SelectTrigger>
               <SelectContent>
                 {proposals.length === 0 ? (
@@ -146,7 +149,7 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
             </Select>
             {proposals.length === 0 && (
               <p className="text-xs text-red-600">
-                Nenhuma proposta disponível. Crie uma proposta primeiro.
+                Nenhuma proposta disponível. Acesse o menu "Propostas" para criar uma proposta primeiro.
               </p>
             )}
           </div>
