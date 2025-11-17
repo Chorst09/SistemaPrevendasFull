@@ -62,9 +62,53 @@ export default function PropostasPage() {
     if (nocProposalId) {
       const nocProposal = UnifiedProposalService.getProposalById(nocProposalId);
       if (nocProposal && nocProposal.nocData) {
-        // Preencher dados da proposta comercial com dados do NOC
+        const nocData = nocProposal.nocData.data;
+        const calculations = nocProposal.nocData.calculations;
+        
+        // Preencher dados básicos
         newProposal.cover.clientName = nocProposal.client;
         newProposal.title = `Proposta Comercial - ${nocProposal.title}`;
+        
+        // Preencher cliente
+        newProposal.client = {
+          name: nocProposal.client,
+          contact: '',
+          email: '',
+          phone: '',
+          address: nocData?.project?.location || ''
+        };
+        
+        // Preencher investimento com valores calculados do NOC
+        if (calculations) {
+          newProposal.investment = {
+            plans: [
+              {
+                id: 'plan-monthly',
+                name: 'Plano Mensal NOC',
+                value: calculations.finalMonthlyPrice || 0,
+                recurrence: 'monthly',
+                description: `Serviço de NOC ${nocData?.project?.coverage || '24x7'} com ${nocData?.totalDevices || 0} dispositivos monitorados`
+              },
+              {
+                id: 'plan-annual',
+                name: 'Plano Anual NOC',
+                value: calculations.finalAnnualPrice || 0,
+                recurrence: 'annual',
+                description: `Contrato anual com desconto - ${nocData?.project?.contractDuration || 12} meses`
+              }
+            ],
+            setupFee: calculations.monthlyInfrastructureCost || 0,
+            paymentConditions: 'Pagamento mensal via boleto ou transferência bancária',
+            contractTerms: `Contrato de ${nocData?.project?.contractDuration || 12} meses com SLA de ${nocData?.sla?.availability || 99.9}% de disponibilidade`
+          };
+          
+          // Preencher sumário executivo com informações do NOC
+          newProposal.executiveSummary = {
+            problem: `Necessidade de monitoramento ${nocData?.project?.coverage || '24x7'} de ${nocData?.totalDevices || 0} dispositivos com SLA de ${nocData?.sla?.availability || 99.9}% de disponibilidade.`,
+            solution: `Implementação de NOC (Network Operations Center) com nível de serviço ${nocData?.project?.serviceLevel || 'standard'}, utilizando ${nocData?.monitoring?.tools?.join(', ') || 'ferramentas de monitoramento'} e equipe especializada de ${nocData?.teamSize || 0} profissionais.`,
+            mainBenefit: `Garantia de ${nocData?.sla?.availability || 99.9}% de disponibilidade, tempo de resposta de ${nocData?.sla?.responseTime || 15} minutos e resolução em até ${nocData?.sla?.resolutionTime || 4} horas.`
+          };
+        }
       }
     }
     

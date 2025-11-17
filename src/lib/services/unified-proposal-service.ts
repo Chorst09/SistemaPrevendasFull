@@ -34,8 +34,11 @@ export class UnifiedProposalService {
   static async saveNOCProposal(nocProposal: Omit<NOCProposal, 'id' | 'updatedAt' | 'status'>): Promise<UnifiedProposal> {
     const proposals = this.getAllProposals();
     
+    // Gerar ID único com timestamp + random
+    const uniqueId = `noc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
     const unifiedProposal: UnifiedProposal = {
-      id: `noc-${Date.now()}`,
+      id: uniqueId,
       type: 'noc',
       title: nocProposal.title,
       client: nocProposal.client,
@@ -44,7 +47,7 @@ export class UnifiedProposalService {
       status: 'draft',
       nocData: {
         ...nocProposal,
-        id: `noc-${Date.now()}`,
+        id: uniqueId,
         updatedAt: new Date().toISOString(),
         status: 'draft'
       } as NOCProposal
