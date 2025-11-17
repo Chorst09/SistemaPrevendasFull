@@ -263,6 +263,10 @@ export interface TimelineMilestone {
   id: string;
   period: string; // Ex: "Semana 1-2"
   description: string;
+  startDate?: string; // Data de início
+  endDate?: string; // Data de término
+  durationDays?: number; // Duração em dias
+  dependencies?: string[]; // IDs de marcos dependentes
 }
 
 export interface Investment {
