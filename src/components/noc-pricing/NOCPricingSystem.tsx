@@ -11,6 +11,16 @@ import { NOCDataManager } from '@/lib/services/noc-data-manager';
 import { NOCValidationEngine } from '@/lib/services/noc-validation-engine';
 import { NOCCalculationEngine } from '@/lib/services/noc-calculation-engine';
 
+// Import tabs
+import { ProjectTab } from './tabs/ProjectTab';
+import { DevicesTab } from './tabs/DevicesTab';
+import { MonitoringTab } from './tabs/MonitoringTab';
+import { SLATab } from './tabs/SLATab';
+import { TeamTab } from './tabs/TeamTab';
+import { CostsTab } from './tabs/CostsTab';
+import { TaxesTab } from './tabs/TaxesTab';
+import { VariablesTab } from './tabs/VariablesTab';
+
 // Tabs do sistema NOC
 const NOC_TABS = [
   { id: 'project', label: 'Projeto', description: 'Dados básicos do projeto NOC' },
@@ -214,62 +224,69 @@ export function NOCPricingSystem() {
               })}
             </TabsList>
 
-            {/* Conteúdo das abas será implementado nos próximos componentes */}
+            {/* Conteúdo das abas */}
             <div className="mt-6">
               <TabsContent value="project">
-                <div className="p-6 border rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4">Dados do Projeto</h3>
-                  <p className="text-gray-500">Componente em desenvolvimento...</p>
-                </div>
+                <ProjectTab
+                  data={data.project}
+                  onChange={(projectData) => handleDataUpdate('project', projectData)}
+                />
               </TabsContent>
 
               <TabsContent value="devices">
-                <div className="p-6 border rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4">Dispositivos Monitorados</h3>
-                  <p className="text-gray-500">Componente em desenvolvimento...</p>
-                </div>
+                <DevicesTab
+                  devices={data.devices}
+                  totalDevices={data.totalDevices}
+                  totalMetrics={data.totalMetrics}
+                  estimatedAlertsPerMonth={data.estimatedAlertsPerMonth}
+                  onChange={(devicesData) => handleDataUpdate('devices', devicesData)}
+                />
               </TabsContent>
 
               <TabsContent value="monitoring">
-                <div className="p-6 border rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4">Configuração de Monitoramento</h3>
-                  <p className="text-gray-500">Componente em desenvolvimento...</p>
-                </div>
+                <MonitoringTab
+                  data={data.monitoring}
+                  onChange={(monitoringData) => handleDataUpdate('monitoring', monitoringData)}
+                />
               </TabsContent>
 
               <TabsContent value="sla">
-                <div className="p-6 border rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4">SLA - Acordo de Nível de Serviço</h3>
-                  <p className="text-gray-500">Componente em desenvolvimento...</p>
-                </div>
+                <SLATab
+                  data={data.sla}
+                  onChange={(slaData) => handleDataUpdate('sla', slaData)}
+                />
               </TabsContent>
 
               <TabsContent value="team">
-                <div className="p-6 border rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4">Equipe NOC</h3>
-                  <p className="text-gray-500">Componente em desenvolvimento...</p>
-                </div>
+                <TeamTab
+                  team={data.team}
+                  teamSize={data.teamSize}
+                  coverage={data.project.coverage}
+                  serviceLevel={data.project.serviceLevel}
+                  deviceCount={data.totalDevices}
+                  onChange={(teamData) => handleDataUpdate('team', teamData)}
+                />
               </TabsContent>
 
               <TabsContent value="costs">
-                <div className="p-6 border rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4">Custos Operacionais</h3>
-                  <p className="text-gray-500">Componente em desenvolvimento...</p>
-                </div>
+                <CostsTab
+                  data={data.operationalCosts}
+                  onChange={(costsData) => handleDataUpdate('costs', costsData)}
+                />
               </TabsContent>
 
               <TabsContent value="taxes">
-                <div className="p-6 border rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4">Impostos e Encargos</h3>
-                  <p className="text-gray-500">Componente em desenvolvimento...</p>
-                </div>
+                <TaxesTab
+                  data={data.taxes}
+                  onChange={(taxesData) => handleDataUpdate('taxes', taxesData)}
+                />
               </TabsContent>
 
               <TabsContent value="variables">
-                <div className="p-6 border rounded-lg">
-                  <h3 className="text-lg font-semibold mb-4">Variáveis Econômicas</h3>
-                  <p className="text-gray-500">Componente em desenvolvimento...</p>
-                </div>
+                <VariablesTab
+                  data={data.variables}
+                  onChange={(variablesData) => handleDataUpdate('variables', variablesData)}
+                />
               </TabsContent>
 
               <TabsContent value="calculations">
