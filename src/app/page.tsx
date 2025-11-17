@@ -44,6 +44,7 @@ import { RoChartsView } from '@/components/dashboard/RoChartsView';
 import { PrinterOutsourcingModule } from '@/components/printer-outsourcing/PrinterOutsourcingModule';
 import { ServiceDeskModule } from '@/components/service-desk/ServiceDeskModule';
 import { ServiceDeskPricingSystem } from '@/components/service-desk-pricing/ServiceDeskPricingSystem';
+import { NOCPricingSystem } from '@/components/noc-pricing/NOCPricingSystem';
 import { ProposalListManager } from '@/components/pdf-generation/managers/ProposalListManager';
 
 
@@ -122,7 +123,7 @@ export default function App() { // Ou Home
             icon: <Calculator size={20} />,
             subItems: [
                 { id: 'calculator-ti-vls', label: 'Venda/Locação/Serviços', icon: <Briefcase size={16} />, openInNewTab: false } as NavSubItem & { openInNewTab?: boolean; url?: string },
-                { id: 'calculator-servicedesk', label: 'Service Desk', icon: <Headset size={16} />, openInNewTab: false } as NavSubItem & { openInNewTab?: boolean; url?: string },
+                { id: 'calculator-noc', label: 'NOC', icon: <Headset size={16} />, openInNewTab: false } as NavSubItem & { openInNewTab?: boolean; url?: string },
                 { id: 'calculator-servicedesk-advanced', label: 'Service Desk Avançado', icon: <Server size={16} />, openInNewTab: false } as NavSubItem & { openInNewTab?: boolean; url?: string },
                 { id: 'calculator-printer', label: 'Outsourcing de Impressão', icon: <Printer size={16} />, openInNewTab: false } as NavSubItem & { openInNewTab?: boolean; url?: string },
                 { id: 'simuladores', label: 'Simuladores', icon: <BarChart size={16} />, openInNewTab: true, url: 'https://simuladores-supa.vercel.app/' } as NavSubItem & { openInNewTab?: boolean; url?: string },
@@ -270,11 +271,7 @@ export default function App() { // Ou Home
                 onNavigateToQuotes={() => setActiveTab('quotes')}
             />;
             case 'calculator-ti-vls': return <ITPricingModule onNavigateToProposals={() => setActiveTab('proposals')} />;
-            case 'calculator-servicedesk': return <ServiceDeskModule
-                onNavigateToProposals={() => setActiveTab('proposals')}
-                editingProposalId={editingProposalId}
-                onFinishEditing={() => setEditingProposalId(null)}
-            />;
+            case 'calculator-noc': return <NOCPricingSystem />;
             case 'calculator-servicedesk-advanced': return <ServiceDeskPricingSystem
                 integrationMode="integrated"
                 onDataChange={(data) => {
