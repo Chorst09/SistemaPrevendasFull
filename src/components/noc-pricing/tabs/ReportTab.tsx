@@ -29,14 +29,20 @@ export function ReportTab({ data, onSaveProposal, onExportPDF }: ReportTabProps)
       const proposalData = {
         title: proposalTitle,
         description: proposalDescription,
-        type: 'NOC',
+        type: 'NOC' as const,
         client: data.project.clientName,
         data: data,
         calculations: calculations,
         createdAt: new Date().toISOString()
       };
       
-      await onSaveProposal(proposalData);
+      const result = await onSaveProposal(proposalData);
+      console.log('Proposta salva com sucesso:', result);
+      
+      // Limpar formulário após salvar
+      setProposalDescription('');
+    } catch (error) {
+      console.error('Erro ao salvar proposta:', error);
     } finally {
       setIsSaving(false);
     }

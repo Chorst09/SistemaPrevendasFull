@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { NOCProposalService, NOCProposal } from '@/lib/services/noc-proposal-service';
-import { FileText, Trash2, Download, Eye, Calendar, Users, Server, DollarSign } from 'lucide-react';
+import { FileText, Trash2, Download, Eye, Calendar, Users, Server, DollarSign, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export function NOCProposalsList() {
@@ -17,7 +17,9 @@ export function NOCProposalsList() {
   }, []);
 
   const loadProposals = () => {
+    console.log('NOCProposalsList.loadProposals - Carregando propostas...');
     const allProposals = NOCProposalService.getAllProposals();
+    console.log('NOCProposalsList.loadProposals - Propostas carregadas:', allProposals.length);
     setProposals(allProposals);
   };
 
@@ -90,7 +92,13 @@ export function NOCProposalsList() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Propostas NOC</h2>
-        <Badge variant="outline">{proposals.length} proposta(s)</Badge>
+        <div className="flex items-center space-x-2">
+          <Button variant="outline" size="sm" onClick={loadProposals}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Atualizar
+          </Button>
+          <Badge variant="outline">{proposals.length} proposta(s)</Badge>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4">

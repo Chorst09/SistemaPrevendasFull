@@ -25,7 +25,10 @@ export class NOCProposalService {
    * Salva uma nova proposta
    */
   static async saveProposal(proposalData: Omit<NOCProposal, 'id' | 'updatedAt' | 'status'>): Promise<NOCProposal> {
+    console.log('NOCProposalService.saveProposal - Iniciando...', proposalData);
+    
     const proposals = this.getAllProposals();
+    console.log('NOCProposalService.saveProposal - Propostas existentes:', proposals.length);
     
     const newProposal: NOCProposal = {
       ...proposalData,
@@ -35,7 +38,10 @@ export class NOCProposalService {
     };
 
     proposals.push(newProposal);
+    console.log('NOCProposalService.saveProposal - Total após adicionar:', proposals.length);
+    
     this.saveToStorage(proposals);
+    console.log('NOCProposalService.saveProposal - Salvo no storage!');
 
     return newProposal;
   }
@@ -99,12 +105,22 @@ export class NOCProposalService {
    * Salva no localStorage
    */
   private static saveToStorage(proposals: NOCProposal[]): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      console.log('NOCProposalService.saveToStorage - Window undefined, não salvando');
+      return;
+    }
 
     try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(proposals));
+      const key = this.STORAGE_KEY;
+      const data = JSON.stringify(proposals);
+      console.log('NOCProposalService.saveToStorage - Salvando:', key, proposals.length, 'propostas');
+      localStorage.setItem(key, data);
+      
+      // Verificar se foi salvo
+      const saved = localStorage.getItem(key);
+      console.log('NOCProposalService.saveToStorage - Verificação:', saved ? 'Salvo com sucesso' : 'ERRO: Não foi salvo');
     } catch (error) {
-      console.error('Error saving proposals:', error);
+      console.error('NOCProposalService.saveToStorage - Error saving proposals:', error);
       throw error;
     }
   }
