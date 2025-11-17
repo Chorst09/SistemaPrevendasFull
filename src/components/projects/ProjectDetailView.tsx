@@ -367,7 +367,7 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
                     backgroundColor: project.progress.healthStatus === 'green' ? '#16a34a' : 
                                      project.progress.healthStatus === 'yellow' ? '#ca8a04' : '#dc2626'
                   }} />
-                  <span className="font-semibold">
+                  <span className="font-semibold text-blue-900">
                     Status Geral: {project.progress.healthStatus === 'green' ? 'Saudável' :
                                    project.progress.healthStatus === 'yellow' ? 'Atenção Necessária' : 'Crítico'}
                   </span>
@@ -539,13 +539,13 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+              <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium">Progresso do Cronograma</span>
-                  <span className="text-sm font-bold">{getTimeProgress().toFixed(0)}%</span>
+                  <span className="text-sm font-medium text-blue-900">Progresso do Cronograma</span>
+                  <span className="text-sm font-bold text-blue-900">{getTimeProgress().toFixed(0)}%</span>
                 </div>
                 <Progress value={getTimeProgress()} className="mb-2" />
-                <div className="flex justify-between text-xs text-gray-600">
+                <div className="flex justify-between text-xs text-blue-700">
                   <span>
                     Início: {project.startDate ? new Date(project.startDate).toLocaleDateString('pt-BR') : 'N/A'}
                   </span>
@@ -684,19 +684,19 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
             <CardContent className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-1">Orçamento Total</div>
+                  <div className="text-sm text-blue-700 mb-1 font-medium">Orçamento Total</div>
                   <div className="text-2xl font-bold text-blue-600">
                     {project.budget.currency} {project.budget.totalBudget.toLocaleString()}
                   </div>
                 </div>
                 <div className="text-center p-4 bg-orange-50 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-1">Gasto</div>
+                  <div className="text-sm text-orange-700 mb-1 font-medium">Gasto</div>
                   <div className="text-2xl font-bold text-orange-600">
                     {project.budget.currency} {project.budget.spentBudget.toLocaleString()}
                   </div>
                 </div>
                 <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <div className="text-sm text-gray-600 mb-1">Restante</div>
+                  <div className="text-sm text-green-700 mb-1 font-medium">Restante</div>
                   <div className="text-2xl font-bold text-green-600">
                     {project.budget.currency} {project.budget.remainingBudget.toLocaleString()}
                   </div>
@@ -779,19 +779,19 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
                       <div className="text-2xl font-bold text-red-600">
                         {project.risks.filter(r => r.riskScore >= 8).length}
                       </div>
-                      <div className="text-xs text-gray-600 mt-1">Riscos Altos</div>
+                      <div className="text-xs text-red-700 mt-1 font-medium">Riscos Altos</div>
                     </div>
                     <div className="text-center p-4 bg-orange-50 rounded-lg">
                       <div className="text-2xl font-bold text-orange-600">
                         {project.risks.filter(r => r.riskScore >= 5 && r.riskScore < 8).length}
                       </div>
-                      <div className="text-xs text-gray-600 mt-1">Riscos Médios</div>
+                      <div className="text-xs text-orange-700 mt-1 font-medium">Riscos Médios</div>
                     </div>
                     <div className="text-center p-4 bg-yellow-50 rounded-lg">
                       <div className="text-2xl font-bold text-yellow-600">
                         {project.risks.filter(r => r.riskScore < 5).length}
                       </div>
-                      <div className="text-xs text-gray-600 mt-1">Riscos Baixos</div>
+                      <div className="text-xs text-yellow-700 mt-1 font-medium">Riscos Baixos</div>
                     </div>
                   </div>
 
