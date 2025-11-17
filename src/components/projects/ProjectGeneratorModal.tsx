@@ -40,11 +40,18 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
   }, []);
 
   const loadProposals = () => {
+    console.log('ProjectGeneratorModal - Carregando propostas...');
     const allProposals = UnifiedProposalService.getAllProposals();
+    console.log('ProjectGeneratorModal - Total de propostas:', allProposals.length);
+    console.log('ProjectGeneratorModal - Propostas:', allProposals);
+    
     // Filtrar apenas propostas aprovadas ou enviadas
     const validProposals = allProposals.filter(p => 
       p.status === 'approved' || p.status === 'sent' || p.status === 'draft'
     );
+    console.log('ProjectGeneratorModal - Propostas válidas:', validProposals.length);
+    console.log('ProjectGeneratorModal - Propostas válidas:', validProposals);
+    
     setProposals(validProposals);
   };
 
@@ -118,6 +125,12 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
         </CardHeader>
 
         <CardContent className="space-y-6">
+          {/* Debug Info */}
+          <div className="bg-gray-100 p-3 rounded text-xs">
+            <p><strong>Debug:</strong> {proposals.length} propostas carregadas</p>
+            <p><strong>Storage Key:</strong> unified-proposals</p>
+          </div>
+
           {/* Seleção de Proposta */}
           <div className="space-y-2">
             <Label>Proposta Base *</Label>
@@ -148,9 +161,24 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
               </SelectContent>
             </Select>
             {proposals.length === 0 && (
-              <p className="text-xs text-red-600">
-                Nenhuma proposta disponível. Acesse o menu "Propostas" para criar uma proposta primeiro.
-              </p>
+              <div className="space-y-2">
+                <p className="text-xs text-red-600">
+                  Nenhuma proposta disponível. Acesse o menu "Propostas" para criar uma proposta primeiro.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    // Tentar migrar propostas antigas
+                    UnifiedProposalService.migrateOldProposals().then(() => {
+                      loadProposals();
+                    });
+                  }}
+                  className="w-full"
+                >
+                  Tentar Migrar Propostas Antigas
+                </Button>
+              </div>
             )}
           </div>
 
@@ -275,7 +303,7 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
           </div>
 
           {/* Ações */}
-          <div className="flex space-x-3 pt-4">
+          <div className="flex space-x-3 pt-4 border-t">
             <Button
               variant="outline"
               onClick={onClose}
@@ -301,6 +329,13 @@ export function ProjectGeneratorModal({ onClose, onGenerate }: ProjectGeneratorM
                 </>
               )}
             </Button>
+          </div>
+          
+          {/* Debug - Condições do botão */}
+          <div className="text-xs text-gray-500 space-y-1">
+            <p>Proposta selecionada: {selectedProposalId ? '✓' : '✗'}</p>
+            <p>Nome do projeto: {projectName ? '✓' : '✗'}</p>
+            <p>Botão habilitado: {(!selectedProposalId || !projectName || isGenerating) ? '✗' : '✓'}</p>
           </div>
         </CardContent>
       </Card>
