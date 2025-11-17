@@ -190,7 +190,7 @@ export default function PropostasPage() {
                     <SelectValue placeholder="Nenhuma (criar sem vincular)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Nenhuma (criar sem vincular)</SelectItem>
+                    <SelectItem value="none">Nenhuma (criar sem vincular)</SelectItem>
                     {nocProposalsForSelection.map(noc => (
                       <SelectItem key={noc.id} value={noc.id}>
                         {noc.title} - {noc.client}
@@ -215,7 +215,7 @@ export default function PropostasPage() {
                   Cancelar
                 </Button>
                 <Button
-                  onClick={() => createCommercialProposal(selectedNOCId || undefined)}
+                  onClick={() => createCommercialProposal(selectedNOCId && selectedNOCId !== 'none' ? selectedNOCId : undefined)}
                   className="flex-1"
                 >
                   Criar Proposta

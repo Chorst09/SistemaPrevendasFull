@@ -66,13 +66,22 @@ export class UnifiedProposalService {
   ): Promise<UnifiedProposal> {
     const proposals = this.getAllProposals();
     
+    // Converter datas para string se necessário
+    const createdAt = typeof commercialProposal.createdAt === 'string' 
+      ? commercialProposal.createdAt 
+      : commercialProposal.createdAt.toISOString();
+    
+    const updatedAt = typeof commercialProposal.updatedAt === 'string'
+      ? commercialProposal.updatedAt
+      : commercialProposal.updatedAt.toISOString();
+    
     const unifiedProposal: UnifiedProposal = {
       id: commercialProposal.id,
       type: 'commercial',
       title: commercialProposal.title,
       client: commercialProposal.client?.name || commercialProposal.cover.clientName || 'Cliente não informado',
-      createdAt: commercialProposal.createdAt.toISOString(),
-      updatedAt: commercialProposal.updatedAt.toISOString(),
+      createdAt,
+      updatedAt,
       status: commercialProposal.status as any,
       commercialData: commercialProposal,
       linkedNOCProposalId
