@@ -26,13 +26,13 @@ export function InvestmentSection({ proposal, onUpdate }: InvestmentSectionProps
     onUpdate({
       investment: {
         ...proposal.investment,
-        plans: [...proposal.investment.plans, newPlan]
+        plans: [...(proposal.investment.plans || []), newPlan]
       }
     });
   };
 
   const updatePlan = (index: number, updates: Partial<InvestmentPlan>) => {
-    const plans = [...proposal.investment.plans];
+    const plans = [...(proposal.investment.plans || [])];
     plans[index] = { ...plans[index], ...updates };
     onUpdate({
       investment: { ...proposal.investment, plans }
@@ -40,7 +40,7 @@ export function InvestmentSection({ proposal, onUpdate }: InvestmentSectionProps
   };
 
   const removePlan = (index: number) => {
-    const plans = proposal.investment.plans.filter((_, i) => i !== index);
+    const plans = (proposal.investment.plans || []).filter((_, i) => i !== index);
     onUpdate({
       investment: { ...proposal.investment, plans }
     });
@@ -109,7 +109,7 @@ export function InvestmentSection({ proposal, onUpdate }: InvestmentSectionProps
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {proposal.investment.plans.map((plan, index) => (
+          {(proposal.investment.plans || []).map((plan, index) => (
             <Card key={plan.id}>
               <CardContent className="pt-6">
                 <div className="space-y-4">
