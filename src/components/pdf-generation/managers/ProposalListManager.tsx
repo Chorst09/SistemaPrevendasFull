@@ -34,6 +34,8 @@ import {
   generatePDFFileName
 } from '../../../lib/pdf/utils/pdf-viewer'
 import { ProposalVersionHistory } from '../viewers/ProposalVersionHistory'
+import { GeneratedProposalService } from '@/lib/services/generated-proposal-service'
+import { CommercialProposal } from '@/lib/types/commercial-proposal'
 
 interface ProposalListManagerProps {
   onEditProposal: (proposalId: string) => void
@@ -344,12 +346,28 @@ export function ProposalListManager({
     }
   }, [toast, loadProposals, proposals])
 
+  // Salvar no GeneratedProposalService
+  const saveToGeneratedProposals = useCallback((proposal: SavedProposal) => {
+    try {
+      // Converter SavedProposal para CommercialProposal
+      if (proposal.proposalData) {
+        GeneratedProposalService.saveGeneratedProposal(proposal.proposalData as CommercialProposal);
+        console.log('Proposta salva em GeneratedProposalService:', proposal.id);
+      }
+    } catch (error) {
+      console.error('Erro ao salvar em GeneratedProposalService:', error);
+    }
+  }, []);
+
   // Download proposal
   const handleDownload = useCallback((proposal: SavedProposal) => {
     try {
       const pdfUrl = URL.createObjectURL(proposal.pdfBlob)
       const fileName = generatePDFFileName(proposal.clientName, proposal.projectName)
       downloadPDF(pdfUrl, fileName)
+      
+      // Salvar no GeneratedProposalService
+      saveToGeneratedProposals(proposal);
       
       toast({
         title: "Download Iniciado",
@@ -366,7 +384,7 @@ export function ProposalListManager({
         variant: "destructive"
       })
     }
-  }, [toast])
+  }, [toast, saveToGeneratedProposals])
 
   // View proposal
   const handleView = useCallback((proposal: SavedProposal) => {
@@ -374,6 +392,9 @@ export function ProposalListManager({
       const pdfUrl = URL.createObjectURL(proposal.pdfBlob)
       const fileName = generatePDFFileName(proposal.clientName, proposal.projectName)
       openPDFInNewTab(pdfUrl, fileName)
+      
+      // Salvar no GeneratedProposalService
+      saveToGeneratedProposals(proposal);
       
       // Clean up the URL after a delay
       setTimeout(() => URL.revokeObjectURL(pdfUrl), 1000)
@@ -385,7 +406,7 @@ export function ProposalListManager({
         variant: "destructive"
       })
     }
-  }, [toast])
+  }, [toast, saveToGeneratedProposals])
 
   // Show version history
   const handleShowVersionHistory = useCallback((proposalId: string) => {
