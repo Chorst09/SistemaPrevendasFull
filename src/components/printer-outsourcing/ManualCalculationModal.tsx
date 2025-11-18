@@ -37,6 +37,7 @@ interface ManualCalculationModalProps {
 }
 
 export function ManualCalculationModal({ onClose, onSave }: ManualCalculationModalProps) {
+  const [showModalidadeSelection, setShowModalidadeSelection] = useState(true);
   const [activeTab, setActiveTab] = useState('impressora');
   
   // Dados da impressora
@@ -271,9 +272,104 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
         <DialogHeader>
           <DialogTitle>Cálculo Manual Detalhado</DialogTitle>
           <DialogDescription>
-            Adicione a impressora e todos os suprimentos para calcular o custo por página real
+            {showModalidadeSelection 
+              ? 'Selecione a modalidade de locação para começar'
+              : 'Adicione a impressora e todos os suprimentos para calcular o custo por página real'
+            }
           </DialogDescription>
         </DialogHeader>
+
+        {showModalidadeSelection ? (
+          /* Tela de Seleção de Modalidade */
+          <div className="space-y-6 py-6">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-semibold mb-2">Escolha a Modalidade de Locação</h3>
+              <p className="text-sm text-gray-600">
+                Selecione como deseja calcular o custo da impressora
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Modalidade Franquia */}
+              <Card
+                className="cursor-pointer hover:shadow-lg transition-all border-2 hover:border-blue-500"
+                onClick={() => {
+                  setModalidadeLocacao('franquia');
+                  setShowModalidadeSelection(false);
+                }}
+              >
+                <CardHeader className="text-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Package className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-blue-900">Franquia Mensal</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <p className="text-sm text-gray-600 text-center">
+                    Valor fixo mensal incluindo impressora e franquia de páginas
+                  </p>
+                  <div className="bg-blue-50 p-3 rounded-lg space-y-2">
+                    <h4 className="font-semibold text-sm text-blue-900">Inclui:</h4>
+                    <ul className="text-xs text-blue-700 space-y-1">
+                      <li>✓ Locação do equipamento</li>
+                      <li>✓ Franquia de páginas mensais</li>
+                      <li>✓ Valor fixo e previsível</li>
+                      <li>✓ Ideal para volumes constantes</li>
+                    </ul>
+                  </div>
+                  <div className="text-center pt-2">
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                      Recomendado para volumes estáveis
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Modalidade Por Página */}
+              <Card
+                className="cursor-pointer hover:shadow-lg transition-all border-2 hover:border-green-500"
+                onClick={() => {
+                  setModalidadeLocacao('por-pagina');
+                  setShowModalidadeSelection(false);
+                }}
+              >
+                <CardHeader className="text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Calculator className="h-8 w-8 text-green-600" />
+                  </div>
+                  <CardTitle className="text-green-900">Por Página Impressa</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <p className="text-sm text-gray-600 text-center">
+                    Locação da impressora + custo por página impressa
+                  </p>
+                  <div className="bg-green-50 p-3 rounded-lg space-y-2">
+                    <h4 className="font-semibold text-sm text-green-900">Inclui:</h4>
+                    <ul className="text-xs text-green-700 space-y-1">
+                      <li>✓ Locação do equipamento (valor fixo)</li>
+                      <li>✓ Custo por página impressa</li>
+                      <li>✓ Custos mono e color separados</li>
+                      <li>✓ Ideal para volumes variáveis</li>
+                    </ul>
+                  </div>
+                  <div className="text-center pt-2">
+                    <Badge variant="secondary" className="bg-green-100 text-green-800">
+                      Recomendado para volumes variáveis
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="flex justify-center pt-4">
+              <Button variant="outline" onClick={onClose}>
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        ) : (
+          /* Formulário Principal */
+          <>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid grid-cols-4 w-full">
@@ -795,9 +891,14 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-end space-x-2 pt-4 border-t">
-          <Button variant="outline" onClick={onClose}>
-            Cancelar
+        <div className="flex justify-between space-x-2 pt-4 border-t">
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              setShowModalidadeSelection(true);
+            }}
+          >
+            ← Voltar
           </Button>
           <Button 
             onClick={handleSalvar}
@@ -807,6 +908,8 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
             Adicionar ao Cálculo
           </Button>
         </div>
+        </>
+        )}
       </DialogContent>
     </Dialog>
   );
