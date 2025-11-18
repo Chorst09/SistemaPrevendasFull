@@ -65,8 +65,8 @@ export function MonitoringTab({ data, onChange }: MonitoringTabProps) {
                 key={tool.value}
                 className={`border rounded-lg p-4 cursor-pointer transition-all ${
                   data.tools.includes(tool.value)
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-green-500 bg-green-100 shadow-md'
+                    : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100'
                 }`}
                 onClick={() => handleToolToggle(tool.value)}
               >
@@ -77,9 +77,18 @@ export function MonitoringTab({ data, onChange }: MonitoringTabProps) {
                         checked={data.tools.includes(tool.value)}
                         onCheckedChange={() => handleToolToggle(tool.value)}
                       />
-                      <span className="font-medium">{tool.label}</span>
+                      <span className={`font-medium ${data.tools.includes(tool.value) ? 'text-green-900' : 'text-gray-900'}`}>
+                        {tool.label}
+                      </span>
                     </div>
-                    <Badge variant="outline" className="mt-2 text-xs">
+                    <Badge 
+                      variant="outline" 
+                      className={`mt-2 text-xs ${
+                        data.tools.includes(tool.value) 
+                          ? 'border-green-600 text-green-700 bg-green-50' 
+                          : 'border-gray-400 text-gray-700'
+                      }`}
+                    >
                       {tool.type === 'open-source' ? 'Open Source' :
                        tool.type === 'commercial' ? 'Comercial' : 'SaaS'}
                     </Badge>
@@ -114,8 +123,8 @@ export function MonitoringTab({ data, onChange }: MonitoringTabProps) {
                   key={channel.value}
                   className={`border rounded-lg p-3 cursor-pointer transition-all ${
                     data.alertChannels.includes(channel.value as any)
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-green-500 bg-green-100 shadow-md'
+                      : 'border-gray-300 bg-gray-50 hover:border-gray-400 hover:bg-gray-100'
                   }`}
                   onClick={() => handleChannelToggle(channel.value)}
                 >
@@ -124,7 +133,13 @@ export function MonitoringTab({ data, onChange }: MonitoringTabProps) {
                       checked={data.alertChannels.includes(channel.value as any)}
                       onCheckedChange={() => handleChannelToggle(channel.value)}
                     />
-                    <span className="text-sm font-medium">{channel.label}</span>
+                    <span className={`text-sm font-medium ${
+                      data.alertChannels.includes(channel.value as any) 
+                        ? 'text-green-900' 
+                        : 'text-gray-900'
+                    }`}>
+                      {channel.label}
+                    </span>
                   </div>
                 </div>
               ))}
