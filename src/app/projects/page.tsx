@@ -9,6 +9,7 @@ import { Project } from '@/lib/types/project';
 import { ProjectListView } from '@/components/projects/ProjectListView';
 import { ProjectDetailView } from '@/components/projects/ProjectDetailView';
 import { ProjectGeneratorModal } from '@/components/projects/ProjectGeneratorModal';
+import { ManualProjectModal } from '@/components/projects/ManualProjectModal';
 
 type ViewMode = 'list' | 'detail';
 
@@ -18,6 +19,7 @@ export default function ProjectsPage() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [showGeneratorModal, setShowGeneratorModal] = useState(false);
+  const [showManualModal, setShowManualModal] = useState(false);
 
   useEffect(() => {
     loadProjects();
@@ -50,8 +52,19 @@ export default function ProjectsPage() {
     setShowGeneratorModal(true);
   };
 
+  const handleCreateManualProject = () => {
+    setShowManualModal(true);
+  };
+
   const handleProjectGenerated = (project: Project) => {
     setShowGeneratorModal(false);
+    loadProjects();
+    setSelectedProject(project);
+    setViewMode('detail');
+  };
+
+  const handleProjectCreated = (project: Project) => {
+    setShowManualModal(false);
     loadProjects();
     setSelectedProject(project);
     setViewMode('detail');
@@ -117,9 +130,13 @@ export default function ProjectsPage() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              <Button onClick={handleCreateManualProject} variant="outline" className="flex items-center space-x-2">
+                <Plus className="h-4 w-4" />
+                <span>Criar Projeto Manual</span>
+              </Button>
               <Button onClick={handleGenerateProject} className="flex items-center space-x-2">
                 <Plus className="h-4 w-4" />
-                <span>Gerar Projeto</span>
+                <span>Gerar de Proposta</span>
               </Button>
             </div>
           </div>
@@ -139,6 +156,13 @@ export default function ProjectsPage() {
         <ProjectGeneratorModal
           onClose={() => setShowGeneratorModal(false)}
           onGenerate={handleProjectGenerated}
+        />
+      )}
+
+      {showManualModal && (
+        <ManualProjectModal
+          onClose={() => setShowManualModal(false)}
+          onCreate={handleProjectCreated}
         />
       )}
     </div>

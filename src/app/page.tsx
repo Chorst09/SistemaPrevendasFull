@@ -257,19 +257,25 @@ export default function App() { // Ou Home
             />;
             case 'quotes': return <QuotesView partners={partners} />;
             case 'proposals': return <ProposalsView proposals={proposals} partners={partners} onSave={(proposal) => setProposals(prev => [...prev.filter(p => p.id !== proposal.id), proposal])} onDelete={(id) => setProposals(prev => prev.filter(p => p.id !== id))} />;
-            case 'generated-proposals': return <ProposalListManager
-                onEditProposal={(proposalId) => {
-                    // Set editing proposal ID and navigate to printer calculator
-                    setEditingProposalId(proposalId)
-                    setActiveTab('calculator-printer')
-                }}
-                onCreateNew={() => {
-                    // Clear editing mode and navigate to printer calculator
-                    setEditingProposalId(null)
-                    setActiveTab('calculator-printer')
-                }}
-                onNavigateToQuotes={() => setActiveTab('quotes')}
-            />;
+            case 'generated-proposals': return (
+                <div className="p-6">
+                    <div className="text-center">
+                        <h2 className="text-2xl font-bold mb-4">Gestão de Propostas</h2>
+                        <p className="text-muted-foreground mb-6">
+                            Gerencie todas as suas propostas: Comerciais, NOC, Service Desk, Outsourcing de Impressão e Venda/Locação/Serviços
+                        </p>
+                        <div className="flex items-center justify-center space-x-4">
+                            <a
+                                href="/propostas"
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                            >
+                                <FileDown className="h-4 w-4 mr-2" />
+                                Acessar Propostas Geradas
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
             case 'calculator-ti-vls': return <ITPricingModule onNavigateToProposals={() => setActiveTab('proposals')} />;
             case 'calculator-noc': return <NOCPricingSystem />;
             case 'calculator-servicedesk-advanced': return <ServiceDeskPricingSystem

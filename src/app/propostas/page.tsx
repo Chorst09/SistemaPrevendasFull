@@ -33,14 +33,33 @@ export default function PropostasPage() {
   const [selectedNOCId, setSelectedNOCId] = useState<string>('');
 
   useEffect(() => {
+    console.log('PropostasPage - useEffect - Carregando propostas...');
     loadProposals();
     // Migrar propostas antigas na primeira vez
     UnifiedProposalService.migrateOldProposals();
   }, []);
 
   const loadProposals = () => {
+    console.log('PropostasPage.loadProposals - Iniciando...');
     const allProposals = UnifiedProposalService.getAllProposals();
+    console.log('PropostasPage.loadProposals - Propostas carregadas:', allProposals.length);
+    console.log('PropostasPage.loadProposals - Propostas:', allProposals);
+    
+    // Verificar estrutura de cada proposta
+    allProposals.forEach((p, index) => {
+      console.log(`Proposta ${index + 1}:`, {
+        id: p.id,
+        type: p.type,
+        title: p.title,
+        client: p.client,
+        status: p.status,
+        hasNocData: !!p.nocData,
+        hasCommercialData: !!p.commercialData
+      });
+    });
+    
     setProposals(allProposals);
+    console.log('PropostasPage.loadProposals - State atualizado com', allProposals.length, 'propostas');
   };
 
   const handleCreateNew = () => {
@@ -218,17 +237,45 @@ export default function PropostasPage() {
   };
 
   const filteredProposals = proposals.filter(proposal => {
-    const matchesSearch = 
-      proposal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      proposal.client.toLowerCase().includes(searchTerm.toLowerCase());
+    // Garantir que title e client existem
+    const title = proposal.title || '';
+    const client = proposal.client || '';
+    const status = proposal.status || 'draft';
     
-    const matchesStatus = filterStatus === 'ALL' || proposal.status.toLowerCase() === filterStatus.toLowerCase();
+    const matchesSearch = 
+      title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = filterStatus === 'ALL' || status.toLowerCase() === filterStatus.toLowerCase();
     const matchesType = filterType === 'ALL' || proposal.type === filterType;
 
-    return matchesSearch && matchesStatus && matchesType;
+    const passes = matchesSearch && matchesStatus && matchesType;
+    
+    if (!passes) {
+      console.log('Proposta filtrada (não passou):', {
+        id: proposal.id,
+        title,
+        client,
+        status,
+        type: proposal.type,
+        matchesSearch,
+        matchesStatus,
+        matchesType
+      });
+    }
+
+    return passes;
   });
 
   const nocProposalsForSelection = UnifiedProposalService.getNOCProposalsForSelection();
+
+  console.log('PropostasPage - Render:', {
+    totalProposals: proposals.length,
+    filteredProposals: filteredProposals.length,
+    searchTerm,
+    filterStatus,
+    filterType
+  });
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -297,12 +344,33 @@ export default function PropostasPage() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
+          
+          {/* Debug Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              console.log('=== DEBUG PROPOSTAS ===');
+              const stored = localStorage.getItem('unified-proposals');
+              console.log('LocalStorage unified-proposals:', stored);
+              if (stored) {
+                const parsed = JSON.parse(stored);
+                console.log('Total propostas:', parsed.length);
+                console.log('Propostas NOC:', parsed.filter((p: any) => p.type === 'noc').length);
+                console.log('Propostas Comerciais:', parsed.filter((p: any) => p.type === 'commercial').length);
+                console.table(parsed.map((p: any) => ({ id: p.id, type: p.type, title: p.title, client: p.client })));
+              }
+              loadProposals();
+            }}
+          >
+            🔍 Debug
+          </Button>
         </div>
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold">Lista de Propostas</h1>
             <p className="text-muted-foreground mt-2">
-              Gerencie suas propostas comerciais e NOC
+              Gerencie suas propostas comerciais e NOC ({proposals.length} total)
             </p>
           </div>
           <Button onClick={handleCreateNew} size="lg">
@@ -315,60 +383,87 @@ export default function PropostasPage() {
       {/* Filtros */}
       <Card className="mb-6">
         <CardContent className="pt-6">
-          <div className="flex gap-4 flex-wrap">
-            <div className="flex-1 min-w-[300px]">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar por título ou cliente..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+          <div className="space-y-4">
+            {/* Linha 1: Busca */}
+            <div className="flex gap-4 items-center">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por título ou cliente..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
               </div>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  setSearchTerm('');
+                  setFilterStatus('ALL');
+                  setFilterType('ALL');
+                  console.log('Filtros limpos');
+                }}
+              >
+                🗑️ Limpar Filtros
+              </Button>
             </div>
-            <div className="flex gap-2">
+
+            {/* Linha 2: Filtros de Tipo */}
+            <div className="flex gap-2 items-center">
+              <span className="text-sm font-medium text-gray-600 mr-2">Tipo:</span>
               <Button
                 variant={filterType === 'ALL' ? 'default' : 'outline'}
                 onClick={() => setFilterType('ALL')}
+                size="sm"
               >
                 Todas
               </Button>
               <Button
                 variant={filterType === 'commercial' ? 'default' : 'outline'}
                 onClick={() => setFilterType('commercial')}
+                size="sm"
               >
                 Comerciais
               </Button>
               <Button
                 variant={filterType === 'noc' ? 'default' : 'outline'}
                 onClick={() => setFilterType('noc')}
+                size="sm"
               >
                 NOC
               </Button>
             </div>
-            <div className="flex gap-2">
+
+            {/* Linha 3: Filtros de Status */}
+            <div className="flex gap-2 items-center">
+              <span className="text-sm font-medium text-gray-600 mr-2">Status:</span>
               <Button
                 variant={filterStatus === 'ALL' ? 'default' : 'outline'}
                 onClick={() => setFilterStatus('ALL')}
+                size="sm"
               >
-                Todos Status
+                Todos
               </Button>
               <Button
                 variant={filterStatus === ProposalStatus.DRAFT ? 'default' : 'outline'}
                 onClick={() => setFilterStatus(ProposalStatus.DRAFT)}
+                size="sm"
               >
                 Rascunhos
               </Button>
               <Button
                 variant={filterStatus === ProposalStatus.SENT ? 'default' : 'outline'}
                 onClick={() => setFilterStatus(ProposalStatus.SENT)}
+                size="sm"
               >
                 Enviadas
               </Button>
               <Button
                 variant={filterStatus === ProposalStatus.APPROVED ? 'default' : 'outline'}
                 onClick={() => setFilterStatus(ProposalStatus.APPROVED)}
+                size="sm"
               >
                 Aprovadas
               </Button>

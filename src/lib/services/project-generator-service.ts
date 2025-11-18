@@ -431,7 +431,7 @@ export class ProjectGeneratorService {
   /**
    * Salva projeto no localStorage
    */
-  private static async saveProject(project: Project): Promise<void> {
+  static async saveProject(project: Project): Promise<void> {
     if (typeof window === 'undefined') return;
 
     try {

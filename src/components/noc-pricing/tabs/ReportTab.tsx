@@ -26,6 +26,11 @@ export function ReportTab({ data, onSaveProposal, onExportPDF }: ReportTabProps)
   const handleSaveProposal = async () => {
     setIsSaving(true);
     try {
+      console.log('ReportTab.handleSaveProposal - Iniciando...');
+      console.log('ReportTab.handleSaveProposal - Título:', proposalTitle);
+      console.log('ReportTab.handleSaveProposal - Cliente:', data.project.clientName);
+      console.log('ReportTab.handleSaveProposal - Descrição:', proposalDescription);
+      
       const proposalData = {
         title: proposalTitle,
         description: proposalDescription,
@@ -36,13 +41,15 @@ export function ReportTab({ data, onSaveProposal, onExportPDF }: ReportTabProps)
         createdAt: new Date().toISOString()
       };
       
+      console.log('ReportTab.handleSaveProposal - Dados da proposta:', proposalData);
+      
       const result = await onSaveProposal(proposalData);
-      console.log('Proposta salva com sucesso:', result);
+      console.log('ReportTab.handleSaveProposal - Proposta salva com sucesso:', result);
       
       // Limpar formulário após salvar
       setProposalDescription('');
     } catch (error) {
-      console.error('Erro ao salvar proposta:', error);
+      console.error('ReportTab.handleSaveProposal - Erro ao salvar proposta:', error);
     } finally {
       setIsSaving(false);
     }
@@ -389,6 +396,32 @@ export function ReportTab({ data, onSaveProposal, onExportPDF }: ReportTabProps)
             >
               <Download className="h-4 w-4 mr-2" />
               Exportar PDF
+            </Button>
+          </div>
+
+          {/* Debug: Verificar localStorage */}
+          <div className="mt-4 p-3 bg-gray-100 rounded text-xs">
+            <div className="font-semibold mb-2">Debug - LocalStorage:</div>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                const stored = localStorage.getItem('unified-proposals');
+                console.log('=== DEBUG LOCALSTORAGE ===');
+                console.log('Chave: unified-proposals');
+                console.log('Conteúdo:', stored);
+                if (stored) {
+                  const parsed = JSON.parse(stored);
+                  console.log('Propostas encontradas:', parsed.length);
+                  console.log('Propostas:', parsed);
+                  alert(`Encontradas ${parsed.length} propostas no localStorage`);
+                } else {
+                  console.log('Nenhuma proposta encontrada');
+                  alert('Nenhuma proposta encontrada no localStorage');
+                }
+              }}
+            >
+              Verificar Propostas Salvas
             </Button>
           </div>
         </CardContent>

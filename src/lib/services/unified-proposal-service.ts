@@ -32,7 +32,10 @@ export class UnifiedProposalService {
    * Salva uma proposta NOC
    */
   static async saveNOCProposal(nocProposal: Omit<NOCProposal, 'id' | 'updatedAt' | 'status'>): Promise<UnifiedProposal> {
+    console.log('UnifiedProposalService.saveNOCProposal - Iniciando...', nocProposal);
+    
     const proposals = this.getAllProposals();
+    console.log('UnifiedProposalService.saveNOCProposal - Propostas existentes:', proposals.length);
     
     // Gerar ID único com timestamp + random
     const uniqueId = `noc-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -53,10 +56,21 @@ export class UnifiedProposalService {
       } as NOCProposal
     };
 
+    console.log('UnifiedProposalService.saveNOCProposal - Proposta criada:', unifiedProposal);
+    
     proposals.push(unifiedProposal);
+    console.log('UnifiedProposalService.saveNOCProposal - Total após adicionar:', proposals.length);
+    
     this.saveToStorage(proposals);
+    
+    // Verificar se foi salvo
+    const savedProposals = this.getAllProposals();
+    console.log('UnifiedProposalService.saveNOCProposal - Verificação após salvar:', savedProposals.length);
+    
+    const found = savedProposals.find(p => p.id === uniqueId);
+    console.log('UnifiedProposalService.saveNOCProposal - Proposta encontrada após salvar:', found ? 'SIM' : 'NÃO');
 
-    console.log('UnifiedProposalService - Proposta NOC salva:', unifiedProposal.id);
+    console.log('UnifiedProposalService - Proposta NOC salva com sucesso:', unifiedProposal.id);
     return unifiedProposal;
   }
 
@@ -191,13 +205,30 @@ export class UnifiedProposalService {
    * Salva no localStorage
    */
   private static saveToStorage(proposals: UnifiedProposal[]): void {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {
+      console.log('UnifiedProposalService.saveToStorage - Window undefined, não salvando');
+      return;
+    }
 
     try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(proposals));
-      console.log('UnifiedProposalService - Salvo:', proposals.length, 'propostas');
+      const key = this.STORAGE_KEY;
+      const data = JSON.stringify(proposals);
+      console.log('UnifiedProposalService.saveToStorage - Salvando:', key, proposals.length, 'propostas');
+      console.log('UnifiedProposalService.saveToStorage - Dados:', data.substring(0, 200) + '...');
+      
+      localStorage.setItem(key, data);
+      
+      // Verificar se foi salvo
+      const saved = localStorage.getItem(key);
+      console.log('UnifiedProposalService.saveToStorage - Verificação:', saved ? `Salvo com sucesso (${saved.length} chars)` : 'ERRO: Não foi salvo');
+      
+      // Verificar se pode fazer parse
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        console.log('UnifiedProposalService.saveToStorage - Parse OK:', parsed.length, 'propostas');
+      }
     } catch (error) {
-      console.error('Error saving proposals:', error);
+      console.error('UnifiedProposalService.saveToStorage - Error saving proposals:', error);
       throw error;
     }
   }

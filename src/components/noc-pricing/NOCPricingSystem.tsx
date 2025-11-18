@@ -143,7 +143,11 @@ export function NOCPricingSystem() {
   // Salva como proposta
   const handleSaveProposal = useCallback(async (proposalData: any) => {
     try {
+      console.log('NOCPricingSystem.handleSaveProposal - Iniciando...', proposalData);
+      
       const proposal = await UnifiedProposalService.saveNOCProposal(proposalData);
+      
+      console.log('NOCPricingSystem.handleSaveProposal - Proposta salva:', proposal);
       
       toast({
         title: 'Proposta NOC Salva!',
@@ -153,12 +157,12 @@ export function NOCPricingSystem() {
 
       // Navegar para propostas após 2 segundos
       setTimeout(() => {
-        console.log('Proposta NOC salva:', proposal.id);
+        console.log('NOCPricingSystem - Proposta NOC salva:', proposal.id);
       }, 2000);
 
       return proposal;
     } catch (error) {
-      console.error('Error saving proposal:', error);
+      console.error('NOCPricingSystem.handleSaveProposal - Error saving proposal:', error);
       toast({
         title: 'Erro ao Salvar',
         description: 'Não foi possível salvar a proposta. Tente novamente.',
