@@ -91,15 +91,26 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
   };
 
   const calcularCustoPorPagina = () => {
-    if (volumeMensal === 0) return { total: 0, detalhes: {} };
+    if (volumeMensal === 0) return { total: 0, totalMono: 0, totalColor: 0, detalhes: {} };
+
+    const isColorida = tipo === 'Laser Colorida';
 
     // 1. Custo de Suprimentos por página
-    let custoSuprimentosPorPagina = 0;
+    let custoSuprimentosMono = 0;
+    let custoSuprimentosColor = 0;
     const detalhesSuprimentos: any = {};
 
     suprimentos.forEach(sup => {
       const custoPorPagina = sup.custo / sup.rendimento;
-      custoSuprimentosPorPagina += custoPorPagina;
+      
+      // Separar custos mono e color
+      if (sup.tipo === 'Toner P&B' || sup.tipo === 'Cilindro' || sup.tipo === 'Fusor' || sup.tipo === 'Kit Manutenção') {
+        custoSuprimentosMono += custoPorPagina;
+      } else {
+        // Toners coloridos (Ciano, Magenta, Amarelo)
+        custoSuprimentosColor += custoPorPagina;
+      }
+      
       detalhesSuprimentos[sup.tipo] = {
         custo: sup.custo,
         rendimento: sup.rendimento,
@@ -117,22 +128,38 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
     // 4. Custo de Manutenção por página
     const custoManutencaoPorPagina = custoManutencao / volumeMensal;
 
-    // 5. Custo Total por Página
-    const custoTotalPorPagina = 
-      custoSuprimentosPorPagina +
-      custoDepreciacaoPorPagina +
-      custoEnergiaPorPagina +
-      custoManutencaoPorPagina;
+    // 5. Custos fixos (aplicados tanto em mono quanto color)
+    const custosFixosPorPagina = custoDepreciacaoPorPagina + custoEnergiaPorPagina + custoManutencaoPorPagina;
 
-    // 6. Custos Mensais e Anuais
+    // 6. Custo Total por Página
+    let custoTotalMono = 0;
+    let custoTotalColor = 0;
+    let custoTotalPorPagina = 0;
+
+    if (isColorida) {
+      // Para impressoras coloridas, calcular separadamente
+      custoTotalMono = custoSuprimentosMono + custosFixosPorPagina;
+      custoTotalColor = custoSuprimentosMono + custoSuprimentosColor + custosFixosPorPagina;
+      custoTotalPorPagina = custoTotalColor; // Usar color como padrão para cálculos gerais
+    } else {
+      // Para impressoras P&B, apenas mono
+      custoTotalMono = custoSuprimentosMono + custosFixosPorPagina;
+      custoTotalPorPagina = custoTotalMono;
+    }
+
+    // 7. Custos Mensais e Anuais (usando custo médio ou color)
     const custoMensal = custoTotalPorPagina * volumeMensal;
     const custoAnual = custoMensal * 12;
     const custoTotalContrato = custoAnual * (prazoContrato / 12);
 
     return {
       total: custoTotalPorPagina,
+      totalMono: custoTotalMono,
+      totalColor: isColorida ? custoTotalColor : 0,
+      isColorida,
       detalhes: {
-        suprimentos: custoSuprimentosPorPagina,
+        suprimentosMono: custoSuprimentosMono,
+        suprimentosColor: custoSuprimentosColor,
         depreciacao: custoDepreciacaoPorPagina,
         energia: custoEnergiaPorPagina,
         manutencao: custoManutencaoPorPagina,
@@ -169,7 +196,11 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
       custoEnergiaKWh,
       calculo,
       isFromCatalog: false,
-      isManualCalculation: true
+      isManualCalculation: true,
+      // Incluir custos separados para impressoras coloridas
+      custoPorPaginaMono: calculo.totalMono,
+      custoPorPaginaColor: calculo.isColorida ? calculo.totalColor : 0,
+      isColorida: calculo.isColorida
     };
 
     onSave(dados);
@@ -448,19 +479,51 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
           <TabsContent value="resultado" className="space-y-4">
             {volumeMensal > 0 && suprimentos.length > 0 ? (
               <>
-                <Card className="border-green-200 bg-green-50">
-                  <CardHeader>
-                    <CardTitle className="text-green-900">Custo por Página Calculado</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center">
-                      <div className="text-4xl font-bold text-green-600">
-                        R$ {calculo.total.toFixed(4)}
+                {calculo.isColorida ? (
+                  <div className="grid grid-cols-2 gap-4">
+                    <Card className="border-blue-200 bg-blue-50">
+                      <CardHeader>
+                        <CardTitle className="text-blue-900">Custo Monocromático</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-blue-600">
+                            R$ {calculo.totalMono.toFixed(4)}
+                          </div>
+                          <p className="text-sm text-blue-700 mt-2">por página P&B</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border-green-200 bg-green-50">
+                      <CardHeader>
+                        <CardTitle className="text-green-900">Custo Colorido</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-green-600">
+                            R$ {calculo.totalColor.toFixed(4)}
+                          </div>
+                          <p className="text-sm text-green-700 mt-2">por página Color</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ) : (
+                  <Card className="border-green-200 bg-green-50">
+                    <CardHeader>
+                      <CardTitle className="text-green-900">Custo por Página Calculado</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-center">
+                        <div className="text-4xl font-bold text-green-600">
+                          R$ {calculo.total.toFixed(4)}
+                        </div>
+                        <p className="text-sm text-green-700 mt-2">por página P&B</p>
                       </div>
-                      <p className="text-sm text-green-700 mt-2">por página</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                )}
 
                 <Card>
                   <CardHeader>
@@ -468,12 +531,29 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      <div className="flex justify-between p-2 bg-blue-50 rounded">
-                        <span className="text-blue-900">Suprimentos</span>
-                        <span className="font-bold text-blue-600">
-                          R$ {calculo.detalhes.suprimentos?.toFixed(4) || '0.0000'}
-                        </span>
-                      </div>
+                      {calculo.isColorida ? (
+                        <>
+                          <div className="flex justify-between p-2 bg-blue-50 rounded">
+                            <span className="text-blue-900">Suprimentos Mono (P&B)</span>
+                            <span className="font-bold text-blue-600">
+                              R$ {calculo.detalhes.suprimentosMono?.toFixed(4) || '0.0000'}
+                            </span>
+                          </div>
+                          <div className="flex justify-between p-2 bg-cyan-50 rounded">
+                            <span className="text-cyan-900">Suprimentos Color (CMY)</span>
+                            <span className="font-bold text-cyan-600">
+                              R$ {calculo.detalhes.suprimentosColor?.toFixed(4) || '0.0000'}
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="flex justify-between p-2 bg-blue-50 rounded">
+                          <span className="text-blue-900">Suprimentos</span>
+                          <span className="font-bold text-blue-600">
+                            R$ {calculo.detalhes.suprimentosMono?.toFixed(4) || '0.0000'}
+                          </span>
+                        </div>
+                      )}
                       <div className="flex justify-between p-2 bg-purple-50 rounded">
                         <span className="text-purple-900">Depreciação</span>
                         <span className="font-bold text-purple-600">

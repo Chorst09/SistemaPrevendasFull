@@ -180,7 +180,10 @@ export function PrinterCalculatorModule({ onBack, onNavigateToProposals, printer
                 suprimentos: dados.suprimentos,
                 custoAquisicao: dados.impressora.custoAquisicao,
                 vidaUtil: dados.impressora.vidaUtil,
-                detalhamento: dados.calculo.detalhes
+                detalhamento: dados.calculo.detalhes,
+                custoPorPaginaMono: dados.custoPorPaginaMono,
+                custoPorPaginaColor: dados.custoPorPaginaColor,
+                isColorida: dados.isColorida
             }
         }
 
