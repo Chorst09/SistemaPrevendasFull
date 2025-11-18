@@ -98,15 +98,18 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
   };
 
   const calcularCustoPorPagina = () => {
-    if (volumeMensal === 0) return { 
-      total: 0, 
-      totalMono: 0, 
-      totalColor: 0, 
-      detalhes: {},
-      custoMensal: 0,
-      custoAnual: 0,
-      custoTotalContrato: 0
-    };
+    // Para modalidade franquia, volume mensal é obrigatório
+    if (modalidadeLocacao === 'franquia' && volumeMensal === 0) {
+      return { 
+        total: 0, 
+        totalMono: 0, 
+        totalColor: 0, 
+        detalhes: {},
+        custoMensal: 0,
+        custoAnual: 0,
+        custoTotalContrato: 0
+      };
+    }
 
     const isColorida = tipo === 'Laser Colorida';
 
@@ -133,20 +136,24 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
       };
     });
 
-    // 2. Custo de Depreciação por página
-    const custoDepreciacaoPorPagina = custoAquisicao / vidaUtil;
+    // 2. Custo de Depreciação por página (apenas para franquia)
+    const custoDepreciacaoPorPagina = modalidadeLocacao === 'franquia' ? custoAquisicao / vidaUtil : 0;
 
-    // 3. Custo de Energia por página
+    // 3. Custo de Energia por página (apenas para franquia)
     const custoEnergiaMensal = consumoEnergia * custoEnergiaKWh;
-    const custoEnergiaPorPagina = custoEnergiaMensal / volumeMensal;
+    const custoEnergiaPorPagina = modalidadeLocacao === 'franquia' && volumeMensal > 0 
+      ? custoEnergiaMensal / volumeMensal 
+      : 0;
 
-    // 4. Custo de Manutenção por página
-    const custoManutencaoPorPagina = custoManutencao / volumeMensal;
+    // 4. Custo de Manutenção por página (apenas para franquia)
+    const custoManutencaoPorPagina = modalidadeLocacao === 'franquia' && volumeMensal > 0
+      ? custoManutencao / volumeMensal
+      : 0;
 
-    // 5. Custos fixos (aplicados tanto em mono quanto color)
+    // 5. Custos fixos (aplicados apenas na franquia)
     const custosFixosPorPagina = custoDepreciacaoPorPagina + custoEnergiaPorPagina + custoManutencaoPorPagina;
 
-    // 6. Custo Total por Página (APENAS SUPRIMENTOS para modalidade por página)
+    // 6. Custo Total por Página
     let custoTotalMono = 0;
     let custoTotalColor = 0;
     let custoTotalPorPagina = 0;
@@ -184,9 +191,9 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
       custoAnual = custoMensal * 12;
       custoTotalContrato = custoAnual * (prazoContrato / 12);
     } else {
-      // Por página: locação da impressora + custo por página
-      const custoPaginasMensal = custoTotalPorPagina * volumeMensal;
-      custoMensal = valorLocacaoImpressora + custoPaginasMensal;
+      // Por página: apenas locação da impressora (custo por página será aplicado no uso)
+      // Não calculamos custo mensal total pois depende do volume real de impressão
+      custoMensal = valorLocacaoImpressora;
       custoAnual = custoMensal * 12;
       custoTotalContrato = custoAnual * (prazoContrato / 12);
     }
@@ -215,16 +222,25 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
   };
 
   const handleSalvar = () => {
-    if (!modelo || !marca || volumeMensal === 0 || suprimentos.length === 0) {
-      alert('Preencha todos os campos obrigatórios: modelo, marca, volume mensal e pelo menos um suprimento');
+    // Validação básica
+    if (!modelo || !marca || suprimentos.length === 0) {
+      alert('Preencha todos os campos obrigatórios: modelo, marca e pelo menos um suprimento');
       return;
     }
 
-    if (modalidadeLocacao === 'franquia' && valorFranquia === 0) {
-      alert('Preencha o valor da franquia mensal');
-      return;
+    // Validação específica para modalidade franquia
+    if (modalidadeLocacao === 'franquia') {
+      if (volumeMensal === 0) {
+        alert('Preencha o volume mensal para modalidade de franquia');
+        return;
+      }
+      if (valorFranquia === 0) {
+        alert('Preencha o valor da franquia mensal');
+        return;
+      }
     }
 
+    // Validação específica para modalidade por página
     if (modalidadeLocacao === 'por-pagina' && valorLocacaoImpressora === 0) {
       alert('Preencha o valor da locação da impressora');
       return;
@@ -621,19 +637,21 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
                 <CardTitle className="text-sm">Parâmetros de Cálculo</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label>Volume Mensal (páginas) *</Label>
-                    <Input
-                      type="number"
-                      value={volumeMensal || ''}
-                      onChange={(e) => setVolumeMensal(Number(e.target.value))}
-                      placeholder="Ex: 5000"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Volume estimado de impressão por mês
-                    </p>
-                  </div>
+                <div className={`grid ${modalidadeLocacao === 'por-pagina' ? 'grid-cols-2' : 'grid-cols-3'} gap-4`}>
+                  {modalidadeLocacao === 'franquia' && (
+                    <div>
+                      <Label>Volume Mensal (páginas) *</Label>
+                      <Input
+                        type="number"
+                        value={volumeMensal || ''}
+                        onChange={(e) => setVolumeMensal(Number(e.target.value))}
+                        placeholder="Ex: 5000"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Volume estimado de impressão por mês
+                      </p>
+                    </div>
+                  )}
                   <div>
                     <Label>Prazo do Contrato (meses)</Label>
                     <Select value={prazoContrato.toString()} onValueChange={(v) => setPrazoContrato(Number(v))}>
@@ -711,7 +729,7 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
 
           {/* Aba Resultado */}
           <TabsContent value="resultado" className="space-y-4">
-            {volumeMensal > 0 && suprimentos.length > 0 ? (
+            {((modalidadeLocacao === 'franquia' && volumeMensal > 0) || modalidadeLocacao === 'por-pagina') && suprimentos.length > 0 ? (
               <>
                 {/* Modalidade de Locação */}
                 <Card className={modalidadeLocacao === 'franquia' ? 'border-blue-200 bg-blue-50' : 'border-green-200 bg-green-50'}>
@@ -855,21 +873,35 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
                     <CardTitle className="text-sm">Custos Totais</CardTitle>
                   </CardHeader>
                   <CardContent>
+                    {modalidadeLocacao === 'por-pagina' && (
+                      <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-xs text-green-800">
+                          <strong>Nota:</strong> Os valores abaixo representam apenas a locação da impressora. 
+                          O custo das páginas impressas será cobrado separadamente conforme o uso real.
+                        </p>
+                      </div>
+                    )}
                     <div className="grid grid-cols-3 gap-4">
                       <div className="text-center p-4 bg-gray-50 rounded-lg">
-                        <p className="text-xs text-gray-600 mb-1">Custo Mensal</p>
+                        <p className="text-xs text-gray-600 mb-1">
+                          {modalidadeLocacao === 'por-pagina' ? 'Locação Mensal' : 'Custo Mensal'}
+                        </p>
                         <p className="text-xl font-bold text-gray-900">
                           R$ {calculo.custoMensal?.toFixed(2) || '0.00'}
                         </p>
                       </div>
                       <div className="text-center p-4 bg-gray-50 rounded-lg">
-                        <p className="text-xs text-gray-600 mb-1">Custo Anual</p>
+                        <p className="text-xs text-gray-600 mb-1">
+                          {modalidadeLocacao === 'por-pagina' ? 'Locação Anual' : 'Custo Anual'}
+                        </p>
                         <p className="text-xl font-bold text-gray-900">
                           R$ {calculo.custoAnual?.toFixed(2) || '0.00'}
                         </p>
                       </div>
                       <div className="text-center p-4 bg-gray-50 rounded-lg">
-                        <p className="text-xs text-gray-600 mb-1">Custo Total ({prazoContrato} meses)</p>
+                        <p className="text-xs text-gray-600 mb-1">
+                          {modalidadeLocacao === 'por-pagina' ? 'Locação Total' : 'Custo Total'} ({prazoContrato} meses)
+                        </p>
                         <p className="text-xl font-bold text-gray-900">
                           R$ {calculo.custoTotalContrato?.toFixed(2) || '0.00'}
                         </p>
@@ -883,7 +915,10 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
                 <CardContent className="py-12 text-center">
                   <Calculator className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-500">
-                    Preencha os dados da impressora, adicione suprimentos e defina o volume mensal para ver o resultado
+                    {modalidadeLocacao === 'franquia' 
+                      ? 'Preencha os dados da impressora, adicione suprimentos e defina o volume mensal para ver o resultado'
+                      : 'Preencha os dados da impressora e adicione suprimentos para ver o resultado'
+                    }
                   </p>
                 </CardContent>
               </Card>
@@ -902,7 +937,14 @@ export function ManualCalculationModal({ onClose, onSave }: ManualCalculationMod
           </Button>
           <Button 
             onClick={handleSalvar}
-            disabled={!modelo || !marca || volumeMensal === 0 || suprimentos.length === 0}
+            disabled={
+              !modelo || 
+              !marca || 
+              suprimentos.length === 0 ||
+              (modalidadeLocacao === 'franquia' && volumeMensal === 0) ||
+              (modalidadeLocacao === 'franquia' && valorFranquia === 0) ||
+              (modalidadeLocacao === 'por-pagina' && valorLocacaoImpressora === 0)
+            }
           >
             <Calculator className="h-4 w-4 mr-2" />
             Adicionar ao Cálculo
