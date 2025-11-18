@@ -964,76 +964,143 @@ export function PrinterCalculatorModule({ onBack, onNavigateToProposals, printer
                                             </div>
                                         )}
 
-                                        <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                                            <div>
-                                                <Label className="text-xs">Tipo</Label>
-                                                <p className="font-medium">{item.tipo}</p>
+                                        {/* Mostrar informações do cálculo manual detalhado */}
+                                        {item.detalhesCalculo?.isColorida ? (
+                                            <div className="space-y-4">
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                    <div>
+                                                        <Label className="text-xs">Tipo</Label>
+                                                        <p className="font-medium">{item.tipo}</p>
+                                                        {item.modelo && (
+                                                            <p className="text-xs text-gray-500">{item.marca} {item.modelo}</p>
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <Label className="text-xs">Volume Mensal</Label>
+                                                        <Input
+                                                            type="number"
+                                                            value={item.volumeMensal}
+                                                            onChange={(e) => atualizarItem(item.id, 'volumeMensal', Number(e.target.value))}
+                                                            className="h-8"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <Label className="text-xs">Prazo (meses)</Label>
+                                                        <Input
+                                                            type="number"
+                                                            value={item.prazoContrato}
+                                                            onChange={(e) => atualizarItem(item.id, 'prazoContrato', Number(e.target.value))}
+                                                            className="h-8"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                {/* Custos separados para impressora colorida */}
+                                                <div className="grid grid-cols-2 gap-4 p-3 bg-gray-50 rounded-lg">
+                                                    <div className="p-3 bg-blue-50 rounded border border-blue-200">
+                                                        <Label className="text-xs text-blue-700">Custo/Página Mono</Label>
+                                                        <p className="font-bold text-blue-600 text-lg">
+                                                            R$ {item.detalhesCalculo.custoPorPaginaMono.toFixed(4)}
+                                                        </p>
+                                                    </div>
+                                                    <div className="p-3 bg-green-50 rounded border border-green-200">
+                                                        <Label className="text-xs text-green-700">Custo/Página Color</Label>
+                                                        <p className="font-bold text-green-600 text-lg">
+                                                            R$ {item.detalhesCalculo.custoPorPaginaColor.toFixed(4)}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <Label className="text-xs">Custo Mensal</Label>
+                                                        <p className="font-bold text-green-600">
+                                                            R$ {item.custoMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <Label className="text-xs">Custo Total ({item.prazoContrato} meses)</Label>
+                                                        <p className="font-bold text-blue-600">
+                                                            R$ {(item.custoMensal * item.prazoContrato).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <Label className="text-xs">Volume Mensal</Label>
-                                                <Input
-                                                    type="number"
-                                                    value={item.volumeMensal}
-                                                    onChange={(e) => atualizarItem(item.id, 'volumeMensal', Number(e.target.value))}
-                                                    className="h-8"
-                                                />
-                                            </div>
-                                            <div>
-                                                <Label className="text-xs">Prazo (meses)</Label>
-                                                {item.isFromCatalog ? (
-                                                    <Select 
-                                                        value={item.prazoContrato.toString()} 
-                                                        onValueChange={(value) => atualizarItem(item.id, 'prazoContrato', Number(value))}
-                                                    >
-                                                        <SelectTrigger className="h-8">
-                                                            <SelectValue />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="12">12</SelectItem>
-                                                            <SelectItem value="24">24</SelectItem>
-                                                            <SelectItem value="36">36</SelectItem>
-                                                            <SelectItem value="48">48</SelectItem>
-                                                            <SelectItem value="60">60</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                ) : (
+                                        ) : (
+                                            <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+                                                <div>
+                                                    <Label className="text-xs">Tipo</Label>
+                                                    <p className="font-medium">{item.tipo}</p>
+                                                    {item.modelo && (
+                                                        <p className="text-xs text-gray-500">{item.marca} {item.modelo}</p>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <Label className="text-xs">Volume Mensal</Label>
                                                     <Input
                                                         type="number"
-                                                        value={item.prazoContrato}
-                                                        onChange={(e) => atualizarItem(item.id, 'prazoContrato', Number(e.target.value))}
+                                                        value={item.volumeMensal}
+                                                        onChange={(e) => atualizarItem(item.id, 'volumeMensal', Number(e.target.value))}
                                                         className="h-8"
                                                     />
-                                                )}
-                                            </div>
-                                            <div>
-                                                <Label className="text-xs">Custo/Página</Label>
-                                                {item.isFromCatalog ? (
-                                                    <p className="font-medium text-sm">
-                                                        R$ {item.custoPorPagina.toFixed(4)}
+                                                </div>
+                                                <div>
+                                                    <Label className="text-xs">Prazo (meses)</Label>
+                                                    {item.isFromCatalog ? (
+                                                        <Select 
+                                                            value={item.prazoContrato.toString()} 
+                                                            onValueChange={(value) => atualizarItem(item.id, 'prazoContrato', Number(value))}
+                                                        >
+                                                            <SelectTrigger className="h-8">
+                                                                <SelectValue />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                <SelectItem value="12">12</SelectItem>
+                                                                <SelectItem value="24">24</SelectItem>
+                                                                <SelectItem value="36">36</SelectItem>
+                                                                <SelectItem value="48">48</SelectItem>
+                                                                <SelectItem value="60">60</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    ) : (
+                                                        <Input
+                                                            type="number"
+                                                            value={item.prazoContrato}
+                                                            onChange={(e) => atualizarItem(item.id, 'prazoContrato', Number(e.target.value))}
+                                                            className="h-8"
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <Label className="text-xs">Custo/Página</Label>
+                                                    {item.isFromCatalog || item.detalhesCalculo ? (
+                                                        <p className="font-medium text-sm">
+                                                            R$ {(item.detalhesCalculo?.custoPorPaginaMono || item.custoPorPagina).toFixed(4)}
+                                                        </p>
+                                                    ) : (
+                                                        <Input
+                                                            type="number"
+                                                            step="0.01"
+                                                            value={item.custoPorPagina}
+                                                            onChange={(e) => atualizarItem(item.id, 'custoPorPagina', Number(e.target.value))}
+                                                            className="h-8"
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <Label className="text-xs">Custo Mensal</Label>
+                                                    <p className="font-bold text-green-600">
+                                                        R$ {item.custoMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                                     </p>
-                                                ) : (
-                                                    <Input
-                                                        type="number"
-                                                        step="0.01"
-                                                        value={item.custoPorPagina}
-                                                        onChange={(e) => atualizarItem(item.id, 'custoPorPagina', Number(e.target.value))}
-                                                        className="h-8"
-                                                    />
-                                                )}
+                                                </div>
+                                                <div>
+                                                    <Label className="text-xs">Custo Total</Label>
+                                                    <p className="font-bold text-blue-600">
+                                                        R$ {(item.custoMensal * item.prazoContrato).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <Label className="text-xs">Custo Mensal</Label>
-                                                <p className="font-bold text-green-600">
-                                                    R$ {item.custoMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <Label className="text-xs">Custo Total</Label>
-                                                <p className="font-bold text-blue-600">
-                                                    R$ {item.custoAnual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                                                </p>
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
