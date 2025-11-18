@@ -12,6 +12,7 @@ import { usePricingIntegration } from "@/hooks/use-pricing-integration"
 import { useProposalEditing } from "@/hooks/use-proposal-editing"
 import { ProposalClientForm, type ClientData } from "@/components/calculators/ProposalClientForm"
 import { Printer as PrinterType } from "./types"
+import { ManualCalculationModal } from "./ManualCalculationModal"
 import PDFGenerator from "@/components/pdf-generation/generators/PDFGenerator"
 import SimplePDFGenerator from "@/components/pdf-generation/simple/SimplePDFGenerator"
 import ProposalConfirmation from "@/components/pdf-generation/viewers/ProposalConfirmation"
@@ -84,6 +85,7 @@ export function PrinterCalculatorModule({ onBack, onNavigateToProposals, printer
     const [volumeImpressora, setVolumeImpressora] = useState(0)
     const [prazoImpressora, setPrazoImpressora] = useState(36)
     const [tipoModoCalculo, setTipoModoCalculo] = useState<"manual" | "catalogo">("manual")
+    const [showManualCalculationModal, setShowManualCalculationModal] = useState(false)
     
     // Effect to load proposal data when editing
     useEffect(() => {
@@ -158,6 +160,31 @@ export function PrinterCalculatorModule({ onBack, onNavigateToProposals, printer
         setNovoVolume(0)
         setNovoCusto(0)
         setNovoPrazo(36)
+    }
+
+    const handleManualCalculationSave = (dados: any) => {
+        const novoItem: PrinterItem = {
+            id: Date.now().toString(),
+            modelo: dados.impressora.modelo,
+            marca: dados.impressora.marca,
+            tipo: dados.impressora.tipo,
+            volumeMensal: dados.volumeMensal,
+            custoPorPagina: dados.calculo.total,
+            custoMensal: dados.calculo.custoMensal,
+            custoAnual: dados.calculo.custoAnual,
+            prazoContrato: dados.prazoContrato,
+            isFromCatalog: false,
+            // Armazenar dados detalhados para referência
+            detalhesCalculo: {
+                suprimentos: dados.suprimentos,
+                custoAquisicao: dados.impressora.custoAquisicao,
+                vidaUtil: dados.impressora.vidaUtil,
+                detalhamento: dados.calculo.detalhes
+            }
+        }
+
+        setPrinters([...printers, novoItem])
+        setShowManualCalculationModal(false)
     }
 
     const adicionarImpressoraCatalogo = () => {
@@ -724,12 +751,12 @@ export function PrinterCalculatorModule({ onBack, onNavigateToProposals, printer
                                     Impressora do Catálogo
                                 </Button>
                                 <Button
-                                    variant={tipoModoCalculo === "manual" ? "default" : "outline"}
-                                    onClick={() => setTipoModoCalculo("manual")}
+                                    variant="default"
+                                    onClick={() => setShowManualCalculationModal(true)}
                                     className="flex items-center gap-2"
                                 >
-                                    <Plus className="h-4 w-4" />
-                                    Cálculo Manual
+                                    <Calculator className="h-4 w-4" />
+                                    Cálculo Manual Detalhado
                                 </Button>
                             </div>
                         </div>
@@ -1215,6 +1242,14 @@ export function PrinterCalculatorModule({ onBack, onNavigateToProposals, printer
                     proposalData={pdfData.proposalData}
                     clientData={pdfData.clientData}
                     pdfUrl={pdfData.pdfUrl}
+                />
+            )}
+
+            {/* Modal de Cálculo Manual Detalhado */}
+            {showManualCalculationModal && (
+                <ManualCalculationModal
+                    onClose={() => setShowManualCalculationModal(false)}
+                    onSave={handleManualCalculationSave}
                 />
             )}
         </div>
