@@ -22,12 +22,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { UnifiedProposalService, UnifiedProposal } from '@/lib/services/unified-proposal-service';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ProposalCoverPage } from '@/components/propostas/ProposalCoverPage';
 
 export default function PropostasPage() {
   const router = useRouter();
   const [proposals, setProposals] = useState<UnifiedProposal[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<ProposalStatus | 'ALL'>('ALL');
+  const [showCoverPage, setShowCoverPage] = useState(false);
   const [filterType, setFilterType] = useState<'ALL' | 'commercial' | 'noc'>('ALL');
   const [showNOCSelector, setShowNOCSelector] = useState(false);
   const [selectedNOCId, setSelectedNOCId] = useState<string>('');
@@ -63,6 +65,11 @@ export default function PropostasPage() {
   };
 
   const handleCreateNew = () => {
+    // Mostrar página de capa primeiro
+    setShowCoverPage(true);
+  };
+
+  const handleCoverPageContinue = (coverData: { clientName: string; date: string; services: string[] }) => {
     // Verificar se existem propostas NOC
     const nocProposals = UnifiedProposalService.getNOCProposalsForSelection();
     
@@ -71,12 +78,30 @@ export default function PropostasPage() {
       setShowNOCSelector(true);
     } else {
       // Criar proposta comercial sem vincular NOC
-      createCommercialProposal();
+      createCommercialProposal(undefined, coverData);
     }
   };
 
-  const createCommercialProposal = (nocProposalId?: string) => {
+  const createCommercialProposal = (nocProposalId?: string, coverData?: { clientName: string; date: string; services: string[] }) => {
     const newProposal = CommercialProposalService.createEmptyProposal();
+    
+    // Preencher dados da capa se fornecidos
+    if (coverData) {
+      newProposal.cover.clientName = coverData.clientName;
+      newProposal.cover.proposalDate = new Date(coverData.date);
+      newProposal.title = `Proposta Comercial - ${coverData.clientName}`;
+      newProposal.client = {
+        ...newProposal.client,
+        name: coverData.clientName
+      };
+      // Adicionar serviços como tags ou no sumário executivo
+      if (coverData.services.length > 0) {
+        newProposal.executiveSummary = {
+          ...newProposal.executiveSummary,
+          solution: `Fornecimento de serviços de ${coverData.services.join(', ')}.`
+        };
+      }
+    }
     
     // Se tiver proposta NOC vinculada, preencher dados
     if (nocProposalId) {
@@ -276,6 +301,19 @@ export default function PropostasPage() {
     filterStatus,
     filterType
   });
+
+  // Se estiver mostrando a página de capa, renderizar apenas ela
+  if (showCoverPage) {
+    return (
+      <ProposalCoverPage
+        onContinue={(coverData) => {
+          setShowCoverPage(false);
+          handleCoverPageContinue(coverData);
+        }}
+        onBack={() => setShowCoverPage(false)}
+      />
+    );
+  }
 
   return (
     <div className="container mx-auto py-8 px-4">
