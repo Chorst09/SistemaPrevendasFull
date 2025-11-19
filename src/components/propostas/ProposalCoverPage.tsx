@@ -224,7 +224,7 @@ export function ProposalCoverPage({
               </div>
 
               {/* Imagem do Datacenter - Lado Direito com Quadro */}
-              <div className="absolute top-1/3 right-12 w-5/12 h-2/5">
+              <div className="absolute top-[32%] right-2 w-5/12 h-[48%]">
                 {/* Quadro/Moldura branca ao redor da imagem */}
                 <div className="relative w-full h-full">
                   {/* Formas geométricas decorativas */}
