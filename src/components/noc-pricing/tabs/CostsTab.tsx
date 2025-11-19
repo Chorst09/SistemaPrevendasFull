@@ -155,10 +155,10 @@ export function CostsTab({ data, onChange }: CostsTabProps) {
     });
   };
 
-  const totalInfrastructure = data.serverCosts + data.storageCosts + data.networkCosts;
-  const totalSoftware = data.monitoringLicenses + data.integrationCosts;
-  const totalCosts = totalInfrastructure + totalSoftware + data.facilityCosts + data.utilitiesCosts + 
-                     data.trainingCosts + data.certificationCosts + data.contingencyCosts;
+  const totalInfrastructure = (data.serverCosts || 0) + (data.storageCosts || 0) + (data.networkCosts || 0);
+  const totalSoftware = (data.monitoringLicenses || 0) + (data.integrationCosts || 0);
+  const totalCosts = totalInfrastructure + totalSoftware + (data.facilityCosts || 0) + (data.utilitiesCosts || 0) + 
+                     (data.trainingCosts || 0) + (data.certificationCosts || 0) + (data.contingencyCosts || 0);
 
   return (
     <div className="space-y-6">
@@ -231,19 +231,19 @@ export function CostsTab({ data, onChange }: CostsTabProps) {
             <div className="text-center p-3 bg-blue-50 rounded-lg">
               <p className="text-xs text-gray-600 mb-1">Servidores</p>
               <p className="text-lg font-bold text-blue-600">
-                R$ {data.serverCosts.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                R$ {(data.serverCosts || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
             <div className="text-center p-3 bg-purple-50 rounded-lg">
               <p className="text-xs text-gray-600 mb-1">Storage</p>
               <p className="text-lg font-bold text-purple-600">
-                R$ {data.storageCosts.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                R$ {(data.storageCosts || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
             <div className="text-center p-3 bg-green-50 rounded-lg">
               <p className="text-xs text-gray-600 mb-1">Rede</p>
               <p className="text-lg font-bold text-green-600">
-                R$ {data.networkCosts.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                R$ {(data.networkCosts || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
           </div>
@@ -320,13 +320,13 @@ export function CostsTab({ data, onChange }: CostsTabProps) {
             <div className="text-center p-3 bg-green-50 rounded-lg">
               <p className="text-xs text-gray-600 mb-1">Licenças de Monitoramento</p>
               <p className="text-lg font-bold text-green-600">
-                R$ {data.monitoringLicenses.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                R$ {(data.monitoringLicenses || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
             <div className="text-center p-3 bg-cyan-50 rounded-lg">
               <p className="text-xs text-gray-600 mb-1">Integrações</p>
               <p className="text-lg font-bold text-cyan-600">
-                R$ {data.integrationCosts.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                R$ {(data.integrationCosts || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </p>
             </div>
           </div>
@@ -345,7 +345,7 @@ export function CostsTab({ data, onChange }: CostsTabProps) {
               <Input
                 type="number"
                 min="0"
-                value={data.facilityCosts}
+                value={data.facilityCosts || 0}
                 onChange={(e) => handleChange('facilityCosts', parseFloat(e.target.value) || 0)}
               />
             </div>
@@ -355,7 +355,7 @@ export function CostsTab({ data, onChange }: CostsTabProps) {
               <Input
                 type="number"
                 min="0"
-                value={data.utilitiesCosts}
+                value={data.utilitiesCosts || 0}
                 onChange={(e) => handleChange('utilitiesCosts', parseFloat(e.target.value) || 0)}
               />
             </div>
@@ -375,7 +375,7 @@ export function CostsTab({ data, onChange }: CostsTabProps) {
               <Input
                 type="number"
                 min="0"
-                value={data.trainingCosts}
+                value={data.trainingCosts || 0}
                 onChange={(e) => handleChange('trainingCosts', parseFloat(e.target.value) || 0)}
               />
             </div>
@@ -385,7 +385,7 @@ export function CostsTab({ data, onChange }: CostsTabProps) {
               <Input
                 type="number"
                 min="0"
-                value={data.certificationCosts}
+                value={data.certificationCosts || 0}
                 onChange={(e) => handleChange('certificationCosts', parseFloat(e.target.value) || 0)}
               />
             </div>
@@ -395,7 +395,7 @@ export function CostsTab({ data, onChange }: CostsTabProps) {
               <Input
                 type="number"
                 min="0"
-                value={data.contingencyCosts}
+                value={data.contingencyCosts || 0}
                 onChange={(e) => handleChange('contingencyCosts', parseFloat(e.target.value) || 0)}
               />
             </div>
@@ -426,13 +426,13 @@ export function CostsTab({ data, onChange }: CostsTabProps) {
               <div className="text-center p-3 bg-purple-50 rounded-lg">
                 <p className="text-xs text-gray-600 mb-1">Facilities</p>
                 <p className="text-lg font-bold text-purple-600">
-                  R$ {(data.facilityCosts + data.utilitiesCosts).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  R$ {((data.facilityCosts || 0) + (data.utilitiesCosts || 0)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </p>
               </div>
               <div className="text-center p-3 bg-orange-50 rounded-lg">
                 <p className="text-xs text-gray-600 mb-1">Outros</p>
                 <p className="text-lg font-bold text-orange-600">
-                  R$ {(data.trainingCosts + data.certificationCosts + data.contingencyCosts).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  R$ {((data.trainingCosts || 0) + (data.certificationCosts || 0) + (data.contingencyCosts || 0)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </p>
               </div>
             </div>
