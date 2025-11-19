@@ -55,6 +55,7 @@ import { EmployeeRegistryManager } from './employees/EmployeeRegistryManager';
 export interface ServiceDeskPricingSystemProps {
   initialData?: ServiceDeskData;
   onDataChange?: (data: ServiceDeskData) => void;
+  onBack?: () => void;
   integrationMode?: 'standalone' | 'integrated';
 }
 
@@ -173,6 +174,7 @@ const TAB_CONFIG = [
 export function ServiceDeskPricingSystem({
   initialData,
   onDataChange,
+  onBack,
   integrationMode = 'integrated'
 }: ServiceDeskPricingSystemProps) {
   // Early return for SSR - prevent localStorage access on server
@@ -735,6 +737,16 @@ export function ServiceDeskPricingSystem({
             
             {/* Action Buttons */}
             <div className="flex items-center space-x-2">
+              {onBack && (
+                <Button
+                  variant="outline"
+                  onClick={onBack}
+                  className="flex items-center space-x-2"
+                >
+                  <span>← Voltar</span>
+                </Button>
+              )}
+              
               <Tooltip content="Gerencie templates para reutilizar configurações">
                 <Button
                   variant="outline"

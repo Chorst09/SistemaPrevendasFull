@@ -40,7 +40,11 @@ const NOC_TABS = [
   { id: 'report', label: 'Relatório', description: 'Relatório final' }
 ];
 
-export function NOCPricingSystem() {
+interface NOCPricingSystemProps {
+  onBack?: () => void;
+}
+
+export function NOCPricingSystem({ onBack }: NOCPricingSystemProps = {}) {
   const [isMounted, setIsMounted] = useState(false);
   const [data, setData] = useState<NOCPricingData>(NOCDataManager.createEmptyData());
   const [validationStatus, setValidationStatus] = useState<Record<string, NOCTabValidationStatus>>({});
@@ -225,6 +229,16 @@ export function NOCPricingSystem() {
             </div>
             
             <div className="flex items-center space-x-2">
+              {onBack && (
+                <Button
+                  variant="outline"
+                  onClick={onBack}
+                  className="flex items-center space-x-2"
+                >
+                  <span>← Voltar</span>
+                </Button>
+              )}
+              
               <Button
                 variant="outline"
                 onClick={handleSave}

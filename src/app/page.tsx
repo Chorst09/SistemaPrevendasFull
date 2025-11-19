@@ -41,10 +41,9 @@ import { POCManagementView } from '@/components/poc';
 import { ITPricingModule } from '@/components/it-pricing/ITPricingModule';
 import { SettingsView } from '@/components/settings/SettingsView';
 import { RoChartsView } from '@/components/dashboard/RoChartsView';
-import { PrinterOutsourcingModule } from '@/components/printer-outsourcing/PrinterOutsourcingModule';
-import { ServiceDeskModule } from '@/components/service-desk/ServiceDeskModule';
-import { ServiceDeskPricingSystem } from '@/components/service-desk-pricing/ServiceDeskPricingSystem';
-import { NOCPricingSystem } from '@/components/noc-pricing/NOCPricingSystem';
+import { NOCModuleWrapper } from '@/components/noc-pricing/NOCModuleWrapper';
+import { ServiceDeskModuleWrapper } from '@/components/service-desk-pricing/ServiceDeskModuleWrapper';
+import { PrinterModuleWrapper } from '@/components/printer-outsourcing/PrinterModuleWrapper';
 import { ProposalListManager } from '@/components/pdf-generation/managers/ProposalListManager';
 
 
@@ -277,21 +276,9 @@ export default function App() { // Ou Home
                 </div>
             );
             case 'calculator-ti-vls': return <ITPricingModule onNavigateToProposals={() => setActiveTab('proposals')} />;
-            case 'calculator-noc': return <NOCPricingSystem />;
-            case 'calculator-servicedesk-advanced': return <ServiceDeskPricingSystem
-                integrationMode="integrated"
-                onDataChange={(data) => {
-                    console.log('Service Desk data updated:', data);
-                }}
-            />;
-            case 'calculator-printer': return <PrinterOutsourcingModule
-                onNavigateToProposals={() => setActiveTab('proposals')}
-                editingProposalId={editingProposalId}
-                onFinishEditing={() => {
-                    setEditingProposalId(null)
-                    setActiveTab('generated-proposals')
-                }}
-            />;
+            case 'calculator-noc': return <NOCModuleWrapper />;
+            case 'calculator-servicedesk-advanced': return <ServiceDeskModuleWrapper />;
+            case 'calculator-printer': return <PrinterModuleWrapper />;
 
 
             case 'bids-analysis': return <EditalAnalysisView

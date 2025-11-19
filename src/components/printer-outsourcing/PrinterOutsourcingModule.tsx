@@ -18,9 +18,10 @@ interface PrinterOutsourcingModuleProps {
     onNavigateToProposals?: () => void
     editingProposalId?: string | null
     onFinishEditing?: () => void
+    onBack?: () => void
 }
 
-export function PrinterOutsourcingModule({ onNavigateToProposals, editingProposalId, onFinishEditing }: PrinterOutsourcingModuleProps = {}) {
+export function PrinterOutsourcingModule({ onNavigateToProposals, editingProposalId, onFinishEditing, onBack }: PrinterOutsourcingModuleProps = {}) {
     const [currentModule, setCurrentModule] = useState<ModuleType>("home")
     const [selectedPrinter, setSelectedPrinter] = useState<PrinterType | null>(null)
 
@@ -241,6 +242,11 @@ export function PrinterOutsourcingModule({ onNavigateToProposals, editingProposa
                             </div>
                         </div>
                         <div className="flex items-center space-x-2">
+                            {onBack && currentModule === "home" && (
+                                <Button onClick={onBack} variant="outline" size="sm">
+                                    ← Voltar
+                                </Button>
+                            )}
                             <Badge variant="outline" className="text-xs">
                                 Módulo: {currentModule}
                             </Badge>
