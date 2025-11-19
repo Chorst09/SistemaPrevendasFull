@@ -90,16 +90,42 @@ export interface NOCTeamMember {
   experienceYears: number;
 }
 
+// Item de infraestrutura
+export interface InfrastructureItem {
+  id: string;
+  name: string;
+  type: 'server' | 'storage' | 'network' | 'other';
+  quantity: number;
+  unitCost: number; // Custo unitário mensal
+  totalCost: number; // quantity * unitCost
+  description?: string;
+}
+
+// Item de software/licença
+export interface SoftwareLicenseItem {
+  id: string;
+  name: string;
+  type: 'monitoring' | 'integration' | 'security' | 'backup' | 'other';
+  quantity: number;
+  unitCost: number; // Custo unitário mensal
+  totalCost: number; // quantity * unitCost
+  vendor?: string;
+  licenseType?: 'per-device' | 'per-user' | 'per-metric' | 'flat-rate';
+  description?: string;
+}
+
 // Custos operacionais NOC
 export interface NOCOperationalCosts {
-  // Infraestrutura
-  serverCosts: number; // Servidores de monitoramento
-  storageCosts: number; // Storage para logs e métricas
-  networkCosts: number; // Conectividade e redundância
+  // Infraestrutura (novo formato detalhado)
+  infrastructureItems: InfrastructureItem[];
+  serverCosts: number; // Total calculado dos servidores
+  storageCosts: number; // Total calculado do storage
+  networkCosts: number; // Total calculado da rede
   
-  // Software e licenças
-  monitoringLicenses: number; // Licenças de ferramentas
-  integrationCosts: number; // Integrações com sistemas
+  // Software e licenças (novo formato detalhado)
+  softwareLicenseItems: SoftwareLicenseItem[];
+  monitoringLicenses: number; // Total calculado das licenças
+  integrationCosts: number; // Total calculado das integrações
   
   // Facilities
   facilityCosts: number; // Espaço físico do NOC

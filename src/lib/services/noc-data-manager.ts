@@ -51,6 +51,8 @@ export class NOCDataManager {
       team: [],
       teamSize: 0,
       operationalCosts: {
+        infrastructureItems: [],
+        softwareLicenseItems: [],
         serverCosts: 0,
         storageCosts: 0,
         networkCosts: 0,
