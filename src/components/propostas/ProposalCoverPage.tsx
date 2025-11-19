@@ -33,6 +33,22 @@ const AVAILABLE_SERVICES = [
   'Service Desk'
 ];
 
+// Mapeamento de imagens para cada serviço (Unsplash)
+const SERVICE_IMAGES: Record<string, string> = {
+  'Datacenter': 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=600&fit=crop',
+  'Firewall': 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&h=600&fit=crop',
+  'Cloud Computing': 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&h=600&fit=crop',
+  'Backup': 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&h=600&fit=crop',
+  'Segurança': 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800&h=600&fit=crop',
+  'Rede': 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&h=600&fit=crop',
+  'Servidores': 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=600&fit=crop',
+  'Storage': 'https://images.unsplash.com/photo-1597852074816-d933c7d2b988?w=800&h=600&fit=crop',
+  'Virtualização': 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=600&fit=crop',
+  'Monitoramento': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+  'NOC': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+  'Service Desk': 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&h=600&fit=crop'
+};
+
 export function ProposalCoverPage({ 
   clientName: initialClientName = '', 
   date: initialDate = new Date().toISOString().split('T')[0],
@@ -48,11 +64,19 @@ export function ProposalCoverPage({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleServiceToggle = (service: string) => {
-    setSelectedServices(prev => 
-      prev.includes(service) 
+    setSelectedServices(prev => {
+      const isRemoving = prev.includes(service);
+      const newServices = isRemoving 
         ? prev.filter(s => s !== service)
-        : [...prev, service]
-    );
+        : [...prev, service];
+      
+      // Se estiver adicionando um serviço e não houver imagem, definir automaticamente
+      if (!isRemoving && !datacenterImage && SERVICE_IMAGES[service]) {
+        setDatacenterImage(SERVICE_IMAGES[service]);
+      }
+      
+      return newServices;
+    });
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -341,9 +365,9 @@ export function ProposalCoverPage({
 
                   <div className="space-y-2">
                     <Label className="text-gray-300">Tipos de Serviço * (selecione até 4)</Label>
-                    <div className="grid grid-cols-1 gap-3 p-4 bg-slate-900/50 rounded-lg border border-slate-600 max-h-64 overflow-y-auto">
+                    <div className="grid grid-cols-1 gap-2 p-4 bg-slate-900/50 rounded-lg border border-slate-600 max-h-64 overflow-y-auto">
                       {AVAILABLE_SERVICES.map((service) => (
-                        <div key={service} className="flex items-center space-x-2">
+                        <div key={service} className="flex items-center space-x-2 group">
                           <Checkbox
                             id={service}
                             checked={selectedServices.includes(service)}
@@ -356,11 +380,21 @@ export function ProposalCoverPage({
                           >
                             {service}
                           </label>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setDatacenterImage(SERVICE_IMAGES[service])}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity text-xs h-6 px-2 text-cyan-400 hover:text-cyan-300"
+                            title="Usar imagem deste serviço"
+                          >
+                            🖼️
+                          </Button>
                         </div>
                       ))}
                     </div>
                     <p className="text-xs text-gray-500">
-                      {selectedServices.length} serviço(s) selecionado(s)
+                      {selectedServices.length} serviço(s) selecionado(s) • Clique no ícone 🖼️ para usar a imagem do serviço
                     </p>
                   </div>
                 </div>
