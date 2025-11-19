@@ -1,18 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, Check, Upload, X } from 'lucide-react';
+import Image from 'next/image';
 
 interface ProposalCoverPageProps {
   clientName?: string;
   date?: string;
   services?: string[];
-  onContinue: (data: { clientName: string; date: string; services: string[] }) => void;
+  datacenterImage?: string;
+  onContinue: (data: { clientName: string; date: string; services: string[]; datacenterImage?: string }) => void;
   onBack?: () => void;
 }
 
@@ -35,12 +37,15 @@ export function ProposalCoverPage({
   clientName: initialClientName = '', 
   date: initialDate = new Date().toISOString().split('T')[0],
   services: initialServices = ['Datacenter', 'Firewall'],
+  datacenterImage: initialDatacenterImage,
   onContinue,
   onBack 
 }: ProposalCoverPageProps) {
   const [clientName, setClientName] = useState(initialClientName);
   const [date, setDate] = useState(initialDate);
   const [selectedServices, setSelectedServices] = useState<string[]>(initialServices);
+  const [datacenterImage, setDatacenterImage] = useState<string | undefined>(initialDatacenterImage);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleServiceToggle = (service: string) => {
     setSelectedServices(prev => 
@@ -48,6 +53,24 @@ export function ProposalCoverPage({
         ? prev.filter(s => s !== service)
         : [...prev, service]
     );
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setDatacenterImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setDatacenterImage(undefined);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleContinue = () => {
@@ -59,7 +82,7 @@ export function ProposalCoverPage({
       alert('Por favor, selecione pelo menos um tipo de serviço');
       return;
     }
-    onContinue({ clientName, date, services: selectedServices });
+    onContinue({ clientName, date, services: selectedServices, datacenterImage });
   };
 
   const formatDate = (dateString: string) => {
@@ -96,7 +119,6 @@ export function ProposalCoverPage({
               {/* Formas geométricas brancas - Topo */}
               <div className="absolute top-0 left-0 right-0 h-64">
                 <svg viewBox="0 0 800 300" className="w-full h-full" preserveAspectRatio="xMidYMin slice">
-                  {/* Forma principal do topo */}
                   <polygon 
                     points="0,0 800,0 800,150 550,250 250,250 0,150" 
                     fill="none" 
@@ -114,16 +136,31 @@ export function ProposalCoverPage({
                 </svg>
               </div>
 
-              {/* Logo no topo */}
+              {/* Logo Double no topo */}
               <div className="absolute top-8 left-0 right-0 flex justify-center z-10">
-                <div className="bg-[#1a2942] px-12 py-6 rounded-b-3xl border-2 border-white/30 shadow-xl">
-                  <div className="flex items-center space-x-3">
-                    <div className="text-4xl font-bold text-gray-400">◇◇</div>
-                    <div>
-                      <div className="text-3xl font-bold text-gray-400 tracking-wider">double</div>
-                      <div className="text-xs text-gray-500 text-right">ti + telecom</div>
-                    </div>
-                  </div>
+                <div className="bg-[#1a2942] px-8 py-4 rounded-b-3xl border-2 border-white/30 shadow-xl">
+                  {/* Logo SVG da Double */}
+                  <svg width="280" height="80" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+                    {/* Símbolo Double (dois losangos entrelaçados) */}
+                    <g transform="translate(20, 30)">
+                      {/* Losango esquerdo - mais escuro */}
+                      <path d="M 0,30 L 25,10 L 50,30 L 25,50 Z" fill="#4a5f7f" stroke="#4a5f7f" strokeWidth="2"/>
+                      {/* Losango direito - mais claro (cyan) */}
+                      <path d="M 25,30 L 50,10 L 75,30 L 50,50 Z" fill="#6ba3c0" stroke="#6ba3c0" strokeWidth="2"/>
+                      {/* Detalhe de entrelaçamento */}
+                      <circle cx="37.5" cy="30" r="5" fill="#0a1628"/>
+                    </g>
+                    
+                    {/* Texto "double" */}
+                    <text x="110" y="70" fontFamily="Arial, sans-serif" fontSize="48" fontWeight="300" fill="#7a8fa8">
+                      double
+                    </text>
+                    
+                    {/* Texto "ti + telecom" */}
+                    <text x="280" y="85" fontFamily="Arial, sans-serif" fontSize="16" fill="#6a7a8a">
+                      ti + telecom
+                    </text>
+                  </svg>
                 </div>
               </div>
 
@@ -183,27 +220,33 @@ export function ProposalCoverPage({
                     />
                   </svg>
                   
-                  {/* Placeholder para imagem do datacenter */}
-                  <div className="absolute inset-0 m-12 bg-gradient-to-br from-blue-900/50 to-cyan-900/50 rounded-lg flex items-center justify-center border-2 border-white/20">
-                    <div className="text-center text-white/60">
-                      <div className="text-6xl mb-4">🖥️</div>
-                      <div className="text-sm">Datacenter</div>
-                    </div>
+                  {/* Imagem do datacenter ou placeholder */}
+                  <div className="absolute inset-0 m-12 rounded-lg overflow-hidden border-2 border-white/20">
+                    {datacenterImage ? (
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={datacenterImage}
+                          alt="Datacenter"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-blue-900/50 to-cyan-900/50 flex items-center justify-center">
+                        <div className="text-center text-white/60">
+                          <div className="text-6xl mb-4">🖥️</div>
+                          <div className="text-sm">Datacenter</div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Rodapé */}
-              <div className="absolute bottom-8 left-12 right-12 flex items-center justify-between z-10">
-                <div className="bg-white p-3 rounded-lg">
-                  <div className="w-20 h-20 bg-black flex items-center justify-center text-white text-xs">
-                    QR Code
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-white font-bold text-xl mb-1">Visite Nosso Site</div>
-                  <div className="text-gray-300 text-lg">www.doubletelecom.com.br</div>
-                </div>
+              {/* Rodapé Centralizado */}
+              <div className="absolute bottom-8 left-0 right-0 flex flex-col items-center justify-center z-10 space-y-2">
+                <div className="text-white font-bold text-xl">Visite Nosso Site</div>
+                <div className="text-gray-300 text-lg">www.doubletelecom.com.br</div>
               </div>
 
               {/* Formas geométricas - Rodapé */}
@@ -249,6 +292,51 @@ export function ProposalCoverPage({
                       onChange={(e) => setDate(e.target.value)}
                       className="bg-slate-900/50 border-slate-600 text-white"
                     />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-gray-300">Imagem do Serviço</Label>
+                    <div className="space-y-2">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                        id="datacenter-image"
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="flex-1 bg-slate-900/50 border-slate-600 text-white hover:bg-slate-800/50"
+                        >
+                          <Upload className="h-4 w-4 mr-2" />
+                          {datacenterImage ? 'Trocar Imagem' : 'Upload Imagem'}
+                        </Button>
+                        {datacenterImage && (
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            onClick={handleRemoveImage}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                      {datacenterImage && (
+                        <div className="relative w-full h-32 rounded-lg overflow-hidden border border-slate-600">
+                          <Image
+                            src={datacenterImage}
+                            alt="Preview"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="space-y-2">
