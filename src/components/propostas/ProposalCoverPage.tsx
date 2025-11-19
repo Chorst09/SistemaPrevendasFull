@@ -189,7 +189,7 @@ export function ProposalCoverPage({
               </div>
 
               {/* Conteúdo Principal - Lado Esquerdo */}
-              <div className="absolute top-64 left-12 right-1/2 z-10">
+              <div className="absolute top-64 left-12 right-1/2 z-10 pr-8">
                 <h1 className="text-6xl font-bold text-[#5eb3d6] mb-2 leading-tight">
                   Proposta
                 </h1>
@@ -198,61 +198,65 @@ export function ProposalCoverPage({
                 </h2>
 
                 <div className="space-y-6 mb-12">
+                  {/* Nome do Cliente - apenas o valor */}
                   <div>
-                    <div className="text-lg text-white font-semibold mb-2">Nome do Cliente</div>
-                    <div className="text-xl text-white">
+                    <div className="text-2xl text-white font-bold">
                       {clientName || 'Nome do Cliente'}
                     </div>
                   </div>
+                  {/* Data */}
                   <div>
-                    <div className="text-lg text-white font-semibold mb-2">Data</div>
-                    <div className="text-xl text-white">
-                      {formatDate(date)}
+                    <div className="text-lg text-white">
+                      Data {formatDate(date)}
                     </div>
                   </div>
                 </div>
 
-                {/* Lista de Serviços */}
-                <div className="border-t border-b border-white/40 py-6 space-y-3">
+                {/* Lista de Serviços - ajustada para caber melhor */}
+                <div className="border-t border-b border-white/40 py-4 space-y-2">
                   {selectedServices.slice(0, 4).map((service, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <Check className="h-6 w-6 text-[#5eb3d6]" />
-                      <span className="text-white font-semibold text-lg">{service}</span>
+                    <div key={index} className="flex items-center space-x-2">
+                      <Check className="h-5 w-5 text-[#5eb3d6] flex-shrink-0" />
+                      <span className="text-white font-semibold text-base truncate">{service}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Imagem do Datacenter - Lado Direito */}
-              <div className="absolute top-1/3 right-0 bottom-32 w-1/2">
-                <div className="relative h-full">
-                  {/* Formas geométricas ao redor da imagem */}
-                  <svg viewBox="0 0 400 600" className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-                    <polygon 
-                      points="50,50 350,100 350,500 100,550 50,450" 
-                      fill="none" 
-                      stroke="white" 
-                      strokeWidth="3"
-                      opacity="0.6"
-                    />
-                    <polygon 
-                      points="80,80 320,120 320,480 120,520 80,430" 
-                      fill="none" 
-                      stroke="white" 
-                      strokeWidth="2"
-                      opacity="0.4"
-                    />
-                  </svg>
+              {/* Imagem do Datacenter - Lado Direito com Quadro */}
+              <div className="absolute top-1/3 right-12 w-5/12 h-2/5">
+                {/* Quadro/Moldura branca ao redor da imagem */}
+                <div className="relative w-full h-full">
+                  {/* Formas geométricas decorativas */}
+                  <div className="absolute -inset-4">
+                    <svg viewBox="0 0 100 100" className="w-full h-full" preserveAspectRatio="none">
+                      <polygon 
+                        points="5,5 95,10 95,90 10,95 5,85" 
+                        fill="none" 
+                        stroke="white" 
+                        strokeWidth="0.5"
+                        opacity="0.6"
+                      />
+                      <polygon 
+                        points="8,8 92,12 92,88 12,92 8,83" 
+                        fill="none" 
+                        stroke="white" 
+                        strokeWidth="0.3"
+                        opacity="0.4"
+                      />
+                    </svg>
+                  </div>
                   
-                  {/* Imagem do datacenter ou placeholder */}
-                  <div className="absolute inset-0 m-12 rounded-lg overflow-hidden border-2 border-white/20">
+                  {/* Quadro principal com borda branca */}
+                  <div className="relative w-full h-full border-4 border-white/80 rounded-lg overflow-hidden shadow-2xl bg-[#1a2942]">
                     {datacenterImage ? (
                       <div className="relative w-full h-full">
                         <Image
                           src={datacenterImage}
-                          alt="Datacenter"
+                          alt="Serviço"
                           fill
                           className="object-cover"
+                          unoptimized
                         />
                       </div>
                     ) : (
