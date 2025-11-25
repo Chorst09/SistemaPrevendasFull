@@ -1,0 +1,65 @@
+/* Forçar cores brancas em todo o componente */
+.bidAnalyzer {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+.bidAnalyzer * {
+  color: #ffffff !important;
+}
+
+.bidAnalyzer h1,
+.bidAnalyzer h2,
+.bidAnalyzer h3,
+.bidAnalyzer h4,
+.bidAnalyzer h5,
+.bidAnalyzer h6 {
+  color: #ffffff !important;
+}
+
+.bidAnalyzer p,
+.bidAnalyzer span,
+.bidAnalyzer div {
+  color: #ffffff !important;
+}
+
+.bidAnalyzer [class*="Card"] {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+.bidAnalyzer input,
+.bidAnalyzer textarea,
+.bidAnalyzer select {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+.bidAnalyzer input::placeholder,
+.bidAnalyzer textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+.bidAnalyzer button {
+  color: #ffffff !important;
+}
+
+.bidAnalyzer label {
+  color: #ffffff !important;
+}
+
+.bidAnalyzer [role="tablist"] {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+}
+
+.bidAnalyzer [role="tab"] {
+  color: #ffffff !important;
+}
+
+.bidAnalyzer [role="tab"][aria-selected="true"] {
+  color: #ffffff !important;
+  background-color: #334155 !important;
+}

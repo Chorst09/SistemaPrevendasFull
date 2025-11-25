@@ -23,6 +23,9 @@ import { Label } from '@/components/ui/label';
 import { UnifiedProposalService, UnifiedProposal } from '@/lib/services/unified-proposal-service';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ProposalCoverPage } from '@/components/propostas/ProposalCoverPage';
+import { ProposalAboutPage } from '@/components/propostas/ProposalAboutPage';
+import { ProposalClientsPage } from '@/components/propostas/ProposalClientsPage';
+import { ProposalContentPage } from '@/components/propostas/ProposalContentPage';
 
 export default function PropostasPage() {
   const router = useRouter();
@@ -30,6 +33,10 @@ export default function PropostasPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<ProposalStatus | 'ALL'>('ALL');
   const [showCoverPage, setShowCoverPage] = useState(false);
+  const [showAboutPage, setShowAboutPage] = useState(false);
+  const [showClientsPage, setShowClientsPage] = useState(false);
+  const [showContentPage, setShowContentPage] = useState(false);
+  const [coverData, setCoverData] = useState<{ clientName: string; date: string; services: string[]; datacenterImage?: string } | null>(null);
   const [filterType, setFilterType] = useState<'ALL' | 'commercial' | 'noc'>('ALL');
   const [showNOCSelector, setShowNOCSelector] = useState(false);
   const [selectedNOCId, setSelectedNOCId] = useState<string>('');
@@ -69,16 +76,37 @@ export default function PropostasPage() {
     setShowCoverPage(true);
   };
 
-  const handleCoverPageContinue = (coverData: { clientName: string; date: string; services: string[] }) => {
-    // Verificar se existem propostas NOC
+  const handleCoverPageContinue = (data: { clientName: string; date: string; services: string[]; datacenterImage?: string }) => {
+    // Salvar dados da capa e ir para página "Quem Somos"
+    setCoverData(data);
+    setShowCoverPage(false);
+    setShowAboutPage(true);
+  };
+
+  const handleAboutPageContinue = () => {
+    // Após a página "Quem Somos", ir para página "Nossos Clientes"
+    setShowAboutPage(false);
+    setShowClientsPage(true);
+  };
+
+  const handleClientsPageContinue = () => {
+    // Após a página "Nossos Clientes", ir para página de conteúdo (exemplo)
+    setShowClientsPage(false);
+    setShowContentPage(true);
+  };
+
+  const handleContentPageContinue = () => {
+    // Após a página de conteúdo, verificar se existem propostas NOC
     const nocProposals = UnifiedProposalService.getNOCProposalsForSelection();
+    
+    setShowContentPage(false);
     
     if (nocProposals.length > 0) {
       // Mostrar seletor de proposta NOC
       setShowNOCSelector(true);
     } else {
       // Criar proposta comercial sem vincular NOC
-      createCommercialProposal(undefined, coverData);
+      createCommercialProposal(undefined, coverData || undefined);
     }
   };
 
@@ -306,11 +334,63 @@ export default function PropostasPage() {
   if (showCoverPage) {
     return (
       <ProposalCoverPage
-        onContinue={(coverData) => {
-          setShowCoverPage(false);
-          handleCoverPageContinue(coverData);
-        }}
+        onContinue={handleCoverPageContinue}
         onBack={() => setShowCoverPage(false)}
+      />
+    );
+  }
+
+  // Se estiver mostrando a página "Quem Somos", renderizar apenas ela
+  if (showAboutPage) {
+    return (
+      <ProposalAboutPage
+        onContinue={handleAboutPageContinue}
+        onBack={() => {
+          setShowAboutPage(false);
+          setShowCoverPage(true);
+        }}
+      />
+    );
+  }
+
+  // Se estiver mostrando a página "Nossos Clientes", renderizar apenas ela
+  if (showClientsPage) {
+    return (
+      <ProposalClientsPage
+        onContinue={handleClientsPageContinue}
+        onBack={() => {
+          setShowClientsPage(false);
+          setShowAboutPage(true);
+        }}
+      />
+    );
+  }
+
+  // Se estiver mostrando a página de conteúdo (página 4+), renderizar apenas ela
+  if (showContentPage) {
+    return (
+      <ProposalContentPage
+        pageNumber={4}
+        title="Sumário Executivo"
+        content={
+          <div className="space-y-6">
+            <p>
+              Esta é uma página de exemplo com o layout padrão (cabeçalho e rodapé).
+            </p>
+            <p>
+              Você pode adicionar qualquer conteúdo aqui: texto, imagens, tabelas, gráficos, etc.
+            </p>
+            <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-cyan-500">
+              <h3 className="font-bold text-lg mb-2">Exemplo de Destaque</h3>
+              <p>Conteúdo importante em destaque.</p>
+            </div>
+          </div>
+        }
+        onContinue={handleContentPageContinue}
+        onBack={() => {
+          setShowContentPage(false);
+          setShowClientsPage(true);
+        }}
       />
     );
   }

@@ -671,7 +671,7 @@ export function ManualProjectModal({ onClose, onCreate }: ManualProjectModalProp
                 <CardTitle className="text-sm">Cronograma - Gráfico de Gantt</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {(() => {
+                {React.useMemo(() => {
                   const timeline = generateTimeline();
                   
                   if (timeline.phases.length === 0) {
@@ -835,7 +835,7 @@ export function ManualProjectModal({ onClose, onCreate }: ManualProjectModalProp
                       </p>
                     </>
                   );
-                })()}
+                }, [deliverables])}
               </CardContent>
             </Card>
           </TabsContent>

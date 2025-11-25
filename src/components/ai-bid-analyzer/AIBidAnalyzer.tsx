@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import styles from './AIBidAnalyzer.module.css';
 import { Edital } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -242,7 +243,7 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
             case 'low': return 'text-green-600';
             case 'medium': return 'text-yellow-600';
             case 'high': return 'text-red-600';
-            default: return 'text-gray-600';
+            default: return 'text-white';
         }
     };
 
@@ -612,12 +613,12 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
     };
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
+        <div className={`${styles.bidAnalyzer} p-6 max-w-7xl mx-auto rounded-lg`}>
             <div className="mb-6">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-3xl font-bold text-white mb-2">
                     Analisador de Editais com IA
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-white">
                     Análise inteligente de editais, documentos obrigatórios e produtos do termo de referência
                 </p>
             </div>
@@ -634,24 +635,24 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
                 </TabsList>
 
                 <TabsContent value="upload" className="space-y-6">
-                    <Card>
+                    <Card className="bg-slate-800 border-slate-700">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-white">
                                 <Upload className="h-5 w-5" />
                                 Upload de Documentos
                             </CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="text-white">
                             <div className="space-y-4">
                                 <div
                                     className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-gray-400 transition-colors"
                                     onClick={() => fileInputRef.current?.click()}
                                 >
-                                    <Upload className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                                    <p className="text-lg font-medium text-gray-900 mb-2">
+                                    <Upload className="h-12 w-12 mx-auto text-white mb-4" />
+                                    <p className="text-lg font-medium text-white mb-2">
                                         Clique para fazer upload dos documentos
                                     </p>
-                                    <p className="text-gray-500">
+                                    <p className="text-white">
                                         Suporte para PDF, DOC, DOCX (máx. 10MB cada)
                                     </p>
                                     <input
@@ -666,13 +667,13 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
 
                                 {files.length > 0 && (
                                     <div className="space-y-2">
-                                        <h3 className="font-medium text-gray-900">Arquivos Selecionados:</h3>
+                                        <h3 className="font-medium text-white">Arquivos Selecionados:</h3>
                                         {files.map((file, index) => (
-                                            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div key={index} className="flex items-center justify-between p-3 bg-slate-700 rounded-lg">
                                                 <div className="flex items-center gap-2">
-                                                    <FileText className="h-4 w-4 text-blue-500" />
-                                                    <span className="text-sm font-medium">{file.name}</span>
-                                                    <span className="text-xs text-gray-500">
+                                                    <FileText className="h-4 w-4 text-blue-400" />
+                                                    <span className="text-sm font-medium text-white">{file.name}</span>
+                                                    <span className="text-xs text-white">
                                                         ({(file.size / 1024 / 1024).toFixed(2)} MB)
                                                     </span>
                                                 </div>
@@ -703,14 +704,14 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
                 </TabsContent>
 
                 <TabsContent value="analysis" className="space-y-6">
-                    <Card>
+                    <Card className="bg-slate-800 border-slate-700">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-white">
                                 <Brain className="h-5 w-5" />
                                 Análise com IA
                             </CardTitle>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="text-white">
                             {!isAnalyzing ? (
                                 <div className="space-y-4">
                                     <Alert>
@@ -729,13 +730,13 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
                             ) : (
                                 <div className="space-y-4">
                                     <div className="text-center">
-                                        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-                                        <p className="text-lg font-medium">Analisando documentos...</p>
+                                        <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-400" />
+                                        <p className="text-lg font-medium text-white">Analisando documentos...</p>
                                     </div>
 
                                     <Progress value={analysisProgress} className="w-full" />
 
-                                    <p className="text-center text-gray-600">
+                                    <p className="text-center text-white">
                                         {analysisProgress}% concluído
                                     </p>
                                 </div>
@@ -748,80 +749,80 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
                     {analysisResult && (
                         <div ref={reportRef}>
                             {/* Resumo do Edital */}
-                            <Card>
+                            <Card className="bg-slate-800 border-slate-700">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
+                                    <CardTitle className="flex items-center gap-2 text-white">
                                         <FileText className="h-5 w-5" />
                                         Resumo do Edital
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent>
+                                <CardContent className="text-white">
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                         <div className="space-y-2">
-                                            <p className="text-sm font-medium text-gray-500">Número do Edital</p>
-                                            <p className="text-lg font-semibold">{analysisResult.summary.bidNumber}</p>
+                                            <p className="text-sm font-medium text-white">Número do Edital</p>
+                                            <p className="text-lg font-semibold text-white">{analysisResult.summary.bidNumber}</p>
                                         </div>
                                         <div className="space-y-2">
-                                            <p className="text-sm font-medium text-gray-500">Órgão</p>
-                                            <p className="text-lg font-semibold">{analysisResult.summary.publishingBody}</p>
+                                            <p className="text-sm font-medium text-white">Órgão</p>
+                                            <p className="text-lg font-semibold text-white">{analysisResult.summary.publishingBody}</p>
                                         </div>
                                         <div className="space-y-2">
-                                            <p className="text-sm font-medium text-gray-500">Modalidade</p>
-                                            <p className="text-lg font-semibold">{analysisResult.summary.modality}</p>
+                                            <p className="text-sm font-medium text-white">Modalidade</p>
+                                            <p className="text-lg font-semibold text-white">{analysisResult.summary.modality}</p>
                                         </div>
                                         <div className="space-y-2">
-                                            <p className="text-sm font-medium text-gray-500">Valor Estimado</p>
-                                            <p className="text-lg font-semibold text-green-600">
+                                            <p className="text-sm font-medium text-white">Valor Estimado</p>
+                                            <p className="text-lg font-semibold text-green-400">
                                                 R$ {analysisResult.summary.estimatedValue.toLocaleString('pt-BR')}
                                             </p>
                                         </div>
                                         <div className="space-y-2">
-                                            <p className="text-sm font-medium text-gray-500">Abertura</p>
-                                            <p className="text-lg font-semibold">{analysisResult.summary.openingDate}</p>
+                                            <p className="text-sm font-medium text-white">Abertura</p>
+                                            <p className="text-lg font-semibold text-white">{analysisResult.summary.openingDate}</p>
                                         </div>
                                         <div className="space-y-2">
-                                            <p className="text-sm font-medium text-gray-500">Prazo para Participação</p>
-                                            <p className="text-lg font-semibold text-orange-600">{analysisResult.summary.participationDeadline}</p>
+                                            <p className="text-sm font-medium text-white">Prazo para Participação</p>
+                                            <p className="text-lg font-semibold text-orange-400">{analysisResult.summary.participationDeadline}</p>
                                         </div>
                                         <div className="space-y-2">
-                                            <p className="text-sm font-medium text-gray-500">Score de Conformidade</p>
+                                            <p className="text-sm font-medium text-white">Score de Conformidade</p>
                                             <div className="flex items-center gap-2">
                                                 <Progress value={analysisResult.complianceScore} className="flex-1" />
-                                                <span className="text-lg font-semibold">{analysisResult.complianceScore}%</span>
+                                                <span className="text-lg font-semibold text-white">{analysisResult.complianceScore}%</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="mt-4">
-                                        <p className="text-sm font-medium text-gray-500 mb-2">Título</p>
-                                        <p className="text-base">{analysisResult.summary.title}</p>
+                                        <p className="text-sm font-medium text-white mb-2">Título</p>
+                                        <p className="text-base text-white">{analysisResult.summary.title}</p>
                                     </div>
                                 </CardContent>
                             </Card>
 
                             {/* Documentos Obrigatórios */}
-                            <Card>
+                            <Card className="bg-slate-800 border-slate-700">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
+                                    <CardTitle className="flex items-center gap-2 text-white">
                                         <Shield className="h-5 w-5" />
                                         Documentos Obrigatórios
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent>
+                                <CardContent className="text-white">
                                     <div className="space-y-3">
                                         {analysisResult.documents.map((doc, index) => (
-                                            <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                                            <div key={index} className="flex items-center justify-between p-3 border border-slate-600 rounded-lg bg-slate-800">
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-2 mb-1">
-                                                        <h4 className="font-medium">{doc.type}</h4>
+                                                        <h4 className="font-medium text-white">{doc.type}</h4>
                                                         {doc.found ? (
-                                                            <CheckCircle className="h-4 w-4 text-green-500" />
+                                                            <CheckCircle className="h-4 w-4 text-green-400" />
                                                         ) : (
-                                                            <AlertCircle className="h-4 w-4 text-red-500" />
+                                                            <AlertCircle className="h-4 w-4 text-red-400" />
                                                         )}
                                                     </div>
-                                                    <p className="text-sm text-gray-600">{doc.description}</p>
+                                                    <p className="text-sm text-white">{doc.description}</p>
                                                     {doc.observations && (
-                                                        <p className="text-sm text-red-600 mt-1">{doc.observations}</p>
+                                                        <p className="text-sm text-red-400 mt-1">{doc.observations}</p>
                                                     )}
                                                 </div>
                                                 <Badge variant={doc.found ? "default" : "destructive"}>
@@ -834,21 +835,21 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
                             </Card>
 
                             {/* Produtos e Serviços */}
-                            <Card>
+                            <Card className="bg-slate-800 border-slate-700">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
+                                    <CardTitle className="flex items-center gap-2 text-white">
                                         <Award className="h-5 w-5" />
                                         Produtos e Serviços
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent>
+                                <CardContent className="text-white">
                                     <div className="space-y-4">
                                         {analysisResult.products.map((product, index) => (
-                                            <div key={index} className="border rounded-lg p-4">
+                                            <div key={index} className="border border-slate-600 rounded-lg p-4 bg-slate-800">
                                                 <div className="flex items-start justify-between mb-3">
                                                     <div>
-                                                        <h4 className="font-semibold text-lg">{product.item}</h4>
-                                                        <p className="text-gray-600">{product.description}</p>
+                                                        <h4 className="font-semibold text-lg text-white">{product.item}</h4>
+                                                        <p className="text-white">{product.description}</p>
                                                     </div>
                                                     <Badge className={getComplianceColor(product.compliance)}>
                                                         {product.compliance === 'compliant' ? 'Conforme' :
@@ -858,13 +859,13 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
 
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
                                                     <div>
-                                                        <p className="text-sm font-medium text-gray-500">Quantidade</p>
-                                                        <p className="text-base">{product.quantity} {product.unit}</p>
+                                                        <p className="text-sm font-medium text-white">Quantidade</p>
+                                                        <p className="text-base text-white">{product.quantity} {product.unit}</p>
                                                     </div>
                                                     {product.estimatedValue && (
                                                         <div>
-                                                            <p className="text-sm font-medium text-gray-500">Valor Estimado</p>
-                                                            <p className="text-base font-semibold text-green-600">
+                                                            <p className="text-sm font-medium text-white">Valor Estimado</p>
+                                                            <p className="text-base font-semibold text-green-400">
                                                                 R$ {product.estimatedValue.toLocaleString('pt-BR')}
                                                             </p>
                                                         </div>
@@ -872,17 +873,17 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
                                                 </div>
 
                                                 <div className="mb-3">
-                                                    <p className="text-sm font-medium text-gray-500 mb-2">Requisitos Técnicos</p>
+                                                    <p className="text-sm font-medium text-white mb-2">Requisitos Técnicos</p>
                                                     <ul className="list-disc list-inside space-y-1">
                                                         {product.technicalRequirements.map((req, reqIndex) => (
-                                                            <li key={reqIndex} className="text-sm text-gray-700">{req}</li>
+                                                            <li key={reqIndex} className="text-sm text-white">{req}</li>
                                                         ))}
                                                     </ul>
                                                 </div>
 
                                                 <div>
-                                                    <p className="text-sm font-medium text-gray-500 mb-1">Observações</p>
-                                                    <p className="text-sm text-gray-700">{product.observations}</p>
+                                                    <p className="text-sm font-medium text-white mb-1">Observações</p>
+                                                    <p className="text-sm text-white">{product.observations}</p>
                                                 </div>
                                             </div>
                                         ))}
