@@ -2,12 +2,9 @@
 
 import React, { useState } from 'react';
 import { ProjectPhase, ProjectTask, ProjectPriority } from '@/lib/types/project';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -27,12 +24,10 @@ import { Progress } from '@/components/ui/progress';
 import {
   Calendar,
   CheckSquare,
-  Edit,
   Trash2,
   Plus,
   ChevronDown,
   ChevronUp,
-  AlertCircle,
 } from 'lucide-react';
 
 interface PhaseManagementModalProps {
@@ -49,10 +44,6 @@ export function PhaseManagementModal({
   onClose,
 }: PhaseManagementModalProps) {
   const [expandedPhaseId, setExpandedPhaseId] = useState<string | null>(null);
-  const [editingPhaseId, setEditingPhaseId] = useState<string | null>(null);
-  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
-  const [editingPhase, setEditingPhase] = useState<ProjectPhase | null>(null);
-  const [editingTask, setEditingTask] = useState<ProjectTask | null>(null);
 
   const getPhaseProgress = (phase: ProjectPhase) => {
     if (phase.tasks.length === 0) return 0;
@@ -63,26 +54,52 @@ export function PhaseManagementModal({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-emerald-500 text-white';
       case 'in-progress':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-orange-500 text-white';
       case 'delayed':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-500 text-white';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-amber-500 text-white';
+    }
+  };
+
+  const getPhaseCardBgColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return '#dcfce7'; // verde claro
+      case 'in-progress':
+        return '#fed7aa'; // laranja claro
+      case 'delayed':
+        return '#fee2e2'; // vermelho claro
+      default:
+        return '#fef3c7'; // âmbar claro
+    }
+  };
+
+  const getPhaseHeaderBgColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'linear-gradient(to right, #10b981, #059669)'; // verde
+      case 'in-progress':
+        return 'linear-gradient(to right, #f97316, #ea580c)'; // laranja
+      case 'delayed':
+        return 'linear-gradient(to right, #ef4444, #dc2626)'; // vermelho
+      default:
+        return 'linear-gradient(to right, #eab308, #ca8a04)'; // âmbar
     }
   };
 
   const getTaskStatusColor = (status: string) => {
     switch (status) {
       case 'done':
-        return 'bg-green-50 border-green-200';
+        return 'bg-emerald-50 border-l-4 border-l-emerald-500';
       case 'in-progress':
-        return 'bg-blue-50 border-blue-200';
+        return 'bg-blue-50 border-l-4 border-l-blue-500';
       case 'review':
-        return 'bg-yellow-50 border-yellow-200';
+        return 'bg-amber-50 border-l-4 border-l-amber-500';
       default:
-        return 'bg-gray-50 border-gray-200';
+        return 'bg-slate-50 border-l-4 border-l-slate-400';
     }
   };
 
@@ -155,10 +172,10 @@ export function PhaseManagementModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white">
         <DialogHeader>
-          <DialogTitle>Gerenciar Fases do Projeto</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-2xl font-bold text-gray-900">Gerenciar Fases do Projeto</DialogTitle>
+          <DialogDescription className="text-gray-700 font-semibold">
             Acompanhe e atualize o status das fases e tarefas do seu projeto
           </DialogDescription>
         </DialogHeader>
@@ -169,8 +186,15 @@ export function PhaseManagementModal({
             const isExpanded = expandedPhaseId === phase.id;
 
             return (
-              <Card key={phase.id} className="border-l-4 border-l-blue-500">
-                <CardHeader className="pb-3">
+              <Card key={phase.id} className="border-l-4 shadow-lg hover:shadow-xl transition-all" style={{ 
+                backgroundColor: getPhaseCardBgColor(phase.status),
+                borderLeftColor: phase.status === 'completed' ? '#10b981' : phase.status === 'in-progress' ? '#f97316' : phase.status === 'delayed' ? '#ef4444' : '#eab308',
+                borderLeftWidth: '6px'
+              }}>
+                <CardHeader className="pb-3 border-b-4" style={{ 
+                  background: getPhaseHeaderBgColor(phase.status),
+                  borderBottomColor: phase.status === 'completed' ? '#059669' : phase.status === 'in-progress' ? '#ea580c' : phase.status === 'delayed' ? '#dc2626' : '#ca8a04'
+                }}>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
@@ -180,15 +204,17 @@ export function PhaseManagementModal({
                           onClick={() =>
                             setExpandedPhaseId(isExpanded ? null : phase.id)
                           }
+                          style={{ color: 'white' }}
+                          className="hover:opacity-80"
                         >
                           {isExpanded ? (
-                            <ChevronUp className="h-4 w-4" />
+                            <ChevronUp className="h-5 w-5" style={{ color: 'white' }} />
                           ) : (
-                            <ChevronDown className="h-4 w-4" />
+                            <ChevronDown className="h-5 w-5" style={{ color: 'white' }} />
                           )}
                         </Button>
-                        <h3 className="text-lg font-semibold">{phase.name}</h3>
-                        <Badge className={getStatusColor(phase.status)}>
+                        <h3 className="text-lg font-bold drop-shadow" style={{ color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>{phase.name}</h3>
+                        <Badge className={`${getStatusColor(phase.status)} font-bold text-sm shadow-md`} style={{ fontSize: '12px', fontWeight: 'bold' }}>
                           {phase.status === 'completed'
                             ? 'Concluída'
                             : phase.status === 'in-progress'
@@ -198,13 +224,13 @@ export function PhaseManagementModal({
                             : 'Pendente'}
                         </Badge>
                       </div>
-                      <p className="text-sm text-gray-600">{phase.description}</p>
+                      <p className="text-sm font-semibold drop-shadow" style={{ color: '#e0f2ff', textShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>{phase.description}</p>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-blue-600">
+                      <div className="text-4xl font-bold drop-shadow-lg" style={{ color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
                         {progress.toFixed(0)}%
                       </div>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs font-bold" style={{ color: '#e0f2ff' }}>
                         {phase.tasks.filter(t => t.status === 'done').length}/
                         {phase.tasks.length} tarefas
                       </p>
@@ -212,14 +238,14 @@ export function PhaseManagementModal({
                   </div>
 
                   <div className="mt-3">
-                    <div className="flex justify-between text-xs text-gray-600 mb-1">
+                    <div className="flex justify-between text-xs mb-2 font-bold" style={{ color: '#e0f2ff' }}>
                       <span>Progresso</span>
                       <span>
                         {new Date(phase.startDate).toLocaleDateString('pt-BR')} -{' '}
                         {new Date(phase.endDate).toLocaleDateString('pt-BR')}
                       </span>
                     </div>
-                    <Progress value={progress} className="h-2" />
+                    <Progress value={progress} className="h-3" style={{ backgroundColor: '#88ddff' }} />
                   </div>
 
                   <div className="mt-3 flex gap-2">
@@ -229,7 +255,7 @@ export function PhaseManagementModal({
                         handlePhaseStatusChange(phase.id, value)
                       }
                     >
-                      <SelectTrigger className="w-[180px] h-8 text-xs">
+                      <SelectTrigger className="w-[180px] h-8 text-xs font-bold bg-white shadow-md" style={{ borderColor: '#0088ff', borderWidth: '2px', color: '#0066ff' }}>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -243,22 +269,25 @@ export function PhaseManagementModal({
                 </CardHeader>
 
                 {isExpanded && (
-                  <CardContent className="space-y-3">
+                  <CardContent className="space-y-3 bg-gray-50 pt-4">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-sm">Tarefas</h4>
+                        <h4 className="font-bold text-sm text-gray-900">Tarefas</h4>
                         <Button
                           size="sm"
-                          variant="outline"
                           onClick={() => handleAddTask(phase.id)}
+                          className="border-0 font-bold shadow-md text-white"
+                          style={{ background: 'linear-gradient(to right, #0066ff, #00ccff)', cursor: 'pointer' }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'linear-gradient(to right, #0044cc, #0099ff)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'linear-gradient(to right, #0066ff, #00ccff)'}
                         >
-                          <Plus className="h-3 w-3 mr-1" />
+                          <Plus className="h-4 w-4 mr-1" />
                           Adicionar Tarefa
                         </Button>
                       </div>
 
                       {phase.tasks.length === 0 ? (
-                        <p className="text-xs text-gray-500 py-4 text-center">
+                        <p className="text-sm text-gray-600 py-4 text-center font-semibold">
                           Nenhuma tarefa nesta fase
                         </p>
                       ) : (
@@ -266,19 +295,22 @@ export function PhaseManagementModal({
                           {phase.tasks.map((task) => (
                             <div
                               key={task.id}
-                              className={`p-3 rounded border ${getTaskStatusColor(
+                              className={`p-3 rounded-lg shadow-md hover:shadow-lg transition-all border-l-4 ${getTaskStatusColor(
                                 task.status
                               )}`}
+                              style={{
+                                borderLeftColor: task.status === 'done' ? '#10b981' : task.status === 'in-progress' ? '#0066ff' : task.status === 'review' ? '#f59e0b' : '#9ca3af',
+                                backgroundColor: task.status === 'done' ? '#f0fdf4' : task.status === 'in-progress' ? '#f0f9ff' : task.status === 'review' ? '#fffbf0' : '#f9fafb'
+                              }}
                             >
                               <div className="flex items-start justify-between gap-2">
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-1">
                                     <CheckSquare
-                                      className={`h-4 w-4 ${
-                                        task.status === 'done'
-                                          ? 'text-green-600'
-                                          : 'text-gray-400'
-                                      }`}
+                                      className="h-5 w-5 flex-shrink-0 font-bold"
+                                      style={{
+                                        color: task.status === 'done' ? '#10b981' : task.status === 'in-progress' ? '#0066ff' : task.status === 'review' ? '#f59e0b' : '#9ca3af'
+                                      }}
                                     />
                                     <input
                                       type="text"
@@ -288,21 +320,22 @@ export function PhaseManagementModal({
                                           name: e.target.value,
                                         })
                                       }
-                                      className="font-medium text-sm bg-transparent border-0 p-0 focus:outline-none focus:ring-0 flex-1"
+                                      className="font-bold text-sm bg-transparent border-0 p-0 focus:outline-none focus:ring-0 flex-1"
+                                      style={{ color: '#111827' }}
                                     />
                                   </div>
                                   {task.description && (
-                                    <p className="text-xs text-gray-600 ml-6">
+                                    <p className="text-xs ml-7 font-semibold" style={{ color: '#1f2937' }}>
                                       {task.description}
                                     </p>
                                   )}
-                                  <div className="flex items-center gap-2 mt-2 ml-6 text-xs text-gray-500">
-                                    <Calendar className="h-3 w-3" />
+                                  <div className="flex items-center gap-2 mt-2 ml-7 text-xs font-semibold" style={{ color: '#374151' }}>
+                                    <Calendar className="h-4 w-4" />
                                     <span>{task.estimatedHours}h estimadas</span>
                                     {task.assignedTo && (
                                       <>
                                         <span>•</span>
-                                        <span>{task.assignedTo}</span>
+                                        <span className="font-bold">{task.assignedTo}</span>
                                       </>
                                     )}
                                   </div>
@@ -318,7 +351,7 @@ export function PhaseManagementModal({
                                       )
                                     }
                                   >
-                                    <SelectTrigger className="w-[120px] h-7 text-xs">
+                                    <SelectTrigger className="w-[120px] h-8 text-xs font-bold bg-white shadow-sm" style={{ borderColor: '#d1d5db', borderWidth: '2px', color: '#111827' }}>
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -338,8 +371,9 @@ export function PhaseManagementModal({
                                     onClick={() =>
                                       handleDeleteTask(phase.id, task.id)
                                     }
+                                    className="hover:opacity-80"
                                   >
-                                    <Trash2 className="h-3 w-3 text-red-500" />
+                                    <Trash2 className="h-4 w-4 font-bold" style={{ color: '#b91c1c' }} />
                                   </Button>
                                 </div>
                               </div>

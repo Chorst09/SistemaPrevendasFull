@@ -573,40 +573,88 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
                     ? (phase.tasks.filter(t => t.status === 'done').length / phase.tasks.length) * 100
                     : 0;
 
+                  const getPhaseStyles = (status: string) => {
+                    switch (status) {
+                      case 'completed':
+                        return {
+                          bg: '#dcfce7',
+                          border: '#10b981',
+                          text: '#065f46',
+                          headerBg: '#10b981',
+                          headerText: 'white'
+                        };
+                      case 'in-progress':
+                        return {
+                          bg: '#fed7aa',
+                          border: '#f97316',
+                          text: '#7c2d12',
+                          headerBg: '#f97316',
+                          headerText: 'white'
+                        };
+                      case 'delayed':
+                        return {
+                          bg: '#fee2e2',
+                          border: '#ef4444',
+                          text: '#7f1d1d',
+                          headerBg: '#ef4444',
+                          headerText: 'white'
+                        };
+                      default:
+                        return {
+                          bg: '#fef3c7',
+                          border: '#eab308',
+                          text: '#713f12',
+                          headerBg: '#eab308',
+                          headerText: '#000'
+                        };
+                    }
+                  };
+
+                  const styles = getPhaseStyles(phase.status);
+
                   return (
-                    <div key={phase.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                      <div className="flex items-center justify-between mb-3">
+                    <div key={phase.id} className="rounded-lg p-4 hover:shadow-lg transition-all border-l-4" style={{
+                      backgroundColor: styles.bg,
+                      borderLeftColor: styles.border,
+                      borderLeftWidth: '6px',
+                      color: styles.text
+                    }}>
+                      <div className="flex items-center justify-between mb-3 p-3 rounded-lg" style={{
+                        backgroundColor: styles.headerBg,
+                        color: styles.headerText
+                      }}>
                         <div className="flex items-center space-x-3">
-                          <h4 className="font-semibold text-lg">{phase.name}</h4>
-                          <Badge variant={
-                            phase.status === 'completed' ? 'default' :
-                            phase.status === 'in-progress' ? 'secondary' :
-                            phase.status === 'delayed' ? 'destructive' : 'outline'
-                          }>
+                          <h4 className="font-bold text-lg" style={{ color: styles.headerText }}>{phase.name}</h4>
+                          <Badge style={{
+                            backgroundColor: styles.headerBg,
+                            color: styles.headerText,
+                            border: `2px solid ${styles.headerText}`,
+                            fontWeight: 'bold'
+                          }}>
                             {phase.status === 'completed' ? 'Concluída' :
                              phase.status === 'in-progress' ? 'Em Andamento' :
                              phase.status === 'delayed' ? 'Atrasada' : 'Pendente'}
                           </Badge>
                         </div>
-                        <span className="text-sm font-medium text-gray-600">
+                        <span className="text-lg font-bold" style={{ color: styles.headerText }}>
                           {phaseProgress.toFixed(0)}%
                         </span>
                       </div>
 
-                      <p className="text-sm text-gray-600 mb-3">{phase.description}</p>
+                      <p className="text-sm font-semibold mb-3" style={{ color: styles.text }}>{phase.description}</p>
 
-                      <div className="flex items-center space-x-4 text-xs text-gray-500 mb-3">
+                      <div className="flex items-center space-x-4 text-xs font-semibold mb-3" style={{ color: styles.text }}>
                         <div className="flex items-center">
-                          <Calendar className="h-3 w-3 mr-1" />
+                          <Calendar className="h-4 w-4 mr-1" />
                           {new Date(phase.startDate).toLocaleDateString('pt-BR')} - {new Date(phase.endDate).toLocaleDateString('pt-BR')}
                         </div>
                         <div className="flex items-center">
-                          <CheckSquare className="h-3 w-3 mr-1" />
+                          <CheckSquare className="h-4 w-4 mr-1" />
                           {phase.tasks.filter(t => t.status === 'done').length}/{phase.tasks.length} tarefas
                         </div>
                       </div>
 
-                      <Progress value={phaseProgress} className="mb-3" />
+                      <Progress value={phaseProgress} className="mb-3" style={{ backgroundColor: styles.border }} />
 
                       {phase.tasks.length > 0 && (
                         <div className="mt-4 space-y-2">
@@ -658,27 +706,64 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {project.timeline.milestones.map(milestone => (
-                    <div key={milestone.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <CheckCircle className={`h-5 w-5 ${milestone.status === 'achieved' ? 'text-green-600' : milestone.status === 'missed' ? 'text-red-600' : 'text-gray-400'}`} />
-                        <div>
-                          <p className="font-medium">{milestone.name}</p>
-                          <p className="text-xs text-gray-500 mb-1">{milestone.description}</p>
-                          <p className="text-xs text-gray-500">
-                            Prazo: {new Date(milestone.dueDate).toLocaleDateString('pt-BR')}
-                          </p>
+                  {project.timeline.milestones.map(milestone => {
+                    const getMilestoneStyles = (status: string) => {
+                      switch (status) {
+                        case 'achieved':
+                          return {
+                            bg: '#dcfce7',
+                            border: '#10b981',
+                            icon: '#10b981',
+                            text: '#065f46'
+                          };
+                        case 'missed':
+                          return {
+                            bg: '#fee2e2',
+                            border: '#ef4444',
+                            icon: '#ef4444',
+                            text: '#7f1d1d'
+                          };
+                        default:
+                          return {
+                            bg: '#fef3c7',
+                            border: '#eab308',
+                            icon: '#eab308',
+                            text: '#713f12'
+                          };
+                      }
+                    };
+
+                    const styles = getMilestoneStyles(milestone.status);
+
+                    return (
+                      <div key={milestone.id} className="flex items-center justify-between p-4 rounded-lg border-l-4 hover:shadow-md transition-all" style={{
+                        backgroundColor: styles.bg,
+                        borderLeftColor: styles.border,
+                        borderLeftWidth: '4px',
+                        color: styles.text
+                      }}>
+                        <div className="flex items-center space-x-3">
+                          <CheckCircle className="h-6 w-6" style={{ color: styles.icon }} />
+                          <div>
+                            <p className="font-bold text-lg">{milestone.name}</p>
+                            <p className="text-sm font-semibold mb-1">{milestone.description}</p>
+                            <p className="text-xs font-semibold">
+                              Prazo: {new Date(milestone.dueDate).toLocaleDateString('pt-BR')}
+                            </p>
+                          </div>
                         </div>
+                        <Badge style={{
+                          backgroundColor: styles.border,
+                          color: 'white',
+                          fontWeight: 'bold',
+                          fontSize: '12px'
+                        }}>
+                          {milestone.status === 'achieved' ? 'Alcançado' : 
+                           milestone.status === 'missed' ? 'Perdido' : 'Pendente'}
+                        </Badge>
                       </div>
-                      <Badge variant={
-                        milestone.status === 'achieved' ? 'default' : 
-                        milestone.status === 'missed' ? 'destructive' : 'outline'
-                      }>
-                        {milestone.status === 'achieved' ? 'Alcançado' : 
-                         milestone.status === 'missed' ? 'Perdido' : 'Pendente'}
-                      </Badge>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
@@ -890,24 +975,65 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
                 <p className="text-center text-gray-500 py-8">Nenhuma entrega definida</p>
               ) : (
                 <div className="space-y-3">
-                  {project.deliverables.map(deliverable => (
-                    <div key={deliverable.id} className="border rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-semibold">{deliverable.name}</h4>
-                        <Badge variant={
-                          deliverable.status === 'delivered' ? 'default' :
-                          deliverable.status === 'approved' ? 'default' :
-                          deliverable.status === 'in-progress' ? 'secondary' : 'outline'
-                        }>
-                          {deliverable.status}
-                        </Badge>
+                  {project.deliverables.map(deliverable => {
+                    const getDeliverableStyles = (status: string) => {
+                      switch (status) {
+                        case 'delivered':
+                          return {
+                            bg: '#dcfce7',
+                            border: '#10b981',
+                            text: '#065f46'
+                          };
+                        case 'approved':
+                          return {
+                            bg: '#dbeafe',
+                            border: '#0284c7',
+                            text: '#0c2340'
+                          };
+                        case 'in-progress':
+                          return {
+                            bg: '#fed7aa',
+                            border: '#f97316',
+                            text: '#7c2d12'
+                          };
+                        default:
+                          return {
+                            bg: '#f3f4f6',
+                            border: '#9ca3af',
+                            text: '#374151'
+                          };
+                      }
+                    };
+
+                    const styles = getDeliverableStyles(deliverable.status);
+
+                    return (
+                      <div key={deliverable.id} className="rounded-lg p-4 border-l-4 hover:shadow-md transition-all" style={{
+                        backgroundColor: styles.bg,
+                        borderLeftColor: styles.border,
+                        borderLeftWidth: '4px',
+                        color: styles.text
+                      }}>
+                        <div className="flex items-start justify-between mb-2">
+                          <h4 className="font-bold text-lg">{deliverable.name}</h4>
+                          <Badge style={{
+                            backgroundColor: styles.border,
+                            color: 'white',
+                            fontWeight: 'bold',
+                            fontSize: '12px'
+                          }}>
+                            {deliverable.status === 'delivered' ? 'Entregue' :
+                             deliverable.status === 'approved' ? 'Aprovado' :
+                             deliverable.status === 'in-progress' ? 'Em Progresso' : 'Pendente'}
+                          </Badge>
+                        </div>
+                        <p className="text-sm font-semibold mb-2">{deliverable.description}</p>
+                        <div className="text-xs font-semibold">
+                          Prazo: {new Date(deliverable.dueDate).toLocaleDateString('pt-BR')}
+                        </div>
                       </div>
-                      <p className="text-sm text-gray-600 mb-2">{deliverable.description}</p>
-                      <div className="text-xs text-gray-500">
-                        Prazo: {new Date(deliverable.dueDate).toLocaleDateString('pt-BR')}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </CardContent>
