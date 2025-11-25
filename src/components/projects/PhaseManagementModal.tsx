@@ -170,6 +170,19 @@ export function PhaseManagementModal({
     onUpdate(updatedPhases);
   };
 
+  const handleAddPhase = () => {
+    const newPhase: ProjectPhase = {
+      id: `phase-${Date.now()}`,
+      name: 'Nova Fase',
+      description: 'Descrição da fase',
+      status: 'not-started',
+      startDate: new Date().toISOString(),
+      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      tasks: [],
+    };
+    onUpdate([...phases, newPhase]);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white">
@@ -181,6 +194,32 @@ export function PhaseManagementModal({
         </DialogHeader>
 
         <div className="space-y-4">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-bold text-gray-900">Fases do Projeto</h3>
+            <Button
+              onClick={handleAddPhase}
+              className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white border-0 font-bold shadow-md"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Adicionar Fase
+            </Button>
+          </div>
+
+          {phases.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+              <Plus className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-600 font-semibold mb-2">Nenhuma fase criada</p>
+              <p className="text-sm text-gray-500 mb-4">Clique no botão acima para adicionar a primeira fase</p>
+              <Button
+                onClick={handleAddPhase}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Criar Primeira Fase
+              </Button>
+            </div>
+          ) : null}
+
           {phases.map((phase) => {
             const progress = getPhaseProgress(phase);
             const isExpanded = expandedPhaseId === phase.id;
