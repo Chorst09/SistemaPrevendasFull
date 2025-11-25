@@ -893,14 +893,14 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
 
                             {/* Requisitos e Riscos */}
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <Card>
+                                <Card className="bg-slate-800 border-slate-700">
                                     <CardHeader>
-                                        <CardTitle className="flex items-center gap-2">
+                                        <CardTitle className="flex items-center gap-2 text-white">
                                             <CheckCircle className="h-5 w-5" />
                                             Requisitos
                                         </CardTitle>
                                     </CardHeader>
-                                    <CardContent>
+                                    <CardContent className="text-white">
                                         <Tabs defaultValue="technical" className="w-full">
                                             <TabsList className="grid w-full grid-cols-3">
                                                 <TabsTrigger value="technical">Técnicos</TabsTrigger>
@@ -910,24 +910,24 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
                                             <TabsContent value="technical" className="space-y-2">
                                                 {analysisResult.requirements.technical.map((req, index) => (
                                                     <div key={index} className="flex items-start gap-2">
-                                                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                                                        <p className="text-sm">{req}</p>
+                                                        <CheckCircle className="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
+                                                        <p className="text-sm text-white">{req}</p>
                                                     </div>
                                                 ))}
                                             </TabsContent>
                                             <TabsContent value="legal" className="space-y-2">
                                                 {analysisResult.requirements.legal.map((req, index) => (
                                                     <div key={index} className="flex items-start gap-2">
-                                                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                                                        <p className="text-sm">{req}</p>
+                                                        <CheckCircle className="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
+                                                        <p className="text-sm text-white">{req}</p>
                                                     </div>
                                                 ))}
                                             </TabsContent>
                                             <TabsContent value="financial" className="space-y-2">
                                                 {analysisResult.requirements.financial.map((req, index) => (
                                                     <div key={index} className="flex items-start gap-2">
-                                                        <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                                                        <p className="text-sm">{req}</p>
+                                                        <CheckCircle className="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
+                                                        <p className="text-sm text-white">{req}</p>
                                                     </div>
                                                 ))}
                                             </TabsContent>
@@ -935,17 +935,17 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
                                     </CardContent>
                                 </Card>
 
-                                <Card>
+                                <Card className="bg-slate-800 border-slate-700">
                                     <CardHeader>
-                                        <CardTitle className="flex items-center gap-2">
+                                        <CardTitle className="flex items-center gap-2 text-white">
                                             <AlertCircle className="h-5 w-5" />
                                             Análise de Riscos
                                         </CardTitle>
                                     </CardHeader>
-                                    <CardContent>
+                                    <CardContent className="text-white">
                                         <div className="space-y-4">
                                             <div>
-                                                <p className="text-sm font-medium text-gray-500 mb-2">Nível de Risco</p>
+                                                <p className="text-sm font-medium text-gray-300 mb-2">Nível de Risco</p>
                                                 <Badge className={`${getRiskColor(analysisResult.risks.level)} text-lg px-3 py-1`}>
                                                     {analysisResult.risks.level === 'low' ? 'Baixo' :
                                                         analysisResult.risks.level === 'medium' ? 'Médio' : 'Alto'}
@@ -953,12 +953,12 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
                                             </div>
 
                                             <div>
-                                                <p className="text-sm font-medium text-gray-500 mb-2">Fatores de Risco</p>
+                                                <p className="text-sm font-medium text-gray-300 mb-2">Fatores de Risco</p>
                                                 <div className="space-y-2">
                                                     {analysisResult.risks.factors.map((factor, index) => (
                                                         <div key={index} className="flex items-start gap-2">
-                                                            <AlertCircle className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
-                                                            <p className="text-sm">{factor}</p>
+                                                            <AlertCircle className="h-4 w-4 text-orange-400 mt-0.5 flex-shrink-0" />
+                                                            <p className="text-sm text-white">{factor}</p>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -969,19 +969,19 @@ const AIBidAnalyzer: React.FC<AIBidAnalyzerProps> = ({ onSaveEdital, onNavigateT
                             </div>
 
                             {/* Recomendações */}
-                            <Card>
+                            <Card className="bg-slate-800 border-slate-700">
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
+                                    <CardTitle className="flex items-center gap-2 text-white">
                                         <Brain className="h-5 w-5" />
                                         Recomendações da IA
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent>
+                                <CardContent className="text-white">
                                     <div className="space-y-3">
                                         {analysisResult.recommendations.map((recommendation, index) => (
-                                            <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                                                <Brain className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                                                <p className="text-sm text-blue-900">{recommendation}</p>
+                                            <div key={index} className="flex items-start gap-3 p-3 bg-slate-700 dark:bg-slate-700 rounded-lg border border-slate-600">
+                                                <Brain className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                                                <p className="text-sm text-white">{recommendation}</p>
                                             </div>
                                         ))}
                                     </div>
