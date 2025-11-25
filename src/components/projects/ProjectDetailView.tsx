@@ -42,6 +42,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { PhaseManagementModal } from './PhaseManagementModal';
 
 interface ProjectDetailViewProps {
   project: Project;
@@ -52,6 +53,7 @@ interface ProjectDetailViewProps {
 export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailViewProps) {
   const [activeTab, setActiveTab] = useState('overview');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isPhaseManagementOpen, setIsPhaseManagementOpen] = useState(false);
   const [editedProject, setEditedProject] = useState<Partial<Project>>(project);
 
   const getStatusColor = (status: ProjectStatus) => {
@@ -533,10 +535,20 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
         <TabsContent value="timeline" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Calendar className="h-5 w-5" />
-                <span>Cronograma do Projeto</span>
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center space-x-2">
+                  <Calendar className="h-5 w-5" />
+                  <span>Cronograma do Projeto</span>
+                </CardTitle>
+                <Button
+                  size="sm"
+                  onClick={() => setIsPhaseManagementOpen(true)}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Gerenciar Fases
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -996,6 +1008,13 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <PhaseManagementModal
+        phases={project.timeline.phases}
+        onUpdate={(phases) => onUpdate({ timeline: { ...project.timeline, phases } })}
+        isOpen={isPhaseManagementOpen}
+        onClose={() => setIsPhaseManagementOpen(false)}
+      />
     </div>
   );
 }
