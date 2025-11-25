@@ -212,15 +212,15 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold mb-2">
-              {project.budget.currency} {project.budget.totalBudget.toLocaleString()}
+              {project.budget.currency} {(project.budget.totalBudget || 0).toLocaleString()}
             </div>
             <Progress value={getBudgetPercentage()} className="mb-2" />
             <div className="flex justify-between text-xs">
               <span className="text-orange-600">
-                Gasto: {project.budget.spentBudget.toLocaleString()}
+                Gasto: {(project.budget.spentBudget || 0).toLocaleString()}
               </span>
               <span className="text-green-600">
-                Restante: {project.budget.remainingBudget.toLocaleString()}
+                Restante: {(project.budget.remainingBudget || 0).toLocaleString()}
               </span>
             </div>
           </CardContent>
@@ -686,19 +686,19 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
                 <div className="text-center p-4 bg-blue-50 rounded-lg">
                   <div className="text-sm text-blue-700 mb-1 font-medium">Orçamento Total</div>
                   <div className="text-2xl font-bold text-blue-600">
-                    {project.budget.currency} {project.budget.totalBudget.toLocaleString()}
+                    {project.budget.currency} {(project.budget.totalBudget || 0).toLocaleString()}
                   </div>
                 </div>
                 <div className="text-center p-4 bg-orange-50 rounded-lg">
                   <div className="text-sm text-orange-700 mb-1 font-medium">Gasto</div>
                   <div className="text-2xl font-bold text-orange-600">
-                    {project.budget.currency} {project.budget.spentBudget.toLocaleString()}
+                    {project.budget.currency} {(project.budget.spentBudget || 0).toLocaleString()}
                   </div>
                 </div>
                 <div className="text-center p-4 bg-green-50 rounded-lg">
                   <div className="text-sm text-green-700 mb-1 font-medium">Restante</div>
                   <div className="text-2xl font-bold text-green-600">
-                    {project.budget.currency} {project.budget.remainingBudget.toLocaleString()}
+                    {project.budget.currency} {(project.budget.remainingBudget || 0).toLocaleString()}
                   </div>
                 </div>
               </div>
@@ -714,10 +714,10 @@ export function ProjectDetailView({ project, onUpdate, onBack }: ProjectDetailVi
                       </div>
                       <div className="text-right">
                         <p className="font-medium text-blue-900">
-                          {project.budget.currency} {item.plannedCost.toLocaleString()}
+                          {project.budget.currency} {(item.plannedCost || 0).toLocaleString()}
                         </p>
                         <p className="text-xs text-blue-700">
-                          Gasto: {item.actualCost.toLocaleString()}
+                          Gasto: {(item.actualCost || 0).toLocaleString()}
                         </p>
                       </div>
                     </div>

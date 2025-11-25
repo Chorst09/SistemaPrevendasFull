@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Plus, FolderKanban } from 'lucide-react';
 import { ProjectGeneratorService } from '@/lib/services/project-generator-service';
-import { Project } from '@/lib/types/project';
+import { Project, ProjectStatus, ProjectPriority } from '@/lib/types/project';
 import { ProjectListView } from '@/components/projects/ProjectListView';
 import { ProjectDetailView } from '@/components/projects/ProjectDetailView';
 import { ProjectGeneratorModal } from '@/components/projects/ProjectGeneratorModal';
@@ -27,7 +27,143 @@ export default function ProjectsPage() {
 
   const loadProjects = () => {
     const allProjects = ProjectGeneratorService.getAllProjects();
-    setProjects(allProjects);
+    
+    // Se não houver projetos, criar um de exemplo
+    if (allProjects.length === 0) {
+      createExampleProject();
+    } else {
+      setProjects(allProjects);
+    }
+  };
+
+  const createExampleProject = () => {
+    const exampleProject: Project = {
+      id: `proj-example-${Date.now()}`,
+      name: 'Implementação NOC - Banco ABC',
+      description: 'Projeto de implementação de Network Operations Center para o Banco ABC com monitoramento 24x7 de infraestrutura crítica.',
+      type: 'noc',
+      status: 'in-progress',
+      priority: 'high',
+      proposalId: undefined,
+      clientId: 'banco-abc',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+      endDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+      projectManager: 'Carlos Silva',
+      team: [
+        { id: 'team-1', name: 'Carlos Silva', role: 'Gerente de Projeto', allocation: 100 },
+        { id: 'team-2', name: 'Ana Santos', role: 'Arquiteta de Sistemas', allocation: 80 },
+        { id: 'team-3', name: 'João Oliveira', role: 'Engenheiro NOC', allocation: 100 },
+        { id: 'team-4', name: 'Maria Costa', role: 'Especialista em Segurança', allocation: 60 }
+      ],
+      scope: {
+        objectives: [
+          'Implementar NOC com monitoramento 24x7',
+          'Configurar alertas e escalação automática',
+          'Treinar equipe do cliente',
+          'Documentar processos e procedimentos'
+        ],
+        deliverables: ['Infraestrutura NOC', 'Dashboards de Monitoramento', 'Documentação Técnica', 'Treinamento da Equipe'],
+        outOfScope: ['Desenvolvimento de aplicações customizadas', 'Migração de dados legados'],
+        assumptions: ['Cliente fornecerá acesso à infraestrutura', 'Equipe disponível para treinamento'],
+        constraints: ['Implementação deve ser concluída em 90 dias', 'Sem downtime durante implementação']
+      },
+      timeline: {
+        phases: [
+          {
+            id: 'phase-1',
+            name: 'Fase 1: Planejamento e Design',
+            description: 'Análise de requisitos e design da solução',
+            startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+            endDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'completed',
+            tasks: [],
+            dependencies: []
+          },
+          {
+            id: 'phase-2',
+            name: 'Fase 2: Implementação',
+            description: 'Instalação e configuração da infraestrutura NOC',
+            startDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+            endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'in-progress',
+            tasks: [],
+            dependencies: ['phase-1']
+          },
+          {
+            id: 'phase-3',
+            name: 'Fase 3: Testes e Validação',
+            description: 'Testes de funcionalidade e validação com cliente',
+            startDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            endDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'not-started',
+            tasks: [],
+            dependencies: ['phase-2']
+          },
+          {
+            id: 'phase-4',
+            name: 'Fase 4: Treinamento e Go-Live',
+            description: 'Treinamento da equipe e ativação do NOC',
+            startDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
+            endDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'not-started',
+            tasks: [],
+            dependencies: ['phase-3']
+          }
+        ],
+        milestones: [
+          { id: 'ms-1', name: 'Design Aprovado', description: 'Design da solução aprovado pelo cliente', dueDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), status: 'completed', deliverables: [] },
+          { id: 'ms-2', name: 'Infraestrutura Instalada', description: 'Infraestrutura NOC completamente instalada', dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(), status: 'in-progress', deliverables: [] },
+          { id: 'ms-3', name: 'Testes Concluídos', description: 'Todos os testes de funcionalidade concluídos', dueDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(), status: 'pending', deliverables: [] }
+        ]
+      },
+      budget: {
+        totalBudget: 450000,
+        spentBudget: 180000,
+        remainingBudget: 270000,
+        currency: 'BRL',
+        breakdown: [
+          { category: 'Infraestrutura', amount: 200000, spent: 80000 },
+          { category: 'Licenças de Software', amount: 150000, spent: 60000 },
+          { category: 'Serviços Profissionais', amount: 100000, spent: 40000 }
+        ],
+        costVariance: 0,
+        costPerformanceIndex: 1.0
+      },
+      risks: [
+        { id: 'risk-1', title: 'Atraso na Entrega de Hardware', description: 'Possível atraso na entrega dos servidores', probability: 'medium', impact: 'high', mitigation: 'Manter contato com fornecedor e ter plano B' },
+        { id: 'risk-2', title: 'Resistência da Equipe', description: 'Equipe do cliente pode resistir às mudanças', probability: 'low', impact: 'medium', mitigation: 'Treinamento abrangente e suporte contínuo' }
+      ],
+      deliverables: [
+        { id: 'del-1', name: 'Infraestrutura NOC', description: 'Servidores, switches e equipamentos de rede', type: 'infrastructure', status: 'in-progress', dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(), assignedTo: 'João Oliveira', acceptanceCriteria: ['Todos os servidores operacionais', 'Rede configurada e testada'] },
+        { id: 'del-2', name: 'Dashboards de Monitoramento', description: 'Painéis de controle e visualização de dados', type: 'software', status: 'in-progress', dueDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(), assignedTo: 'Ana Santos', acceptanceCriteria: ['Dashboards responsivos', 'Alertas em tempo real'] },
+        { id: 'del-3', name: 'Documentação Técnica', description: 'Manuais e guias técnicos', type: 'documentation', status: 'pending', dueDate: new Date(Date.now() + 50 * 24 * 60 * 60 * 1000).toISOString(), assignedTo: 'Maria Costa', acceptanceCriteria: ['Documentação completa', 'Exemplos práticos'] }
+      ],
+      progress: {
+        overallProgress: 65,
+        phasesCompleted: 1,
+        tasksCompleted: 12,
+        totalTasks: 20,
+        milestonesAchieved: 1,
+        totalMilestones: 3,
+        scheduleVariance: 0,
+        schedulePerformanceIndex: 1.0,
+        healthStatus: 'green',
+        healthIndicators: {
+          schedule: 'on-track',
+          budget: 'on-track',
+          scope: 'on-track',
+          quality: 'on-track'
+        }
+      },
+      documents: [],
+      notes: 'Projeto de exemplo para demonstração do sistema de gerenciamento de projetos.',
+      tags: ['NOC', 'Infraestrutura', 'Banco ABC', 'Crítico']
+    };
+
+    ProjectGeneratorService.saveProject(exampleProject);
+    setProjects([exampleProject]);
   };
 
   const handleSelectProject = (project: Project) => {

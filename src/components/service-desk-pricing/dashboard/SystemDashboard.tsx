@@ -207,73 +207,73 @@ export function SystemDashboard({ data, userId }: SystemDashboardProps) {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-lg hover:shadow-xl transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total de Projetos</p>
-                <p className="text-2xl font-bold">{metrics.totalProjects}</p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-sm font-semibold text-blue-700">Total de Projetos</p>
+                <p className="text-3xl font-bold text-blue-900">{metrics.totalProjects}</p>
+                <p className="text-xs text-blue-600 mt-1 font-medium">
                   {metrics.activeProjects} ativos
                 </p>
               </div>
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <BarChart3 className="h-6 w-6 text-blue-600" />
+              <div className="p-3 bg-blue-500 rounded-lg shadow-md">
+                <BarChart3 className="h-6 w-6 text-white" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 shadow-lg hover:shadow-xl transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Receita Total</p>
-                <p className="text-2xl font-bold">{formatCurrency(metrics.totalRevenue)}</p>
+                <p className="text-sm font-semibold text-green-700">Receita Total</p>
+                <p className="text-3xl font-bold text-green-900">{formatCurrency(metrics.totalRevenue)}</p>
                 <div className="flex items-center mt-1">
-                  <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
-                  <p className="text-xs text-green-600">+{metrics.growthRate}%</p>
+                  <TrendingUp className="h-3 w-3 text-green-600 mr-1" />
+                  <p className="text-xs text-green-700 font-medium">+{metrics.growthRate}%</p>
                 </div>
               </div>
-              <div className="p-2 bg-green-100 rounded-lg">
-                <DollarSign className="h-6 w-6 text-green-600" />
+              <div className="p-3 bg-green-500 rounded-lg shadow-md">
+                <DollarSign className="h-6 w-6 text-white" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 shadow-lg hover:shadow-xl transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Equipe Total</p>
-                <p className="text-2xl font-bold">{metrics.totalTeamMembers}</p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-sm font-semibold text-purple-700">Equipe Total</p>
+                <p className="text-3xl font-bold text-purple-900">{metrics.totalTeamMembers}</p>
+                <p className="text-xs text-purple-600 mt-1 font-medium">
                   Média {Math.round(metrics.averageTeamSize)} por projeto
                 </p>
               </div>
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Users className="h-6 w-6 text-purple-600" />
+              <div className="p-3 bg-purple-500 rounded-lg shadow-md">
+                <Users className="h-6 w-6 text-white" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 shadow-lg hover:shadow-xl transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Taxa de Conclusão</p>
-                <p className="text-2xl font-bold">{Math.round(metrics.completionRate)}%</p>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <p className="text-sm font-semibold text-orange-700">Taxa de Conclusão</p>
+                <p className="text-3xl font-bold text-orange-900">{Math.round(metrics.completionRate)}%</p>
+                <div className="w-full bg-orange-200 rounded-full h-2 mt-2">
                   <div 
-                    className="bg-blue-600 h-2 rounded-full" 
+                    className="bg-orange-500 h-2 rounded-full transition-all" 
                     style={{ width: `${metrics.completionRate}%` }}
                   ></div>
                 </div>
               </div>
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Target className="h-6 w-6 text-orange-600" />
+              <div className="p-3 bg-orange-500 rounded-lg shadow-md">
+                <Target className="h-6 w-6 text-white" />
               </div>
             </div>
           </CardContent>
@@ -291,30 +291,30 @@ export function SystemDashboard({ data, userId }: SystemDashboardProps) {
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Activity */}
-            <Card>
+            <Card className="bg-gradient-to-br from-slate-50 to-slate-100 border-slate-200 shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Activity className="h-5 w-5" />
+                <CardTitle className="flex items-center space-x-2 text-slate-800">
+                  <Activity className="h-5 w-5 text-blue-600" />
                   <span>Atividade Recente</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {recentProjects.map((project) => (
-                  <div key={project.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div key={project.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all">
                     <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <FileText className="h-4 w-4 text-primary" />
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <FileText className="h-4 w-4 text-blue-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-sm">{project.name}</p>
-                        <p className="text-xs text-muted-foreground">{project.client}</p>
+                        <p className="font-medium text-sm text-slate-900">{project.name}</p>
+                        <p className="text-xs text-slate-600">{project.client}</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <Badge className={getStatusColor(project.status)}>
                         {project.status === 'active' ? 'Ativo' : 'Concluído'}
                       </Badge>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-xs text-slate-600 mt-1">
                         {formatDistanceToNow(project.lastUpdated, { addSuffix: true, locale: ptBR })}
                       </p>
                     </div>
@@ -324,36 +324,36 @@ export function SystemDashboard({ data, userId }: SystemDashboardProps) {
             </Card>
 
             {/* Performance Metrics */}
-            <Card>
+            <Card className="bg-gradient-to-br from-slate-50 to-slate-100 border-slate-200 shadow-lg">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Award className="h-5 w-5" />
+                <CardTitle className="flex items-center space-x-2 text-slate-800">
+                  <Award className="h-5 w-5 text-purple-600" />
                   <span>Métricas de Performance</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-3">
+                <div className="space-y-3 p-3 bg-white rounded-lg border border-slate-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Valor Médio por Projeto</span>
-                    <span className="text-sm font-bold">{formatCurrency(metrics.averageProjectValue)}</span>
+                    <span className="text-sm font-semibold text-slate-700">Valor Médio por Projeto</span>
+                    <span className="text-sm font-bold text-green-700">{formatCurrency(metrics.averageProjectValue)}</span>
                   </div>
-                  <Progress value={75} className="h-2" />
+                  <Progress value={75} className="h-3 bg-slate-200" />
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-3 p-3 bg-white rounded-lg border border-slate-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Projetos Concluídos</span>
-                    <span className="text-sm font-bold">{metrics.completedProjects}/{metrics.totalProjects}</span>
+                    <span className="text-sm font-semibold text-slate-700">Projetos Concluídos</span>
+                    <span className="text-sm font-bold text-blue-700">{metrics.completedProjects}/{metrics.totalProjects}</span>
                   </div>
-                  <Progress value={(metrics.completedProjects / metrics.totalProjects) * 100} className="h-2" />
+                  <Progress value={(metrics.completedProjects / metrics.totalProjects) * 100} className="h-3 bg-slate-200" />
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-3 p-3 bg-white rounded-lg border border-slate-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Relatórios Gerados</span>
-                    <span className="text-sm font-bold">{metrics.reportsGenerated}</span>
+                    <span className="text-sm font-semibold text-slate-700">Relatórios Gerados</span>
+                    <span className="text-sm font-bold text-orange-700">{metrics.reportsGenerated}</span>
                   </div>
-                  <Progress value={Math.min((metrics.reportsGenerated / 10) * 100, 100)} className="h-2" />
+                  <Progress value={Math.min((metrics.reportsGenerated / 10) * 100, 100)} className="h-3 bg-slate-200" />
                 </div>
               </CardContent>
             </Card>
