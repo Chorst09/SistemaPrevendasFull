@@ -5,6 +5,9 @@ import { ProjectPhase, ProjectTask, ProjectPriority } from '@/lib/types/project'
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -28,6 +31,7 @@ import {
   Plus,
   ChevronDown,
   ChevronUp,
+  Edit,
 } from 'lucide-react';
 
 interface PhaseManagementModalProps {
@@ -44,6 +48,11 @@ export function PhaseManagementModal({
   onClose,
 }: PhaseManagementModalProps) {
   const [expandedPhaseId, setExpandedPhaseId] = useState<string | null>(null);
+  const [editingPhaseId, setEditingPhaseId] = useState<string | null>(null);
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editingPhaseData, setEditingPhaseData] = useState<Partial<ProjectPhase> | null>(null);
+  const [editingTaskData, setEditingTaskData] = useState<Partial<ProjectTask> | null>(null);
+  const [teamMembers, setTeamMembers] = useState<string[]>([]);
 
   const getPhaseProgress = (phase: ProjectPhase) => {
     if (phase.tasks.length === 0) return 0;
@@ -183,6 +192,35 @@ export function PhaseManagementModal({
     onUpdate([...phases, newPhase]);
   };
 
+  const handleEditPhase = (phase: ProjectPhase) => {
+    setEditingPhaseId(phase.id);
+    setEditingPhaseData({ ...phase });
+  };
+
+  const handleSavePhase = () => {
+    if (editingPhaseId && editingPhaseData) {
+      const updatedPhases = phases.map(p =>
+        p.id === editingPhaseId ? { ...p, ...editingPhaseData } : p
+      );
+      onUpdate(updatedPhases);
+      setEditingPhaseId(null);
+      setEditingPhaseData(null);
+    }
+  };
+
+  const handleEditTask = (phaseId: string, task: ProjectTask) => {
+    setEditingTaskId(task.id);
+    setEditingTaskData({ ...task });
+  };
+
+  const handleSaveTask = (phaseId: string) => {
+    if (editingTaskId && editingTaskData) {
+      handleUpdateTask(phaseId, editingTaskId, editingTaskData);
+      setEditingTaskId(null);
+      setEditingTaskData(null);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white">
@@ -253,6 +291,15 @@ export function PhaseManagementModal({
                           )}
                         </Button>
                         <h3 className="text-lg font-bold drop-shadow" style={{ color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>{phase.name}</h3>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditPhase(phase)}
+                          style={{ color: 'white' }}
+                          className="hover:opacity-80"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
                         <Badge className={`${getStatusColor(phase.status)} font-bold text-sm shadow-md`} style={{ fontSize: '12px', fontWeight: 'bold' }}>
                           {phase.status === 'completed'
                             ? 'Concluída'
@@ -380,6 +427,14 @@ export function PhaseManagementModal({
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-1">
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => handleEditTask(phase.id, task)}
+                                    className="hover:opacity-80"
+                                  >
+                                    <Edit className="h-4 w-4 font-bold" style={{ color: '#0066ff' }} />
+                                  </Button>
                                   <Select
                                     value={task.status}
                                     onValueChange={(value) =>
@@ -434,6 +489,152 @@ export function PhaseManagementModal({
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      {/* Dialog de Edição de Fase */}
+      <Dialog open={!!editingPhaseId} onOpenChange={() => setEditingPhaseId(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Editar Fase</DialogTitle>
+            <DialogDescription>
+              Atualize os detalhes da fase
+            </DialogDescription>
+          </DialogHeader>
+          {editingPhaseData && (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="phase-name">Nome da Fase</Label>
+                <Input
+                  id="phase-name"
+                  value={editingPhaseData.name || ''}
+                  onChange={(e) => setEditingPhaseData({ ...editingPhaseData, name: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="phase-description">Descrição</Label>
+                <Textarea
+                  id="phase-description"
+                  value={editingPhaseData.description || ''}
+                  onChange={(e) => setEditingPhaseData({ ...editingPhaseData, description: e.target.value })}
+                  className="mt-1"
+                  rows={3}
+                />
+              </div>
+              <div>
+                <Label htmlFor="phase-start">Data de Início</Label>
+                <Input
+                  id="phase-start"
+                  type="date"
+                  value={editingPhaseData.startDate ? new Date(editingPhaseData.startDate).toISOString().split('T')[0] : ''}
+                  onChange={(e) => setEditingPhaseData({ ...editingPhaseData, startDate: new Date(e.target.value).toISOString() })}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="phase-end">Data de Término</Label>
+                <Input
+                  id="phase-end"
+                  type="date"
+                  value={editingPhaseData.endDate ? new Date(editingPhaseData.endDate).toISOString().split('T')[0] : ''}
+                  onChange={(e) => setEditingPhaseData({ ...editingPhaseData, endDate: new Date(e.target.value).toISOString() })}
+                  className="mt-1"
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingPhaseId(null)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSavePhase} className="bg-blue-600 hover:bg-blue-700">
+              Salvar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de Edição de Tarefa */}
+      <Dialog open={!!editingTaskId} onOpenChange={() => setEditingTaskId(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Editar Tarefa</DialogTitle>
+            <DialogDescription>
+              Atualize os detalhes da tarefa
+            </DialogDescription>
+          </DialogHeader>
+          {editingTaskData && (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="task-name">Nome da Tarefa</Label>
+                <Input
+                  id="task-name"
+                  value={editingTaskData.name || ''}
+                  onChange={(e) => setEditingTaskData({ ...editingTaskData, name: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="task-description">Descrição</Label>
+                <Textarea
+                  id="task-description"
+                  value={editingTaskData.description || ''}
+                  onChange={(e) => setEditingTaskData({ ...editingTaskData, description: e.target.value })}
+                  className="mt-1"
+                  rows={3}
+                />
+              </div>
+              <div>
+                <Label htmlFor="task-hours">Horas Estimadas</Label>
+                <Input
+                  id="task-hours"
+                  type="number"
+                  value={editingTaskData.estimatedHours || 8}
+                  onChange={(e) => setEditingTaskData({ ...editingTaskData, estimatedHours: parseInt(e.target.value) })}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="task-assigned">Designar Para</Label>
+                <Input
+                  id="task-assigned"
+                  placeholder="Nome do membro da equipe"
+                  value={editingTaskData.assignedTo || ''}
+                  onChange={(e) => setEditingTaskData({ ...editingTaskData, assignedTo: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="task-priority">Prioridade</Label>
+                <Select
+                  value={editingTaskData.priority || ProjectPriority.MEDIUM}
+                  onValueChange={(value) => setEditingTaskData({ ...editingTaskData, priority: value as any })}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ProjectPriority.LOW}>Baixa</SelectItem>
+                    <SelectItem value={ProjectPriority.MEDIUM}>Média</SelectItem>
+                    <SelectItem value={ProjectPriority.HIGH}>Alta</SelectItem>
+                    <SelectItem value={ProjectPriority.CRITICAL}>Crítica</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingTaskId(null)}>
+              Cancelar
+            </Button>
+            <Button onClick={() => {
+              const phaseId = phases.find(p => p.tasks.some(t => t.id === editingTaskId))?.id;
+              if (phaseId) handleSaveTask(phaseId);
+            }} className="bg-blue-600 hover:bg-blue-700">
+              Salvar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
