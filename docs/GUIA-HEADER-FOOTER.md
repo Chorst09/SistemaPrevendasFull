@@ -46,7 +46,7 @@ Salve as imagens em: `public/images/proposal/`
 4. Copie (Ctrl+C) e cole em um novo arquivo (Ctrl+N)
 5. Ajuste o tamanho para 1920x200px
 6. Salve como PNG: `Arquivo > Exportar > Salvar para Web`
-7. Repita para o rodapé (1920x320px)
+7. Repita para o rodapé (1920x250px)
 
 #### Figma / Canva
 1. Importe o print
@@ -164,7 +164,7 @@ Se as imagens não forem encontradas, o sistema exibe automaticamente:
 4. Limpe o cache do navegador: Ctrl+Shift+R
 
 ### Imagem aparece cortada?
-1. Verifique as dimensões: 1920x200px (header) ou 1920x320px (footer)
+1. Verifique as dimensões: 1920x200px (header) ou 1920x250px (footer)
 2. Use `object-fit: cover` está configurado corretamente
 3. Ajuste a proporção da imagem original
 
